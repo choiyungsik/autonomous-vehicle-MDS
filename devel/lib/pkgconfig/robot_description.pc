@@ -1,0 +1,8 @@
+prefix=/home/choiys/stauto_ws/devel
+
+Name: robot_description
+Description: Description of robot_description
+Version: 0.4.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
