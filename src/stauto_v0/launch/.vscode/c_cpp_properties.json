@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/opt/ros/kinetic/include",
+        "/home/choiys/stauto_ws/src/stauto_v0/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}

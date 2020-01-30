@@ -1,2 +1,2 @@
-robot_description
+robot_description:stauto_v0
 -DCATKIN_DEVEL_PREFIX=/home/choiys/stauto_ws/devel -DCMAKE_INSTALL_PREFIX=/home/choiys/stauto_ws/install -G Unix Makefiles
