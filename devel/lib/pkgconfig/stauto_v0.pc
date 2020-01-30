@@ -1,0 +1,8 @@
+prefix=/home/choiys/stauto_ws/devel
+
+Name: stauto_v0
+Description: Description of stauto_v0
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
