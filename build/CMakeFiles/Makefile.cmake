@@ -121,6 +121,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/opt/ros/kinetic/share/costmap_2d/cmake/costmap_2dConfig.cmake"
   "/opt/ros/kinetic/share/cpp_common/cmake/cpp_commonConfig-version.cmake"
   "/opt/ros/kinetic/share/cpp_common/cmake/cpp_commonConfig.cmake"
+  "/opt/ros/kinetic/share/dynamic_reconfigure/cmake/../cmake/setup_custom_pythonpath.sh.in"
   "/opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-extras.cmake"
   "/opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-macros.cmake"
   "/opt/ros/kinetic/share/dynamic_reconfigure/cmake/dynamic_reconfigure-msg-extras.cmake"

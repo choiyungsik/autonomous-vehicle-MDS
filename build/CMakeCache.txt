@@ -491,6 +491,12 @@ nodelet_DIR:PATH=/opt/ros/kinetic/share/nodelet/cmake
 //The directory containing a CMake configuration file for nodelet_topic_tools.
 nodelet_topic_tools_DIR:PATH=/opt/ros/kinetic/share/nodelet_topic_tools/cmake
 
+//Value Computed by CMake
+pangyo_control_BINARY_DIR:STATIC=/home/choiys/stauto_ws/build/stauto_sensor
+
+//Value Computed by CMake
+pangyo_control_SOURCE_DIR:STATIC=/home/choiys/stauto_ws/src/stauto_sensor
+
 //The directory containing a CMake configuration file for pcl_conversions.
 pcl_conversions_DIR:PATH=/opt/ros/kinetic/share/pcl_conversions/cmake
 
@@ -571,6 +577,9 @@ rviz_imu_plugin_SOURCE_DIR:STATIC=/home/choiys/stauto_ws/src/imu_tools/rviz_imu_
 
 //The directory containing a CMake configuration file for sensor_msgs.
 sensor_msgs_DIR:PATH=/opt/ros/kinetic/share/sensor_msgs/cmake
+
+//The directory containing a CMake configuration file for serial.
+serial_DIR:PATH=/opt/ros/kinetic/share/serial/cmake
 
 //The directory containing a CMake configuration file for smclib.
 smclib_DIR:PATH=/opt/ros/kinetic/share/smclib/cmake
