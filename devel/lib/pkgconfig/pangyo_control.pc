@@ -1,0 +1,8 @@
+prefix=/home/choiys/stauto_ws/devel
+
+Name: pangyo_control
+Description: Description of pangyo_control
+Version: 0.0.0
+Cflags: -I/home/choiys/stauto_ws/devel/include
+Libs: -L${prefix}/lib 
+Requires: 
