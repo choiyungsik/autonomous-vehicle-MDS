@@ -79,17 +79,6 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -133,6 +122,17 @@ install/local/fast: install/local
 
 .PHONY : install/local/fast
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+
+.PHONY : test/fast
+
 # The main all target
 all: cmake_check_build_system
 	cd /home/choiys/stauto_ws/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/choiys/stauto_ws/build/CMakeFiles /home/choiys/stauto_ws/build/robot_description/CMakeFiles/progress.marks
@@ -164,6 +164,21 @@ preinstall/fast:
 depend:
 	cd /home/choiys/stauto_ws/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule:
+	cd /home/choiys/stauto_ws/build && $(MAKE) -f CMakeFiles/Makefile2 robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
+.PHONY : robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
+
+# Convenience name for target.
+_run_tests_robot_description_roslaunch-check: robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
+
+.PHONY : _run_tests_robot_description_roslaunch-check
+
+# fast build rule for target.
+_run_tests_robot_description_roslaunch-check/fast:
+	cd /home/choiys/stauto_ws/build && $(MAKE) -f robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/build.make robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/build
+.PHONY : _run_tests_robot_description_roslaunch-check/fast
 
 # Convenience name for target.
 robot_description/CMakeFiles/run_tests_robot_description_roslaunch-check.dir/rule:
@@ -241,36 +256,6 @@ _run_tests_robot_description_roslaunch-check_launch/fast:
 .PHONY : _run_tests_robot_description_roslaunch-check_launch/fast
 
 # Convenience name for target.
-robot_description/CMakeFiles/_catkin_empty_exported_target.dir/rule:
-	cd /home/choiys/stauto_ws/build && $(MAKE) -f CMakeFiles/Makefile2 robot_description/CMakeFiles/_catkin_empty_exported_target.dir/rule
-.PHONY : robot_description/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-# Convenience name for target.
-_catkin_empty_exported_target: robot_description/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-.PHONY : _catkin_empty_exported_target
-
-# fast build rule for target.
-_catkin_empty_exported_target/fast:
-	cd /home/choiys/stauto_ws/build && $(MAKE) -f robot_description/CMakeFiles/_catkin_empty_exported_target.dir/build.make robot_description/CMakeFiles/_catkin_empty_exported_target.dir/build
-.PHONY : _catkin_empty_exported_target/fast
-
-# Convenience name for target.
-robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule:
-	cd /home/choiys/stauto_ws/build && $(MAKE) -f CMakeFiles/Makefile2 robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
-.PHONY : robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
-
-# Convenience name for target.
-_run_tests_robot_description_roslaunch-check: robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/rule
-
-.PHONY : _run_tests_robot_description_roslaunch-check
-
-# fast build rule for target.
-_run_tests_robot_description_roslaunch-check/fast:
-	cd /home/choiys/stauto_ws/build && $(MAKE) -f robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/build.make robot_description/CMakeFiles/_run_tests_robot_description_roslaunch-check.dir/build
-.PHONY : _run_tests_robot_description_roslaunch-check/fast
-
-# Convenience name for target.
 robot_description/CMakeFiles/clean_test_results_robot_description.dir/rule:
 	cd /home/choiys/stauto_ws/build && $(MAKE) -f CMakeFiles/Makefile2 robot_description/CMakeFiles/clean_test_results_robot_description.dir/rule
 .PHONY : robot_description/CMakeFiles/clean_test_results_robot_description.dir/rule
@@ -293,19 +278,18 @@ help:
 	@echo "... depend"
 	@echo "... install"
 	@echo "... edit_cache"
-	@echo "... test"
+	@echo "... _run_tests_robot_description_roslaunch-check"
 	@echo "... run_tests_robot_description_roslaunch-check"
 	@echo "... rebuild_cache"
 	@echo "... _run_tests_robot_description"
 	@echo "... run_tests_robot_description_roslaunch-check_launch"
 	@echo "... run_tests_robot_description"
 	@echo "... _run_tests_robot_description_roslaunch-check_launch"
-	@echo "... _catkin_empty_exported_target"
-	@echo "... _run_tests_robot_description_roslaunch-check"
 	@echo "... clean_test_results_robot_description"
 	@echo "... list_install_components"
 	@echo "... install/strip"
 	@echo "... install/local"
+	@echo "... test"
 .PHONY : help
 
 
