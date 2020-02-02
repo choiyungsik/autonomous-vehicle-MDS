@@ -998,6 +998,175 @@ complementary_filter/fast:
 .PHONY : complementary_filter/fast
 
 #=============================================================================
+# Target rules for targets named get_imu
+
+# Build rule for target.
+get_imu: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 get_imu
+.PHONY : get_imu
+
+# fast build rule for target.
+get_imu/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/get_imu.dir/build.make stauto_sensor/CMakeFiles/get_imu.dir/build
+.PHONY : get_imu/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_genpy
+
+# Build rule for target.
+stauto_sensor_genpy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_genpy
+.PHONY : stauto_sensor_genpy
+
+# fast build rule for target.
+stauto_sensor_genpy/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_genpy.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_genpy.dir/build
+.PHONY : stauto_sensor_genpy/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages_eus
+
+# Build rule for target.
+stauto_sensor_generate_messages_eus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages_eus
+.PHONY : stauto_sensor_generate_messages_eus
+
+# fast build rule for target.
+stauto_sensor_generate_messages_eus/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_eus.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_eus.dir/build
+.PHONY : stauto_sensor_generate_messages_eus/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_gencpp
+
+# Build rule for target.
+stauto_sensor_gencpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_gencpp
+.PHONY : stauto_sensor_gencpp
+
+# fast build rule for target.
+stauto_sensor_gencpp/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_gencpp.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_gencpp.dir/build
+.PHONY : stauto_sensor_gencpp/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages_cpp
+
+# Build rule for target.
+stauto_sensor_generate_messages_cpp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages_cpp
+.PHONY : stauto_sensor_generate_messages_cpp
+
+# fast build rule for target.
+stauto_sensor_generate_messages_cpp/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_cpp.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_cpp.dir/build
+.PHONY : stauto_sensor_generate_messages_cpp/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages_lisp
+
+# Build rule for target.
+stauto_sensor_generate_messages_lisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages_lisp
+.PHONY : stauto_sensor_generate_messages_lisp
+
+# fast build rule for target.
+stauto_sensor_generate_messages_lisp/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_lisp.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_lisp.dir/build
+.PHONY : stauto_sensor_generate_messages_lisp/fast
+
+#=============================================================================
+# Target rules for targets named estimate_tf
+
+# Build rule for target.
+estimate_tf: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 estimate_tf
+.PHONY : estimate_tf
+
+# fast build rule for target.
+estimate_tf/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/estimate_tf.dir/build.make stauto_sensor/CMakeFiles/estimate_tf.dir/build
+.PHONY : estimate_tf/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages_py
+
+# Build rule for target.
+stauto_sensor_generate_messages_py: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages_py
+.PHONY : stauto_sensor_generate_messages_py
+
+# fast build rule for target.
+stauto_sensor_generate_messages_py/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_py.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_py.dir/build
+.PHONY : stauto_sensor_generate_messages_py/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_geneus
+
+# Build rule for target.
+stauto_sensor_geneus: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_geneus
+.PHONY : stauto_sensor_geneus
+
+# fast build rule for target.
+stauto_sensor_geneus/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_geneus.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_geneus.dir/build
+.PHONY : stauto_sensor_geneus/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages
+
+# Build rule for target.
+stauto_sensor_generate_messages: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages
+.PHONY : stauto_sensor_generate_messages
+
+# fast build rule for target.
+stauto_sensor_generate_messages/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages.dir/build
+.PHONY : stauto_sensor_generate_messages/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_genlisp
+
+# Build rule for target.
+stauto_sensor_genlisp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_genlisp
+.PHONY : stauto_sensor_genlisp
+
+# fast build rule for target.
+stauto_sensor_genlisp/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_genlisp.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_genlisp.dir/build
+.PHONY : stauto_sensor_genlisp/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_generate_messages_nodejs
+
+# Build rule for target.
+stauto_sensor_generate_messages_nodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_generate_messages_nodejs
+.PHONY : stauto_sensor_generate_messages_nodejs
+
+# fast build rule for target.
+stauto_sensor_generate_messages_nodejs/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_nodejs.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_generate_messages_nodejs.dir/build
+.PHONY : stauto_sensor_generate_messages_nodejs/fast
+
+#=============================================================================
+# Target rules for targets named stauto_sensor_gennodejs
+
+# Build rule for target.
+stauto_sensor_gennodejs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stauto_sensor_gennodejs
+.PHONY : stauto_sensor_gennodejs
+
+# fast build rule for target.
+stauto_sensor_gennodejs/fast:
+	$(MAKE) -f stauto_sensor/CMakeFiles/stauto_sensor_gennodejs.dir/build.make stauto_sensor/CMakeFiles/stauto_sensor_gennodejs.dir/build
+.PHONY : stauto_sensor_gennodejs/fast
+
+#=============================================================================
 # Target rules for targets named _run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test
 
 # Build rule for target.
@@ -2127,6 +2296,19 @@ help:
 	@echo "... tf2_msgs_generate_messages_py"
 	@echo "... std_msgs_generate_messages_eus"
 	@echo "... complementary_filter"
+	@echo "... get_imu"
+	@echo "... stauto_sensor_genpy"
+	@echo "... stauto_sensor_generate_messages_eus"
+	@echo "... stauto_sensor_gencpp"
+	@echo "... stauto_sensor_generate_messages_cpp"
+	@echo "... stauto_sensor_generate_messages_lisp"
+	@echo "... estimate_tf"
+	@echo "... stauto_sensor_generate_messages_py"
+	@echo "... stauto_sensor_geneus"
+	@echo "... stauto_sensor_generate_messages"
+	@echo "... stauto_sensor_genlisp"
+	@echo "... stauto_sensor_generate_messages_nodejs"
+	@echo "... stauto_sensor_gennodejs"
 	@echo "... _run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test"
 	@echo "... run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test"
 	@echo "... run_tests_imu_filter_madgwick_gtest"

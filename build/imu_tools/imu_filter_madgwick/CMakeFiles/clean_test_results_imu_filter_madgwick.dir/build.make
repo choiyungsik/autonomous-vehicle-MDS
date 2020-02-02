@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
 include imu_tools/imu_filter_madgwick/CMakeFiles/clean_test_results_imu_filter_madgwick.dir/progress.make
 
 imu_tools/imu_filter_madgwick/CMakeFiles/clean_test_results_imu_filter_madgwick:
-	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && /usr/bin/python3 /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/choiys/stauto_ws/build/test_results/imu_filter_madgwick
+	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && /usr/bin/python2 /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/choiys/stauto_ws/build/test_results/imu_filter_madgwick
 
 clean_test_results_imu_filter_madgwick: imu_tools/imu_filter_madgwick/CMakeFiles/clean_test_results_imu_filter_madgwick
 clean_test_results_imu_filter_madgwick: imu_tools/imu_filter_madgwick/CMakeFiles/clean_test_results_imu_filter_madgwick.dir/build.make

@@ -3,6 +3,7 @@
 
 stauto_v0/CMakeFiles/MPC_Node.dir/src/MPC.cpp.o
  /home/choiys/stauto_ws/src/stauto_v0/src/MPC.cpp
+ /home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
  /usr/include/eigen3/Eigen/Core
  /usr/include/eigen3/Eigen/src/Core/Array.h
  /usr/include/eigen3/Eigen/src/Core/ArrayBase.h
@@ -130,6 +131,7 @@ stauto_v0/CMakeFiles/MPC_Node.dir/src/MPC.cpp.o
  /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 stauto_v0/CMakeFiles/MPC_Node.dir/src/MPC_Node.cpp.o
+ /home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
  /home/choiys/stauto_ws/src/stauto_v0/src/MPC_Node.cpp
  /opt/ros/kinetic/include/ackermann_msgs/AckermannDrive.h
  /opt/ros/kinetic/include/ackermann_msgs/AckermannDriveStamped.h

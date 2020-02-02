@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
 include robot_description/CMakeFiles/clean_test_results_robot_description.dir/progress.make
 
 robot_description/CMakeFiles/clean_test_results_robot_description:
-	cd /home/choiys/stauto_ws/build/robot_description && /usr/bin/python3 /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/choiys/stauto_ws/build/test_results/robot_description
+	cd /home/choiys/stauto_ws/build/robot_description && /usr/bin/python2 /opt/ros/kinetic/share/catkin/cmake/test/remove_test_results.py /home/choiys/stauto_ws/build/test_results/robot_description
 
 clean_test_results_robot_description: robot_description/CMakeFiles/clean_test_results_robot_description
 clean_test_results_robot_description: robot_description/CMakeFiles/clean_test_results_robot_description.dir/build.make

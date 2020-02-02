@@ -1,0 +1,8 @@
+prefix=/home/choiys/stauto_ws/install
+
+Name: stauto_sensor
+Description: Description of stauto_sensor
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

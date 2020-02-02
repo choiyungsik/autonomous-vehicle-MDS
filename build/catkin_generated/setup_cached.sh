@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD="/home/choiys/stauto_ws/build"
+export PYTHONPATH="/opt/ros/kinetic/lib/python2.7/dist-packages:/home/choiys/stauto_ws/devel/lib/python3/dist-packages"

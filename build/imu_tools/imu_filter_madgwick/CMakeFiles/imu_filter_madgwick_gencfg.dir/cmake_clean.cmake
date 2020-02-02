@@ -3,7 +3,7 @@ file(REMOVE_RECURSE
   "/home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h"
   "/home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.dox"
   "/home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig-usage.dox"
-  "/home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py"
+  "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py"
   "/home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.wikidoc"
 )
 

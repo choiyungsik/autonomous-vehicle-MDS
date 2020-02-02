@@ -16,6 +16,14 @@ cppad/ipopt/solve.hpp
 Eigen/Core
 -
 
+/home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
+vector
+-
+map
+-
+Eigen/Core
+-
+
 /home/choiys/stauto_ws/src/stauto_v0/src/MPC_Node.cpp
 iostream
 -
