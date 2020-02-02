@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <arg name="rviz_file" default="$(find stauto_sensor)/rviz/sensor.rviz"/>
+    <!-- Getting IMU data-->
+    <node name="get_imu" pkg="stauto_sensor" type="get_imu"/>
+
+    <!-- TF setting-->
+    <node name="link1_broadcaster" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 world map 100" />
+    <node name="link2_broadcaster" pkg="tf" type="static_transform_publisher" args="1 0 0 0 0 0 world imu_link 100"/>
+
+    <!-- RVIZ -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rviz_file)" /> <!--args="-d $(find stauto_ws/src/stauto_sensor)/rviz/sensor1.rivz"/>-->
+
+</launch>

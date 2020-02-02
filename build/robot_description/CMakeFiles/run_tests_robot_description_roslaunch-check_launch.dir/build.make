@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
 include robot_description/CMakeFiles/run_tests_robot_description_roslaunch-check_launch.dir/progress.make
 
 robot_description/CMakeFiles/run_tests_robot_description_roslaunch-check_launch:
-	cd /home/choiys/stauto_ws/build/robot_description && ../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/kinetic/share/catkin/cmake/test/run_tests.py /home/choiys/stauto_ws/build/test_results/robot_description/roslaunch-check_launch.xml "/usr/bin/cmake -E make_directory /home/choiys/stauto_ws/build/test_results/robot_description" "/opt/ros/kinetic/share/roslaunch/cmake/../scripts/roslaunch-check -o '/home/choiys/stauto_ws/build/test_results/robot_description/roslaunch-check_launch.xml' '/home/choiys/stauto_ws/src/robot_description/launch' "
+	cd /home/choiys/stauto_ws/build/robot_description && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/kinetic/share/catkin/cmake/test/run_tests.py /home/choiys/stauto_ws/build/test_results/robot_description/roslaunch-check_launch.xml "/usr/bin/cmake -E make_directory /home/choiys/stauto_ws/build/test_results/robot_description" "/opt/ros/kinetic/share/roslaunch/cmake/../scripts/roslaunch-check -o '/home/choiys/stauto_ws/build/test_results/robot_description/roslaunch-check_launch.xml' '/home/choiys/stauto_ws/src/robot_description/launch' "
 
 run_tests_robot_description_roslaunch-check_launch: robot_description/CMakeFiles/run_tests_robot_description_roslaunch-check_launch
 run_tests_robot_description_roslaunch-check_launch: robot_description/CMakeFiles/run_tests_robot_description_roslaunch-check_launch.dir/build.make

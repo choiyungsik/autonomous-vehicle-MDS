@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/get_imu.dir/src/get_imu.cpp.o"
-  "/home/choiys/stauto_ws/devel/lib/pangyo_control/get_imu.pdb"
-  "/home/choiys/stauto_ws/devel/lib/pangyo_control/get_imu"
+  "/home/choiys/stauto_ws/devel/lib/stauto_sensor/get_imu.pdb"
+  "/home/choiys/stauto_ws/devel/lib/stauto_sensor/get_imu"
 )
 
 # Per-language clean rules from dependency scanning.

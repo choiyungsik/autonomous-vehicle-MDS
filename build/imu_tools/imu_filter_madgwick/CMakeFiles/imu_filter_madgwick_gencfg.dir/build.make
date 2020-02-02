@@ -54,14 +54,14 @@ CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
 include imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg.dir/progress.make
 
 imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
-imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
+imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
 
 
 /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h: /home/choiys/stauto_ws/src/imu_tools/imu_filter_madgwick/cfg/ImuFilterMadgwick.cfg
 /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h: /opt/ros/kinetic/share/dynamic_reconfigure/templates/ConfigType.py.template
 /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h: /opt/ros/kinetic/share/dynamic_reconfigure/templates/ConfigType.h.template
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/choiys/stauto_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating dynamic reconfigure files from cfg/ImuFilterMadgwick.cfg: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h /home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py"
-	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && ../../catkin_generated/env_cached.sh /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick/setup_custom_pythonpath.sh /home/choiys/stauto_ws/src/imu_tools/imu_filter_madgwick/cfg/ImuFilterMadgwick.cfg /opt/ros/kinetic/share/dynamic_reconfigure/cmake/.. /home/choiys/stauto_ws/devel/share/imu_filter_madgwick /home/choiys/stauto_ws/devel/include/imu_filter_madgwick /home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/choiys/stauto_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating dynamic reconfigure files from cfg/ImuFilterMadgwick.cfg: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h /home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py"
+	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && ../../catkin_generated/env_cached.sh /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick/setup_custom_pythonpath.sh /home/choiys/stauto_ws/src/imu_tools/imu_filter_madgwick/cfg/ImuFilterMadgwick.cfg /opt/ros/kinetic/share/dynamic_reconfigure/cmake/.. /home/choiys/stauto_ws/devel/share/imu_filter_madgwick /home/choiys/stauto_ws/devel/include/imu_filter_madgwick /home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick
 
 /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.dox: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
 	@$(CMAKE_COMMAND) -E touch_nocreate /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.dox
@@ -69,8 +69,8 @@ imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg: /home/choiy
 /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig-usage.dox: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
 	@$(CMAKE_COMMAND) -E touch_nocreate /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig-usage.dox
 
-/home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
-	@$(CMAKE_COMMAND) -E touch_nocreate /home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
+/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
+	@$(CMAKE_COMMAND) -E touch_nocreate /home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
 
 /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.wikidoc: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
 	@$(CMAKE_COMMAND) -E touch_nocreate /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.wikidoc
@@ -79,7 +79,7 @@ imu_filter_madgwick_gencfg: imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_
 imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/include/imu_filter_madgwick/ImuFilterMadgwickConfig.h
 imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.dox
 imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig-usage.dox
-imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
+imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg/ImuFilterMadgwickConfig.py
 imu_filter_madgwick_gencfg: /home/choiys/stauto_ws/devel/share/imu_filter_madgwick/docs/ImuFilterMadgwickConfig.wikidoc
 imu_filter_madgwick_gencfg: imu_tools/imu_filter_madgwick/CMakeFiles/imu_filter_madgwick_gencfg.dir/build.make
 

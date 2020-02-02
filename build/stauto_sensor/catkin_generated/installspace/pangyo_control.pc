@@ -1,8 +1,0 @@
-prefix=/home/choiys/stauto_ws/install
-
-Name: pangyo_control
-Description: Description of pangyo_control
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

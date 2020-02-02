@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
 include imu_tools/imu_filter_madgwick/CMakeFiles/_run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test.dir/progress.make
 
 imu_tools/imu_filter_madgwick/CMakeFiles/_run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test:
-	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && ../../catkin_generated/env_cached.sh /usr/bin/python3 /opt/ros/kinetic/share/catkin/cmake/test/run_tests.py /home/choiys/stauto_ws/build/test_results/imu_filter_madgwick/gtest-imu_filter_madgwick-madgwick_test.xml "/home/choiys/stauto_ws/devel/lib/imu_filter_madgwick/imu_filter_madgwick-madgwick_test --gtest_output=xml:/home/choiys/stauto_ws/build/test_results/imu_filter_madgwick/gtest-imu_filter_madgwick-madgwick_test.xml"
+	cd /home/choiys/stauto_ws/build/imu_tools/imu_filter_madgwick && ../../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/kinetic/share/catkin/cmake/test/run_tests.py /home/choiys/stauto_ws/build/test_results/imu_filter_madgwick/gtest-imu_filter_madgwick-madgwick_test.xml "/home/choiys/stauto_ws/devel/lib/imu_filter_madgwick/imu_filter_madgwick-madgwick_test --gtest_output=xml:/home/choiys/stauto_ws/build/test_results/imu_filter_madgwick/gtest-imu_filter_madgwick-madgwick_test.xml"
 
 _run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test: imu_tools/imu_filter_madgwick/CMakeFiles/_run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test
 _run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test: imu_tools/imu_filter_madgwick/CMakeFiles/_run_tests_imu_filter_madgwick_gtest_imu_filter_madgwick-madgwick_test.dir/build.make

@@ -37,15 +37,15 @@ if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspeci
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/imu_filter_madgwick" TYPE FILE FILES "/home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/__init__.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages/imu_filter_madgwick" TYPE FILE FILES "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/__init__.py")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  execute_process(COMMAND "/usr/bin/python3" -m compileall "/home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg")
+  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages/imu_filter_madgwick" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/lib/python3/dist-packages/imu_filter_madgwick/cfg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages/imu_filter_madgwick" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/imu_filter_madgwick/cfg")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
