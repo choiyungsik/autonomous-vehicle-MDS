@@ -1,0 +1,8 @@
+prefix=/home/choiys/stauto_ws/devel
+
+Name: main_control
+Description: Description of main_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

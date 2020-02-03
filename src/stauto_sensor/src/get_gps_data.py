@@ -4,6 +4,7 @@ import serial
 import socket as soc
 import rospy
 import time
+from sensor_msgs import NavSatFix
 from ntrip.NtripClient import *
 
 import multiprocessing
@@ -14,7 +15,7 @@ import os
 import sys
 
 import math
-port = "/dev/ttyACM1"
+port = "/dev/ttyACM0"
 gps_data_bef = ""
 
 
@@ -64,6 +65,35 @@ class SocketInfo():
 
 def cb_imu(data):
     yaw = data
+
+class publishGPS(object):
+
+	def __init__(self):
+		rospy.loginfo("Initialising GPS publishing")
+		self.gps_sub=rospy.Subscriber('/GPS_talker_1',String, self.callback, queue_size=1)
+		self.lastMsg=None
+		self.gps_pub=rospy.Publisher('/gps_new', NavSatFix, queue_size=1)
+		rospy.sleep(8)
+		rospy.loginfo("initialised")
+
+	def callback(self, data):
+		self.lastMsg=data
+
+	def do_work(self):
+		self.splitStrings= str(self.lastMsg).split(",")
+		gpsmsg=NavSatFix()
+		gpsmsg.header.stamp = rospy.Time.now()
+		gpsmsg.header.frame_id = "gps"
+		rospy.loginfo(self.splitStrings[1])
+		gpsmsg.latitude=float(self.splitStrings[1][4:])
+		gpsmsg.longitude=float(self.splitStrings[2][5:-5])
+		self.gps_pub.publish(gpsmsg)
+
+	def run(self):
+		r=rospy.Rate(1)
+		while not rospy.is_shutdown():
+			self.do_work()
+			r.sleep()
 
 fix_type={ '0' : "Invalid",
            '1' : "GPS fix (SPS)",
@@ -132,7 +162,7 @@ if __name__ == '__main__':
     Line = 0.0
 
     while isrunning:
-        RoverMessege=ser.readline().decode('ascii')
+        RoverMessage=ser.readline().decode('ascii')
 
         if que.empty()==False:
             data = que.get()[0]
@@ -140,10 +170,10 @@ if __name__ == '__main__':
             ser.write(data)
 
         t = time.time()
-        #print(RoverMessege)
+        print(RoverMessage)
         try:
-            if "GGA" in RoverMessege:
-                data=RoverMessege.split(",")
+            if "GGA" in RoverMessage:
+                data=RoverMessage.split(",")
 
                 lat = round(float(data[2]),5)
                 lon = round(float(data[4]),5)
