@@ -68,76 +68,31 @@ def cb_imu(data):
 
 class publishGPS(object):
 
-    def __init__(self):
-        port = rospy.get_param("~GPS_PORT",port)
-        print(port)
-
-        TCP_info = SocketInfo()
-        TCP_sock = soc.socket(soc.AF_INET, soc.SOCK_STREAM)
-        #print("main : {}".format(os.getpid()))
-
-        ntripArgs = {}
-        #ntripArgs['lat']=37.16
-        #ntripArgs['lon']=127.30
-        #SUWON
-        ntripArgs['lat']=37.6185
-        ntripArgs['lon']=127.0983
-        #SOUL
-
-        ntripArgs['height']=73.901
-        ntripArgs['host']=False
-        ntripArgs['ssl']=False
-
-        ntripArgs['user']="gnss"+":"+"gnss"
-        ntripArgs['caster']="gnssdata.or.kr"
-        ntripArgs['port']=int("2101")
-
-        #ntripArgs['mountpoint']="SUWN-RTCM31"
-        ntripArgs['mountpoint']="SOUL-RTCM31"
-
-        ntripArgs['V2']=True
-
-        ntripArgs['verbose']=False
-        ntripArgs['headerOutput']=None
-
-        maxReconnect=1
-        maxConnectTime=1200
-        ser = serial.serial_for_url(port,115200, timeout=0)
-        #multiprocessing.set_start_method('spawn', True)
-        nclient = NtripClient(**ntripArgs)
-        que = Queue()
-        que_pos = Queue()
-
-        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
-
-        proc.start()
-        isrunning=True
-        isReady=False
-        count_ready = 0
-        t=time.time()
-        prev_pos = [0.0,0.0]
-        Line = 0.0
-
-
+	def __init__(self):
+		rospy.loginfo("Initialising GPS publishing")
+		self.gps_sub=rospy.Subscriber('/GPS_talker_1',String, self.callback, queue_size=1)
+		self.lastMsg=None
 		self.gps_pub=rospy.Publisher('/gps_new', NavSatFix, queue_size=1)
-
 		rospy.sleep(8)
-
 		rospy.loginfo("initialised")
 
+	def callback(self, data):
+		self.lastMsg=data
 
-	def do_work(self,lat,lon):
+	def do_work(self):
+		self.splitStrings= str(self.lastMsg).split(",")
 		gpsmsg=NavSatFix()
 		gpsmsg.header.stamp = rospy.Time.now()
-		gpsmsg.header.frame_id = "GPS_link"
-		gpsmsg.latitude=lat
-		gpsmsg.longitude=lon
+		gpsmsg.header.frame_id = "gps"
+		rospy.loginfo(self.splitStrings[1])
+		gpsmsg.latitude=float(self.splitStrings[1][4:])
+		gpsmsg.longitude=float(self.splitStrings[2][5:-5])
 		self.gps_pub.publish(gpsmsg)
 
-	def run(self, lat, lon):
+	def run(self):
 		r=rospy.Rate(1)
 		while not rospy.is_shutdown():
-			self.do_work(lan, lon)
+			self.do_work()
 			r.sleep()
 
 fix_type={ '0' : "Invalid",
@@ -154,10 +109,57 @@ fix_type={ '0' : "Invalid",
 if __name__ == '__main__':
     rospy.init_node("gps_node")
 
-    r=rospy.Rate(1)
-    obj=publishGPS()
     #yaw_sub = rospy.Subscriber("yaw_imu",Quaternion,cb_imu)
+    pos_pub = rospy.Publisher("GPS",GPS,queue_size=1)
+    pos = GPS()
+    port = rospy.get_param("~GPS_PORT",port)
+    print(port)
 
+    TCP_info = SocketInfo()
+    TCP_sock = soc.socket(soc.AF_INET, soc.SOCK_STREAM)
+    #print("main : {}".format(os.getpid()))
+
+    ntripArgs = {}
+    #ntripArgs['lat']=37.16
+    #ntripArgs['lon']=127.30
+    #SUWON
+    ntripArgs['lat']=37.6185
+    ntripArgs['lon']=127.0983
+    #SOUL
+
+    ntripArgs['height']=73.901
+    ntripArgs['host']=False
+    ntripArgs['ssl']=False
+
+    ntripArgs['user']="gnss"+":"+"gnss"
+    ntripArgs['caster']="gnssdata.or.kr"
+    ntripArgs['port']=int("2101")
+
+    #ntripArgs['mountpoint']="SUWN-RTCM31"
+    ntripArgs['mountpoint']="SOUL-RTCM31"
+
+    ntripArgs['V2']=True
+
+    ntripArgs['verbose']=False
+    ntripArgs['headerOutput']=None
+
+    maxReconnect=1
+    maxConnectTime=1200
+    ser = serial.serial_for_url(port,115200, timeout=0)
+    #multiprocessing.set_start_method('spawn', True)
+    nclient = NtripClient(**ntripArgs)
+    que = Queue()
+    que_pos = Queue()
+
+    proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
+
+    proc.start()
+    isrunning=True
+    isReady=False
+    count_ready = 0
+    t=time.time()
+    prev_pos = [0.0,0.0]
+    Line = 0.0
 
     while isrunning:
         RoverMessage=ser.readline().decode('ascii')
@@ -199,9 +201,14 @@ if __name__ == '__main__':
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
 
+                pos.x = lat_degree
+                pos.y = lon_degree
 
 
-                obj.run(lat_degree,lon_degree)
+                    #print(pos_data[0],pos_data[1])
+                    #pos.x = lon_degree
+                    #pos.y = lat_degree
+                pos_pub.publish(pos)
 
         except:
             print ("Missed" ,"\r")
