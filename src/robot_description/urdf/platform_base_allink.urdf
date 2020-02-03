@@ -5,7 +5,7 @@
     <inertial>
       <origin
         xyz="-1.9248E-17 -0.017346 0.0011737"
-        rpy="0 0 0" />
+        rpy="0 0 1.5708" />
       <mass
         value="437.24" />
       <inertia
@@ -19,7 +19,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 1.5708" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/base_link.STL" />
@@ -33,7 +33,7 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="0 0 1.5708" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/base_link.STL" />
@@ -42,6 +42,25 @@
   </link>
 
 
+  <link
+    name="base_foot_link">
+    <inertial>
+      <origin
+        xyz="5.4448E-18 0 -1.721E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.001" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    
+  </link>
+	
   <link
     name="base_footprint">
     <inertial>
@@ -61,7 +80,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/base_footprint.STL" />
@@ -83,13 +102,12 @@
     </collision>
   </link>
 
-
   <joint
     name="base_foot_joint"
     type="fixed">
     <origin
       xyz="0 0 -0.274"
-      rpy="0 0 1.5708" />
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -97,6 +115,23 @@
     <axis
       xyz="0 0 0" />
   </joint>
+
+
+  <joint
+    name="odom"
+    type="continuous">
+    <origin
+      xyz="0 0 -0.274"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_foot_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+
   <link
     name="GPS_link">
     <inertial>
@@ -116,7 +151,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/GPS_link.STL" />
@@ -143,8 +178,8 @@
     name="GPS_joint"
     type="fixed">
     <origin
-      xyz="0 -0.195 0.545"
-      rpy="0 0 1.5708" />
+      xyz="0 -0.195 0.835"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -171,7 +206,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/IMU_link.STL" />
@@ -198,8 +233,8 @@
     name="IMU_joint"
     type="fixed">
     <origin
-      xyz="0 -0.195 0.545"
-      rpy="0 0 1.5708" />
+      xyz="0 -0.195 0.695"
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -226,7 +261,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/laser_link.STL" />
@@ -254,7 +289,7 @@
     type="fixed">
     <origin
       xyz="0 0 0.695"
-      rpy="0 0 1.5708" />
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
@@ -281,7 +316,7 @@
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 0 3.1415" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
           filename="package://robot_description/meshes/camera_link.STL" />
@@ -309,7 +344,7 @@
     type="fixed">
     <origin
       xyz="0 0.42 0.545"
-      rpy="0 0 1.5708" />
+      rpy="0 0 0" />
     <parent
       link="base_link" />
     <child
