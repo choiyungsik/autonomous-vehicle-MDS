@@ -1,8 +1,8 @@
-# Install script for directory: /home/choiys/stauto_ws/src/stauto_sensor
+# Install script for directory: /home/anseongje/stauto_ws/src/stauto_sensor
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/choiys/stauto_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/anseongje/stauto_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,37 +33,37 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor/cmake" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor/cmake" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor-msg-paths.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/share/roseus/ros/stauto_sensor")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/anseongje/stauto_ws/devel/share/roseus/ros/stauto_sensor")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/stauto_sensor")
+  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/anseongje/stauto_ws/devel/lib/python2.7/dist-packages/stauto_sensor")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/stauto_sensor")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/anseongje/stauto_ws/devel/lib/python2.7/dist-packages/stauto_sensor")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor/cmake" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor/cmake" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensor-msg-extras.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor/cmake" TYPE FILE FILES
-    "/home/choiys/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensorConfig.cmake"
-    "/home/choiys/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensorConfig-version.cmake"
+    "/home/anseongje/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensorConfig.cmake"
+    "/home/anseongje/stauto_ws/build/stauto_sensor/catkin_generated/installspace/stauto_sensorConfig-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor" TYPE FILE FILES "/home/choiys/stauto_ws/src/stauto_sensor/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/stauto_sensor" TYPE FILE FILES "/home/anseongje/stauto_ws/src/stauto_sensor/package.xml")
 endif()
 

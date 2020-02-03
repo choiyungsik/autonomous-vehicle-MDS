@@ -1,8 +1,8 @@
-# Install script for directory: /home/choiys/stauto_ws/src/stauto_control
+# Install script for directory: /home/anseongje/stauto_ws/src/stauto_control
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/choiys/stauto_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/anseongje/stauto_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,37 +33,37 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control/cmake" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control-msg-paths.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control/cmake" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control-msg-paths.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/share/roseus/ros/main_control")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/roseus/ros" TYPE DIRECTORY FILES "/home/anseongje/stauto_ws/devel/share/roseus/ros/main_control")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/main_control")
+  execute_process(COMMAND "/usr/bin/python2" -m compileall "/home/anseongje/stauto_ws/devel/lib/python2.7/dist-packages/main_control")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/choiys/stauto_ws/devel/lib/python2.7/dist-packages/main_control")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages" TYPE DIRECTORY FILES "/home/anseongje/stauto_ws/devel/lib/python2.7/dist-packages/main_control")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control/cmake" TYPE FILE FILES "/home/choiys/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control-msg-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control/cmake" TYPE FILE FILES "/home/anseongje/stauto_ws/build/stauto_control/catkin_generated/installspace/main_control-msg-extras.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control/cmake" TYPE FILE FILES
-    "/home/choiys/stauto_ws/build/stauto_control/catkin_generated/installspace/main_controlConfig.cmake"
-    "/home/choiys/stauto_ws/build/stauto_control/catkin_generated/installspace/main_controlConfig-version.cmake"
+    "/home/anseongje/stauto_ws/build/stauto_control/catkin_generated/installspace/main_controlConfig.cmake"
+    "/home/anseongje/stauto_ws/build/stauto_control/catkin_generated/installspace/main_controlConfig-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control" TYPE FILE FILES "/home/choiys/stauto_ws/src/stauto_control/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/main_control" TYPE FILE FILES "/home/anseongje/stauto_ws/src/stauto_control/package.xml")
 endif()
 

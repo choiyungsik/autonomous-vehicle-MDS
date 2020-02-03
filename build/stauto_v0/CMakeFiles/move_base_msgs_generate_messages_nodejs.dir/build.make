@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/choiys/stauto_ws/src
+CMAKE_SOURCE_DIR = /home/anseongje/stauto_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
+CMAKE_BINARY_DIR = /home/anseongje/stauto_ws/build
 
 # Utility rule file for move_base_msgs_generate_messages_nodejs.
 
@@ -63,10 +63,10 @@ stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/build: move_bas
 .PHONY : stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/build
 
 stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/clean:
-	cd /home/choiys/stauto_ws/build/stauto_v0 && $(CMAKE_COMMAND) -P CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/cmake_clean.cmake
+	cd /home/anseongje/stauto_ws/build/stauto_v0 && $(CMAKE_COMMAND) -P CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/cmake_clean.cmake
 .PHONY : stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/clean
 
 stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/depend:
-	cd /home/choiys/stauto_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/choiys/stauto_ws/src /home/choiys/stauto_ws/src/stauto_v0 /home/choiys/stauto_ws/build /home/choiys/stauto_ws/build/stauto_v0 /home/choiys/stauto_ws/build/stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/anseongje/stauto_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/anseongje/stauto_ws/src /home/anseongje/stauto_ws/src/stauto_v0 /home/anseongje/stauto_ws/build /home/anseongje/stauto_ws/build/stauto_v0 /home/anseongje/stauto_ws/build/stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : stauto_v0/CMakeFiles/move_base_msgs_generate_messages_nodejs.dir/depend
 

@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/choiys/stauto_ws/src/stauto_v0/src/Pure_Pursuit.cpp" "/home/choiys/stauto_ws/build/stauto_v0/CMakeFiles/Pure_Pursuit.dir/src/Pure_Pursuit.cpp.o"
+  "/home/anseongje/stauto_ws/src/stauto_v0/src/Pure_Pursuit.cpp" "/home/anseongje/stauto_ws/build/stauto_v0/CMakeFiles/Pure_Pursuit.dir/src/Pure_Pursuit.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -30,9 +30,9 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/lib/openmpi/include/openmpi"
   "/usr/include/jsoncpp"
   "/usr/include/freetype2"
-  "/usr/include/x86_64-linux-gnu/freetype2"
+  "/usr/include/i386-linux-gnu/freetype2"
   "/usr/include/python2.7"
-  "/usr/include/x86_64-linux-gnu"
+  "/usr/include/i386-linux-gnu"
   "/usr/include/tcl"
   "/usr/include/libxml2"
   )
