@@ -1,2 +1,2 @@
-imu_tools/imu_complementary_filter:imu_tools/imu_filter_madgwick:imu_tools/imu_tools:imu_tools/rviz_imu_plugin:robot_description:stauto_sensor:stauto_v0
+imu_tools/imu_complementary_filter:imu_tools/imu_filter_madgwick:imu_tools/imu_tools:imu_tools/rviz_imu_plugin:robot_description:stauto_control:stauto_sensor:stauto_v0
 -DCATKIN_DEVEL_PREFIX=/home/choiys/stauto_ws/devel -DCMAKE_INSTALL_PREFIX=/home/choiys/stauto_ws/install -G Unix Makefiles
