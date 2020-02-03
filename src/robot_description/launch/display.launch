@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="model" default="$(find robot_description)/urdf/AutoCar.urdf"/>
+  <arg name="model" default="$(find robot_description)/urdf/platform_base_allink.urdf"/>
   <arg name="gui" default="true" />
   <arg name="rvizconfig" default="$(find robot_description)/rviz/Autourdf.rviz" /> 
 
