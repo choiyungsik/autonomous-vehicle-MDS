@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/choiys/stauto_ws/src
+CMAKE_SOURCE_DIR = /home/anseongje/stauto_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/choiys/stauto_ws/build
+CMAKE_BINARY_DIR = /home/anseongje/stauto_ws/build
 
 # Utility rule file for std_srvs_generate_messages_py.
 
@@ -63,10 +63,10 @@ stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/build: std_srvs_generate_
 .PHONY : stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/build
 
 stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/clean:
-	cd /home/choiys/stauto_ws/build/stauto_v0 && $(CMAKE_COMMAND) -P CMakeFiles/std_srvs_generate_messages_py.dir/cmake_clean.cmake
+	cd /home/anseongje/stauto_ws/build/stauto_v0 && $(CMAKE_COMMAND) -P CMakeFiles/std_srvs_generate_messages_py.dir/cmake_clean.cmake
 .PHONY : stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/clean
 
 stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/depend:
-	cd /home/choiys/stauto_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/choiys/stauto_ws/src /home/choiys/stauto_ws/src/stauto_v0 /home/choiys/stauto_ws/build /home/choiys/stauto_ws/build/stauto_v0 /home/choiys/stauto_ws/build/stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/anseongje/stauto_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/anseongje/stauto_ws/src /home/anseongje/stauto_ws/src/stauto_v0 /home/anseongje/stauto_ws/build /home/anseongje/stauto_ws/build/stauto_v0 /home/anseongje/stauto_ws/build/stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : stauto_v0/CMakeFiles/std_srvs_generate_messages_py.dir/depend
 

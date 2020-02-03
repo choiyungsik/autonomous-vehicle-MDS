@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/main_control_generate_messages_eus"
-  "/home/choiys/stauto_ws/devel/share/roseus/ros/main_control/manifest.l"
+  "/home/anseongje/stauto_ws/devel/share/roseus/ros/main_control/manifest.l"
 )
 
 # Per-language clean rules from dependency scanning.

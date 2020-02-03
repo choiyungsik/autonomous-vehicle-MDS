@@ -4,8 +4,8 @@ import serial
 import socket as soc
 import rospy
 import time
-from sensor_msgs import NavSatFix
 from ntrip.NtripClient import *
+from sensor_msgs.msg import NavSatFix
 
 import multiprocessing
 from multiprocessing import Process, Queue
@@ -15,7 +15,7 @@ import os
 import sys
 
 import math
-port = "/dev/ttyACM0"
+port = "/dev/ttyACM1"
 gps_data_bef = ""
 
 
@@ -66,34 +66,18 @@ class SocketInfo():
 def cb_imu(data):
     yaw = data
 
-class publishGPS(object):
+def do_work():
+    gpsmsg=NavSatFix()
+    gpsmsg.header.stamp = rospy.Time.now()
 
-	def __init__(self):
-		rospy.loginfo("Initialising GPS publishing")
-		self.gps_sub=rospy.Subscriber('/GPS_talker_1',String, self.callback, queue_size=1)
-		self.lastMsg=None
-		self.gps_pub=rospy.Publisher('/gps_new', NavSatFix, queue_size=1)
-		rospy.sleep(8)
-		rospy.loginfo("initialised")
+    gpsmsg.header.frame_id = "GPS_link"
 
-	def callback(self, data):
-		self.lastMsg=data
+    gpsmsg.latitude=lat_degree
+    gpsmsg.longitude=lon_degree
 
-	def do_work(self):
-		self.splitStrings= str(self.lastMsg).split(",")
-		gpsmsg=NavSatFix()
-		gpsmsg.header.stamp = rospy.Time.now()
-		gpsmsg.header.frame_id = "gps"
-		rospy.loginfo(self.splitStrings[1])
-		gpsmsg.latitude=float(self.splitStrings[1][4:])
-		gpsmsg.longitude=float(self.splitStrings[2][5:-5])
-		self.gps_pub.publish(gpsmsg)
+    gps_pub.publish(gpsmsg)
 
-	def run(self):
-		r=rospy.Rate(1)
-		while not rospy.is_shutdown():
-			self.do_work()
-			r.sleep()
+    #print(gpsmsg)
 
 fix_type={ '0' : "Invalid",
            '1' : "GPS fix (SPS)",
@@ -110,8 +94,9 @@ if __name__ == '__main__':
     rospy.init_node("gps_node")
 
     #yaw_sub = rospy.Subscriber("yaw_imu",Quaternion,cb_imu)
-    pos_pub = rospy.Publisher("GPS",GPS,queue_size=1)
-    pos = GPS()
+    gps_pub=rospy.Publisher("gps_data", NavSatFix, queue_size=10)
+
+    current_time= rospy.Time.now()
     port = rospy.get_param("~GPS_PORT",port)
     print(port)
 
@@ -145,7 +130,7 @@ if __name__ == '__main__':
 
     maxReconnect=1
     maxConnectTime=1200
-    ser = serial.serial_for_url(port,115200, timeout=0)
+    ser = serial.serial_for_url(port,115200, timeout=10)
     #multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
@@ -161,20 +146,20 @@ if __name__ == '__main__':
     prev_pos = [0.0,0.0]
     Line = 0.0
 
-    while isrunning:
-        RoverMessage=ser.readline().decode('ascii')
-
+    while not rospy.is_shutdown():
+        RoverMessege=ser.readline().decode('ascii')
+        #print(que.empty())
         if que.empty()==False:
             data = que.get()[0]
-            #print(data)
+            #if(len(data)>=10):
             ser.write(data)
 
         t = time.time()
-        print(RoverMessage)
+        #print(RoverMessege)
         try:
-            if "GGA" in RoverMessage:
-                data=RoverMessage.split(",")
-
+            if "GGA" in RoverMessege:
+                data=RoverMessege.split(",")
+                #print(data)
                 lat = round(float(data[2]),5)
                 lon = round(float(data[4]),5)
 
@@ -197,18 +182,12 @@ if __name__ == '__main__':
                 #print("{} {}".format(lat_degree,lon_degree))
                 print ("Fix Type : %s  North : %.7f  East : %.7f \r"% (fix_type[data[6]],lat_degree,lon_degree))
 
-
                 nclient.setPosition(lat,lon)
-                #if(isReady==False): print(Line)
 
-                pos.x = lat_degree
-                pos.y = lon_degree
+                current_time=rospy.Time.now()
 
+                do_work()
 
-                    #print(pos_data[0],pos_data[1])
-                    #pos.x = lon_degree
-                    #pos.y = lat_degree
-                pos_pub.publish(pos)
 
         except:
             print ("Missed" ,"\r")

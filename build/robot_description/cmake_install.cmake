@@ -1,8 +1,8 @@
-# Install script for directory: /home/choiys/stauto_ws/src/robot_description
+# Install script for directory: /home/anseongje/stauto_ws/src/robot_description
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/choiys/stauto_ws/install")
+  set(CMAKE_INSTALL_PREFIX "/home/anseongje/stauto_ws/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -33,24 +33,24 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/choiys/stauto_ws/build/robot_description/catkin_generated/installspace/robot_description.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/anseongje/stauto_ws/build/robot_description/catkin_generated/installspace/robot_description.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_description/cmake" TYPE FILE FILES
-    "/home/choiys/stauto_ws/build/robot_description/catkin_generated/installspace/robot_descriptionConfig.cmake"
-    "/home/choiys/stauto_ws/build/robot_description/catkin_generated/installspace/robot_descriptionConfig-version.cmake"
+    "/home/anseongje/stauto_ws/build/robot_description/catkin_generated/installspace/robot_descriptionConfig.cmake"
+    "/home/anseongje/stauto_ws/build/robot_description/catkin_generated/installspace/robot_descriptionConfig-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_description" TYPE FILE FILES "/home/choiys/stauto_ws/src/robot_description/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_description" TYPE FILE FILES "/home/anseongje/stauto_ws/src/robot_description/package.xml")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/robot_description" TYPE DIRECTORY FILES
-    "/home/choiys/stauto_ws/src/robot_description/launch"
-    "/home/choiys/stauto_ws/src/robot_description/urdf"
+    "/home/anseongje/stauto_ws/src/robot_description/launch"
+    "/home/anseongje/stauto_ws/src/robot_description/urdf"
     )
 endif()
 

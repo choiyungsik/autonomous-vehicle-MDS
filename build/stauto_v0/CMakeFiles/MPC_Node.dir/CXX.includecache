@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/choiys/stauto_ws/src/stauto_v0/src/MPC.cpp
+/home/anseongje/stauto_ws/src/stauto_v0/src/MPC.cpp
 MPC.h
-/home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
+/home/anseongje/stauto_ws/src/stauto_v0/src/MPC.h
 cppad/cppad.hpp
 -
 cppad/ipopt/solve.hpp
@@ -16,7 +16,7 @@ cppad/ipopt/solve.hpp
 Eigen/Core
 -
 
-/home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
+/home/anseongje/stauto_ws/src/stauto_v0/src/MPC.h
 vector
 -
 map
@@ -24,7 +24,7 @@ map
 Eigen/Core
 -
 
-/home/choiys/stauto_ws/src/stauto_v0/src/MPC_Node.cpp
+/home/anseongje/stauto_ws/src/stauto_v0/src/MPC_Node.cpp
 iostream
 -
 map
@@ -32,7 +32,7 @@ map
 math.h
 -
 ros/ros.h
-/home/choiys/stauto_ws/src/stauto_v0/src/ros/ros.h
+/home/anseongje/stauto_ws/src/stauto_v0/src/ros/ros.h
 geometry_msgs/PoseWithCovarianceStamped.h
 -
 geometry_msgs/PoseStamped.h
@@ -52,7 +52,7 @@ ackermann_msgs/AckermannDriveStamped.h
 visualization_msgs/Marker.h
 -
 MPC.h
-/home/choiys/stauto_ws/src/stauto_v0/src/MPC.h
+/home/anseongje/stauto_ws/src/stauto_v0/src/MPC.h
 Eigen/Core
 -
 Eigen/QR
@@ -2356,15 +2356,15 @@ Eigen/src/Core/util/MKL_support.h
 
 /usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
-/usr/include/x86_64-linux-gnu/bits/select.h
+/usr/include/i386-linux-gnu/bits/select.h
 bits/wordsize.h
 -
 
-/usr/include/x86_64-linux-gnu/bits/select2.h
+/usr/include/i386-linux-gnu/bits/select2.h
 
-/usr/include/x86_64-linux-gnu/bits/sigset.h
+/usr/include/i386-linux-gnu/bits/sigset.h
 
-/usr/include/x86_64-linux-gnu/bits/time.h
+/usr/include/i386-linux-gnu/bits/time.h
 bits/types.h
 -
 bits/types.h
@@ -2372,11 +2372,11 @@ bits/types.h
 bits/timex.h
 -
 
-/usr/include/x86_64-linux-gnu/bits/timex.h
+/usr/include/i386-linux-gnu/bits/timex.h
 bits/types.h
 -
 
-/usr/include/x86_64-linux-gnu/bits/types.h
+/usr/include/i386-linux-gnu/bits/types.h
 features.h
 -
 bits/wordsize.h
@@ -2384,11 +2384,11 @@ bits/wordsize.h
 bits/typesizes.h
 -
 
-/usr/include/x86_64-linux-gnu/bits/typesizes.h
+/usr/include/i386-linux-gnu/bits/typesizes.h
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h
+/usr/include/i386-linux-gnu/bits/wordsize.h
 
-/usr/include/x86_64-linux-gnu/sys/select.h
+/usr/include/i386-linux-gnu/sys/select.h
 features.h
 -
 bits/types.h
@@ -2404,7 +2404,7 @@ bits/time.h
 bits/select2.h
 -
 
-/usr/include/x86_64-linux-gnu/sys/time.h
+/usr/include/i386-linux-gnu/sys/time.h
 features.h
 -
 bits/types.h
@@ -2416,7 +2416,7 @@ bits/time.h
 sys/select.h
 -
 
-/usr/include/x86_64-linux-gnu/sys/timeb.h
+/usr/include/i386-linux-gnu/sys/timeb.h
 features.h
 -
 time.h
