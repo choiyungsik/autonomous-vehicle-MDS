@@ -19,7 +19,7 @@
     <arg name="controller"  default="pure_pursuit" doc="opt: mpc, pure_pursuit"/> 
 
     <!--- Sim Time -->
-    <!-- <param name="/use_sim_time" value="true" /> -->
+    <param name="/use_sim_time" value="true" />
     <arg name="open_rviz" default="true"/>
     
     <!-- ********************** -->
@@ -38,7 +38,7 @@
     <!-- Localization -->
     <!-- ************ -->
     <!-- Map server (for amcl) -->
-    <node name="map_server" pkg="map_server" type="map_server" args="/home/rnd/cato_ws/map.yaml">
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find stauto_sensor)/map/map.yaml">
         <!-- <remap from="map" to="map_amcl"/> -->
     </node>
     <!-- Map server (for nav)-->
@@ -54,7 +54,7 @@
     <!-- rviz -->
     <group if="$(arg open_rviz)"> 
         <node pkg="rviz" type="rviz" name="rviz" required="true"
-            args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+            args="-d $(find stauto_sensor)/rviz/turtlebot3_navigation.rviz"/>
     </group>
 
     <!-- ********************** -->
