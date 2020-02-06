@@ -1,8 +1,0 @@
-prefix=/home/anseongje/stauto_ws/install
-
-Name: stauto_v0
-Description: Description of stauto_v0
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/anseongje/stauto_ws/install/lib 
-Requires: 

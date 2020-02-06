@@ -1,2 +1,0 @@
-robot_description:stauto_control:stauto_sensor:stauto_v0
--DCATKIN_DEVEL_PREFIX=/home/anseongje/stauto_ws/devel -DCMAKE_INSTALL_PREFIX=/home/anseongje/stauto_ws/install -G Unix Makefiles
