@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/choiys/stauto_ws/devel/include/**",
+                "/opt/ros/kinetic/include/**",
+                "/home/choiys/catkin_ws/src/beginner_tutorials/include/**",
+                "/home/choiys/catkin_ws/src/hypharos_minicar/include/**",
+                "/home/choiys/stauto_ws/src/imu_tools/imu_complementary_filter/include/**",
+                "/home/choiys/stauto_ws/src/imu_tools/imu_filter_madgwick/include/**",
+                "/home/choiys/catkin_ws/src/learning_tf/include/**",
+                "/home/choiys/stauto_ws/src/stauto_control/include/**",
+                "/home/choiys/stauto_ws/src/stauto_v0/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
