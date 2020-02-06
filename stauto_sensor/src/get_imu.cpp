@@ -322,7 +322,11 @@ int main(int argc, char **argv)
 					IMU_pub.pub_yaw_value.publish(yaw_value);
           IMU_pub.pub_yaw_degree.publish(yaw_degree);
 					//IMU_pub.pub_quat(yaw_val);
+<<<<<<< HEAD
           ROS_INFO("imu: ", imu);
+=======
+          ROS_INFO("imu:", imu);
+>>>>>>> 93d8b84a84dbdf38af7690881a423df04ab33229
 				}
 			}
 		};

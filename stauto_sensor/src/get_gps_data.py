@@ -1,14 +1,14 @@
 #! /usr/bin/env python
-#import keyboard
+import keyboard
 import serial
 import socket as soc
 import rospy
 import time
+from sensor_msgs.msg import NavSatFix
 from ntrip.NtripClient import *
 
 import multiprocessing
 from multiprocessing import Process, Queue
-from pangyo_control.msg import GPS
 
 import os
 import sys
@@ -65,6 +65,19 @@ class SocketInfo():
 def cb_imu(data):
     yaw = data
 
+
+
+def do_work(lat,lon):
+
+    gpsmsg.header.stamp = rospy.Time.now()
+    gpsmsg.header.frame_id = "GPS_link"
+    gpsmsg.latitude=lat
+    gpsmsg.longitude=lon
+    gpsmsg. position_covariance_type=0
+    gps_pub.publish(gpsmsg)
+    print(gpsmsg)
+
+
 fix_type={ '0' : "Invalid",
            '1' : "GPS fix (SPS)",
            '2' : "DGPS fix",
@@ -79,9 +92,6 @@ fix_type={ '0' : "Invalid",
 if __name__ == '__main__':
     rospy.init_node("gps_node")
 
-    #yaw_sub = rospy.Subscriber("yaw_imu",Quaternion,cb_imu)
-    pos_pub = rospy.Publisher("GPS",GPS,queue_size=1)
-    pos = GPS()
     port = rospy.get_param("~GPS_PORT",port)
     print(port)
 
@@ -131,24 +141,35 @@ if __name__ == '__main__':
     prev_pos = [0.0,0.0]
     Line = 0.0
 
+
+    gps_pub=rospy.Publisher('vo', NavSatFix, queue_size=1)
+    gpsmsg=NavSatFix()
+
+    rospy.loginfo("initialised")
+
+    r=rospy.Rate(1)
+
+    #yaw_sub = rospy.Subscriber("yaw_imu",Quaternion,cb_imu)
+
+
     while isrunning:
-        RoverMessege=ser.readline().decode('ascii')
+        RoverMessage=ser.readline().decode('ascii')
 
         if que.empty()==False:
             data = que.get()[0]
-            
+
             if (type(data) is bool):
                 pass
-            elif (len(data)>10):
+            elif (len(data)>0):
                 ser.write(data)
             else:
                 pass
 
         t = time.time()
-        #print(RoverMessege)
+        #print(RoverMessage)
         try:
-            if "GGA" in RoverMessege:
-                data=RoverMessege.split(",")
+            if "GGA" in RoverMessage:
+                data=RoverMessage.split(",")
 
                 lat = round(float(data[2]),5)
                 lon = round(float(data[4]),5)
@@ -175,15 +196,8 @@ if __name__ == '__main__':
 
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
-
-                pos.x = lat_degree
-                pos.y = lon_degree
-
-
-                    #print(pos_data[0],pos_data[1])
-                    #pos.x = lon_degree
-                    #pos.y = lat_degree
-                pos_pub.publish(pos)
+                if (fix_type[data[6]] >=2):
+                    do_work(lat_degree,lon_degree)
 
         except:
             print ("Missed" ,"\r")
