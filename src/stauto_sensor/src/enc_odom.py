@@ -31,7 +31,7 @@ def calculation(steer,dt):
             rad = move_encoder*0.06283185307 # 3.6[deg] * 3.14159265359 / 180 = 0.06283185307, encoder 100 -> 1 rev
             wheel_vth = rad/dt
             speed = wheel_vth * 0.265 #wheel_radius
-            #print(move_encoder, speed)
+            print(move_encoder, speed)
 
         except ZeroDivisionError:
             speed=0
@@ -78,7 +78,7 @@ def calculation(steer,dt):
         try:
             r = -1.03*math.tan((pi/2)-steer)
             vth = speed/r
-            print(r)
+            # print(r)
             return vx, vy, vth
         except ZeroDivisionError:
             vth = 0
@@ -153,7 +153,7 @@ if __name__ == '__main__':
             (x, y, 0.),
             odom_quat,
             current_time,
-            "base_link",
+            "base_footprint",
             "odom"
         )
 
@@ -166,12 +166,12 @@ if __name__ == '__main__':
         odom.pose.pose = Pose(Point(x, y, 0.), Quaternion(*odom_quat))
 
         # set the velocity
-        odom.child_frame_id = "base_link"
+        odom.child_frame_id = "base_footprint"
         odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vth))
 
         # publish the message
-        odom_pub.publish(odom)
+        # odom_pub.publish(odom)
         #print(odom.pose.pose)
 
         last_time = current_time
-        r.sleep
+        r.sleep()

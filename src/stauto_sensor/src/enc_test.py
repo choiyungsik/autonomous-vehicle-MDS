@@ -31,6 +31,7 @@ while not rospy.is_shutdown():
         enc=0
 
     enc_pub.publish(enc)
-    steer_pub.publish(28)
+    steer_pub.publish(0)
+    r.sleep()
 
     # next, we'll publish the odometry message over ROS
