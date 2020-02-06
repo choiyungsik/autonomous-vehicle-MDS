@@ -14,8 +14,7 @@
 
 ### IMU
 
-``rosrun  stauto_sensor get_imu 
-``
+``rosrun  stauto_sensor get_imu ``
 
 ### GPS
 
@@ -26,8 +25,11 @@
 ``roslaunch stauto_sensor HyphaROS_MiniCar_Racing.launch``
 
 
-### wheel_odom
-``rosrun stauto_control get_encodom_and_control.py ``
+### Encoder_read
+``rosrun stauto_control get_enc_and_control.py ``
+
+### Encoder_odom
+``rosrun stauto_sensor enc_odom.py ``
 
 ## ROSBAG save
 
