@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 				// imu.orientation_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 				// imu.angular_velocity_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
 				// imu.linear_acceleration_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
-				
+
 				// RPY[0] = buff.substr(0, pos[0]);
 				// RPY[1] = buff.substr(pos[0] + 1, (pos[1] - pos[0] - 1));
 				// RPY[2] = buff.substr(pos[1] + 1, (pos[2] - pos[1] - 1));
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 				// imu.linear_acceleration.x = ax * 9.8;
 				// imu.linear_acceleration.y = ay * 9.8;
 				// imu.linear_acceleration.z = az * 9.8;
-				
+
 				// //IMU_pub.pub_quat(q);
 				// tf::Matrix3x3 m(q);
 				// m.getRPY(yaw, pitch, roll);
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 
 				// tf::Quaternion q_yaw = tf::Quaternion(yaw,0.0,0.0);
 				// yaw_val.yaw = yaw;
-				
+
 				// string -> 쿼터니언 변환
 
 				RPY[0] = buff.substr(0, pos[0]);
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 				roll = atof(RPY[0].c_str());
 				pitch = atof(RPY[1].c_str());
 				yaw = atof(RPY[2].c_str());
-				
+
 
 				imu.orientation.x = roll / 180 * M_PI;//sqrt((pow(roll,2)+pow(pitch,2)+pow(yaw,2)));
 				imu.orientation.y = pitch / 180 * M_PI;//sqrt((pow(roll,2)+pow(pitch,2)+pow(yaw,2)));
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
 				ax = atof(accel[0].c_str());
 				ay = atof(accel[1].c_str());
 				az = atof(accel[2].c_str());
-				
+
 				imu.linear_acceleration.x = ax * 9.8;
 				imu.linear_acceleration.y = ay * 9.8;
 				imu.linear_acceleration.z = az * 9.8;
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 				eulervec[0] = imu.orientation.x;
 				eulervec[1] = imu.orientation.y;
 				eulervec[2] = imu.orientation.z;
-				
+
 				imu.angular_velocity.x = (eulervec[0] - eulervec[3]) / 0.006;
 				imu.angular_velocity.y = (eulervec[1] - eulervec[4]) / 0.006;
 				imu.angular_velocity.z = (eulervec[2] - eulervec[5]) / 0.006;
@@ -322,6 +322,7 @@ int main(int argc, char **argv)
 					IMU_pub.pub_yaw_value.publish(yaw_value);
           IMU_pub.pub_yaw_degree.publish(yaw_degree);
 					//IMU_pub.pub_quat(yaw_val);
+          ROS_INFO(pub_imu_raw)
 				}
 			}
 		};

@@ -170,7 +170,7 @@ if __name__ == '__main__':
         odom.twist.twist = Twist(Vector3(vx, vy, 0), Vector3(0, 0, vth))
 
         # publish the message
-        # odom_pub.publish(odom)
+        odom_pub.publish(odom)
         #print(odom.pose.pose)
 
         last_time = current_time
