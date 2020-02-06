@@ -22,6 +22,11 @@
 ``rosrun  pangyo_control gps_data_pangyo.py 
 ``
 
+### AMCL
+``roslaunch stauto_sensor HyphaROS_MiniCar_Racing.launch``
+
+### wheel_odom
+``rosrun stauto_sensor enc_odom.py ``
 
 ## ROSBAG save
 
