@@ -142,7 +142,7 @@ if __name__ == '__main__':
     Line = 0.0
 
 
-    gps_pub=rospy.Publisher('vo', NavSatFix, queue_size=1)
+    gps_pub=rospy.Publisher('gps_data', NavSatFix, queue_size=1)
     gpsmsg=NavSatFix()
 
     rospy.loginfo("initialised")
