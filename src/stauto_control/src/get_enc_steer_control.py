@@ -2,7 +2,8 @@
 
 import rospy
 from pangyo_control.msg import ControlCommand
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Float32
+
 from math import *
 
 import math
@@ -10,7 +11,7 @@ import time
 import serial
 
 
-port = "/dev/ttyUSB1"
+port = "/dev/ttyUSB0"
 
 S = chr(0x53)
 T = chr(0x54)
@@ -50,7 +51,7 @@ def GetSPEED(speed):
     return SPEED0, SPEED1
 
 def GetSTEER(steer):
-    steer=steer*71
+    steer=2*71
     steer_max=0b0000011111010000#+2000
     steer_0 = 0b0000000000000000
     steer_min=0b1111100000110000#-2000
@@ -96,18 +97,32 @@ def Send_to_ERP42(gear, speed, steer, brake):
         ser.write(vals[i])
     #time.sleep(0.2)
 cur_ENC_backup=0
+cur_steer_backup=0
 def Read_from_ERP42():
-    global Packet, cur_ENC_backup
+    global Packet, cur_ENC_backup, cur_steer_backup
 
     Packet=ser.readline()
 
+
+
+
+
     if (len(Packet)==18):
+        steer0=ord(Packet[8:9])
+        steer1=ord(Packet[9:10])
+
+        if ((steer1>=0) & (steer1<=8)):
+            steer = float(-(steer1*255 + steer0)/71.)
+        elif ((steer1>=248) & (steer1<=255)):
+            steer = float(((255-steer1)*255 + (255-steer0))/71.)
+        print(steer0, steer1, steer)
+        cur_steer_backup = steer
         cur_ENC=ord(Packet[11:12])
         cur_ENC_backup=cur_ENC
-        return cur_ENC
+        return cur_ENC, steer
 
     else:
-        return cur_ENC_backup
+        return cur_ENC_backup, cur_steer_backup
 
 
 ################################################################################
@@ -124,13 +139,14 @@ def cmd_callback(data):
     speed = data.speed
     steer = data.steer
     brake = data.brake
-    print(steer)
+    #print(steer)
     #print("{}, {}, {}. {}".format(gear,speed, steer, brake))
 
 if __name__ == '__main__':
     rospy.init_node('serial_node')
     cmd_pub = rospy.Subscriber("CONTROL_COMMAND",ControlCommand,cmd_callback)
     pub_encoder = rospy.Publisher('ENCODER_DATA', Int32, queue_size=10)
+    pub_steer = rospy.Publisher('STEER_DATA', Float32, queue_size=10)
 
     rate = rospy.Rate(20)
 
@@ -140,8 +156,9 @@ if __name__ == '__main__':
 
 
     while (ser.isOpen() and (not rospy.is_shutdown())):
-        Send_to_ERP42(gear, speed, steer, brake)
-
-        ENC = Read_from_ERP42()
-        print(ENC)
+        #Send_to_ERP42(gear, speed, steer, brake)
+        ENC,STEER = Read_from_ERP42()
+        #print(ENC, STEER)
         pub_encoder.publish(ENC)
+        pub_steer.publish(STEER)
+        pub_steer
