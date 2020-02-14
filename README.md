@@ -45,6 +45,10 @@
 실시간 확인시 `use_sim_time` 값 false로 변경
 
 ## navsat_transform
+
+GPS Data from NavSatFix to Odometry
+``rosrun gps_common utm_odometry_node``
+
 ``roslaunch robot_localization navsat_transform_template.launch ``
 
 params: magnetic_declination_radians: -1.3731438391195196491 변경 요망
