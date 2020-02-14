@@ -142,7 +142,7 @@ if __name__ == '__main__':
     Line = 0.0
 
 
-    gps_pub=rospy.Publisher('gps_data', NavSatFix, queue_size=1)
+    gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=1)
     gpsmsg=NavSatFix()
 
     rospy.loginfo("initialised")
@@ -194,7 +194,7 @@ if __name__ == '__main__':
                 print ("Fix Type : %s  North : %.7f  East : %.7f \r"% (fix_type[data[6]],lat_degree,lon_degree))
 
 
-                nclient.setPosition(lat,lon)
+                nclient.setPosition(lat_degree,lon_degree)
                 #if(isReady==False): print(Line)
                 if (fix_type[data[6]] >=2):
                     do_work(lat_degree,lon_degree)

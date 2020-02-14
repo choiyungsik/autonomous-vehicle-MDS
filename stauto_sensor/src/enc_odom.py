@@ -6,42 +6,56 @@ from math import sin, cos, pi
 import rospy
 import tf
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Float32, Float64, Header
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
 
-def enc_callback(data):
-    global curl_encoder, current_time
+cur_encoder = 0     # Encoder counting
+prev_encoder = 0
+steer = 0           # -2000 ~ 2000 (actual steering angle * 71)
+speed = 0           # 0~200(actual speed(KPH)*10) 
 
-    curl_encoder=data.data
+def EncCallback(data):
+    global cur_encoder, current_time
 
-def steer_callback(data):
+    cur_encoder=data.data
+
+def SteerCallback(data):
     global steer
 
-    steer=data.data
+    steer= (data.data) * 0.014 #150 for align
 
-def calculation(steer,dt):
-    global curl_encoder, last_encoder
+def SpeedCallback(data):
+    global erp_speed
+
+    erp_speed = data.data/72
+
+
+########### odometry calculation ###############
+
+def calculation(steer,dt,erp_speed_):
+    global cur_encoder, prev_encoder
     
-    if(curl_encoder==last_encoder):
+    if(cur_encoder == prev_encoder):
         speed=0
-    if(curl_encoder > last_encoder):
+
+    elif(cur_encoder > prev_encoder):       # going backward
         try:
-            move_encoder = curl_encoder-last_encoder
-            last_encoder = curl_encoder
-            rad = move_encoder*0.06283185307 # 3.6[deg] * 3.14159265359 / 180 = 0.06283185307, encoder 100 -> 1 rev
+            diff_encoder = abs(cur_encoder-prev_encoder)
+            prev_encoder = cur_encoder
+            rad = diff_encoder*0.06283185307 # 3.6[deg] * 3.14159265359 / 180 = 0.06283185307, encoder 100 -> 1 rev
+
             wheel_vth = rad/dt
             speed = wheel_vth * 0.265 #wheel_radius
-            print(move_encoder, speed)
+            print(diff_encoder, speed)
 
         except ZeroDivisionError:
             speed=0
 
-
-    elif(curl_encoder < last_encoder):
+    elif(cur_encoder < prev_encoder):       #going forward
         try:
-            move_encoder = 255 + (curl_encoder-last_encoder)
-            last_encoder = curl_encoder
-            rad = move_encoder*0.06283185307 # 3.6[deg] * 3.14159265359 / 180 = 0.06283185307, encoder 100 -> 1 rev
+            diff_encoder = abs(cur_encoder-prev_encoder)
+            prev_encoder = cur_encoder
+            rad = diff_encoder*0.06283185307 # 3.6[deg] * 3.14159265359 / 180 = 0.06283185307, encoder 100 -> 1 rev
 
             wheel_vth = rad/dt
             speed = wheel_vth * 0.265 #wheel_radius
@@ -49,23 +63,16 @@ def calculation(steer,dt):
         except ZeroDivisionError:
             speed=0
 
-    else:
-        move_encoder = 0
-
-        speed = 0
-
-    #print(speed)
+    speed = erp_speed_
     vx = speed
     vy = 0
-    #print(steer, speed)
     steer = steer*(pi/180)
-    #print(math.tan((pi/2)+steer))
-    #print(steer)
+
 
     if(steer < 0.):
         try:
-            r = 1.03*math.tan((pi/2)+steer)
-            vth = speed/r
+            r = 1.03/math.tan(steer)
+            vth = speed* 0.6/r #0.6 parameter
 
             return vx, vy, vth
         except ZeroDivisionError:
@@ -76,8 +83,8 @@ def calculation(steer,dt):
 
     elif(steer > 0.):
         try:
-            r = -1.03*math.tan((pi/2)-steer)
-            vth = speed/r
+            r = 1.03/math.tan(steer)
+            vth = speed* 0.72/r #0.72 parameter
             # print(r)
             return vx, vy, vth
         except ZeroDivisionError:
@@ -95,16 +102,17 @@ def calculation(steer,dt):
 if __name__ == '__main__':
     rospy.init_node('odometry_publisher')
 
-    rospy.Subscriber("ENCODER_DATA",Int32,enc_callback)
-    rospy.Subscriber("STEER",Int32,steer_callback)
+    rospy.Subscriber("ERP42_encoder",Float64,EncCallback) # 4 bytes
+    rospy.Subscriber("ERP42_steer",Float32,SteerCallback) # 2 bytes
+    rospy.Subscriber("ERP42_speed",Float32,SpeedCallback) # 2 bytes
 
     odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
     odom_broadcaster = tf.TransformBroadcaster()
 
-
-    curl_encoder=0
+    erp_speed = 0
+    cur_encoder=0
     steer=0
-    last_encoder=0
+    prev_encoder=0
 
     x = 0.0
     y = 0.0
@@ -116,7 +124,7 @@ if __name__ == '__main__':
 
     dt = 0
 
-    last_encoder = curl_encoder
+    prev_encoder = cur_encoder
 
 
     current_time = rospy.Time.now()
@@ -134,9 +142,9 @@ if __name__ == '__main__':
         #rospy.spinOnce()
         current_time = rospy.Time.now()
 
-        dt = (current_time - last_time).to_sec()
+        dt = (current_time - last_time).to_sec() + (current_time - last_time).to_nsec()*1e-9
         if dt>0:
-            vx, vy, vth = calculation(steer,dt)
+            vx, vy, vth = calculation(steer,dt,erp_speed)
         delta_x = (vx * cos(th) - vy * sin(th)) * dt
         delta_y = (vx * sin(th) + vy * cos(th)) * dt
         delta_th = vth * dt
@@ -144,7 +152,7 @@ if __name__ == '__main__':
         x += delta_x
         y += delta_y
         th += delta_th
-        #print(th)
+
         # since all odometry is 6DOF we'll need a quaternion created from yaw
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
@@ -171,7 +179,6 @@ if __name__ == '__main__':
 
         # publish the message
         odom_pub.publish(odom)
-        #print(odom.pose.pose)
 
         last_time = current_time
         r.sleep()

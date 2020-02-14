@@ -86,6 +86,7 @@ class IMU_pub
   tf::Quaternion q;
 };
 
+int time1;
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "get_imu");
@@ -153,6 +154,7 @@ int main(int argc, char **argv)
 				imu.header.stamp = ros::Time::now();
 				imu.header.frame_id = "imu_link";
 
+
 				// imu.orientation_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 				// imu.angular_velocity_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
 				// imu.linear_acceleration_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
@@ -217,9 +219,9 @@ int main(int argc, char **argv)
 				ay = atof(accel[1].c_str());
 				az = atof(accel[2].c_str());
 
-				imu.linear_acceleration.x = ax * 9.8;
-				imu.linear_acceleration.y = ay * 9.8;
-				imu.linear_acceleration.z = az * 9.8;
+				imu.linear_acceleration.x = ax * 9.81;
+				imu.linear_acceleration.y = ay * 9.81;
+				imu.linear_acceleration.z = az * 9.81;
 
 				eulervec[0] = imu.orientation.x;
 				eulervec[1] = imu.orientation.y;
@@ -322,11 +324,6 @@ int main(int argc, char **argv)
 					IMU_pub.pub_yaw_value.publish(yaw_value);
           IMU_pub.pub_yaw_degree.publish(yaw_degree);
 					//IMU_pub.pub_quat(yaw_val);
-<<<<<<< HEAD
-          ROS_INFO("imu: ", imu);
-=======
-          ROS_INFO("imu:", imu);
->>>>>>> 93d8b84a84dbdf38af7690881a423df04ab33229
 				}
 			}
 		};
