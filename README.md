@@ -15,18 +15,17 @@
 
 ### IMU
 
-``rosrun  pangyo_control get_imu 
-``
+``rosrun  stauto_sensor get_imu ``
+
 
 ### Getting ERP42 information (encoder, steer, speed, brake, gear)
 
-``rosrun  stauto_control ERP42_to_PC
-``
+``rosrun  stauto_control ERP42_to_PC``
 
 ### GPS
 
-``rosrun  pangyo_control gps_data_pangyo.py 
-``
+``rosrun  stauto_sensor get_gps_data.py ``
+
 ### AMCL
 
 ``roslaunch stauto_sensor HyphaROS_MiniCar_Racing.launch ``
