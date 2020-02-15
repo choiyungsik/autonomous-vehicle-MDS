@@ -3,6 +3,10 @@
 
 ## Commands
 
+### Velodyne lidar & IMU & ERP_to_PC & GPS 
+
+roslaunch stauto_senor stauto_setting.launch
+
 ### USB cam
 
 ``roslaunch usb_cam usb_cam-test.launch ``
@@ -25,7 +29,7 @@
 
 ### GPS
 
-``rosrun  pangyo_control gps_data_pangyo.py 
+``rosrun  stauto_sensor gps_data_pangyo.py 
 ``
 ### AMCL
 
