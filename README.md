@@ -31,9 +31,15 @@
 
 ``rosrun  stauto_sensor gps_data_pangyo.py 
 ``
-### AMCL
+### localization
 
-``roslaunch stauto_sensor HyphaROS_MiniCar_Racing.launch ``
+``roslaunch stauto_sensor STauto_Racing.launch``
+
+param
+
+``pub_wheel_odom_tf:=true``: wheel_odom tf publish 결정
+
+``use_amcl``:amcl 사용결정
 
 ## ROSBAG save
 
@@ -42,12 +48,7 @@
 
 ## ROSBAG play
 
-``rosbag play -($rosbag name).bag --clock --topic /velodyne_points /imu/data ``
-
-## LEGO-LOAM
-``roslaunch lego_loam run.launch ``
-
-실시간 확인시 `use_sim_time` 값 false로 변경
+``rosbag play -($rosbag name).bag --clock``
 
 ## Protocol
 

@@ -5,18 +5,9 @@
     <!-- Launch file parameters -->
     <!-- ********************** -->
     <!-- general -->
-    <arg name="debug_mode"  default="false" doc="show debug info (bool)"/> 
-    <arg name="pwm_radian"  default="450" doc="non scaled factor pwm/radian (steering)"/>
-    <arg name="neutral_pt"  default="-5.0"   doc="steering neutral point (degree)"/>
-    <arg name="use_imu"     default="false" doc="use imu for ekf (bool)"/> 
-    <arg name="time_out"    default="1.0"   doc="communication time out, unit: sec"/> 
-    <arg name="output"      default="log"   doc="log or screen"/> 
-    <!-- for amcl -->    
-    <arg name="init_x" default="0.0" />
-    <arg name="init_y" default="0.0" />
-    <arg name="init_a" default="0.0" />
-    <!-- for controller -->
-    <arg name="controller"  default="pure_pursuit" doc="opt: mpc, pure_pursuit"/> 
+    <arg name="pub_wheel_odom_tf"  default="false" doc="publish wheel odom tf"/> 
+    <arg name="use_amcl"  default="false" doc="using amcl"/>
+
 
     <!--- Sim Time -->
     <param name="/use_sim_time" value="true" />
@@ -26,35 +17,32 @@
     <!-- Boot up all components -->
     <!-- ********************** -->
     <include file="$(find stauto_sensor)/launch/includes/STauto_Drivers.launch.xml">
-        <arg name="debug_mode" value="$(arg debug_mode)" />
-        <arg name="pwm_radian" value="$(arg pwm_radian)"/>
-        <arg name="neutral_pt" value="$(arg neutral_pt)"/>
-        <arg name="use_imu"    value="$(arg use_imu)" />
-        <arg name="time_out"   value="$(arg time_out)" />
+        <arg name="pub_wheel_odom_tf" value="$(arg pub_wheel_odom_tf)" />
+        <arg name="use_amcl" value="$(arg use_amcl)" />
     </include>
 
-    <!-- <include file="$(find pointcloud_to_laserscan)/launch/sample_node.launch"> </include> -->
+    <include file="$(find pointcloud_to_laserscan)/launch/sample_node.launch">
+    </include>
 
     <!-- ************ -->
     <!-- Localization -->
     <!-- ************ -->
     <!-- Map server (for amcl) -->
     <node name="map_server" pkg="map_server" type="map_server" args="$(find stauto_sensor)/map/map.yaml">
-        <!-- <remap from="map" to="map_amcl"/> -->
+    </node>
+
+    <node name="path_odom_plotter" type="path_odom_plotter.py" pkg="odom_to_trajectory">
     </node>
 
     <!-- for odom only -->
-    <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="35 25 0 3.1415 0 0 /map /odom 10" />
-
-    <!-- Map server (for nav)-->
-    <!-- <node name="map_server_nav" pkg="map_server" type="map_server" args="$(find hypharos_minicar)/map/map_nav.yaml"/> -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map    /odom 10" /> -->
 
     <!-- amcl -->
-    <!--<include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml">
-        <arg name="init_x" value="$(arg init_x)"/>
+    <!-- <include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml"> -->
+        <!-- <arg name="init_x" value="$(arg init_x)"/>
         <arg name="init_y" value="$(arg init_y)"/>
-        <arg name="init_a" value="$(arg init_a)"/> 
-    </include> --> 
+        <arg name="init_a" value="$(arg init_a)"/> -->
+    <!-- </include> -->
 
     <!-- rviz -->
     <group if="$(arg open_rviz)"> 

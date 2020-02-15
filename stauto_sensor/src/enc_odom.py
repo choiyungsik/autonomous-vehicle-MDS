@@ -8,11 +8,36 @@ import tf
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Int32, Float32, Float64, Header
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3
+from geometry_msgs.msg import PoseWithCovarianceStamped
 
 cur_encoder = 0     # Encoder counting
 prev_encoder = 0
 steer = 0           # -2000 ~ 2000 (actual steering angle * 71)
 speed = 0           # 0~200(actual speed(KPH)*10) 
+
+#initial pose set 
+class initpose:
+    def __init__(self):
+        self.pre_position = [0,0,0]
+        self.position = [0,0,0]
+        self.orientation_quaternion = [0,0,0,0]
+
+        rospy.Subscriber("/initialpose", PoseWithCovarianceStamped,self.initialCallback)
+
+    def initialCallback(self,data):
+        current_time = rospy.Time.now()
+        pose_stemp = data
+        self.position = [pose_stemp.pose.pose.position.x, pose_stemp.pose.pose.position.y, pose_stemp.pose.pose.position.z]
+        self.orientation_quaternion = [pose_stemp.pose.pose.orientation.x, pose_stemp.pose.pose.orientation.y, pose_stemp.pose.pose.orientation.z, pose_stemp.pose.pose.orientation.w]
+
+        odom_broadcaster.sendTransform(
+            self.position,
+            self.orientation_quaternion,
+            current_time,
+            "odom",
+            "map"
+        )
+        print("init")
 
 def EncCallback(data):
     global cur_encoder, current_time
@@ -22,7 +47,7 @@ def EncCallback(data):
 def SteerCallback(data):
     global steer
 
-    steer= (data.data) * 0.014 #150 for align
+    steer= (data.data) * 0.014 
 
 def SpeedCallback(data):
     global erp_speed
@@ -46,6 +71,8 @@ def calculation(steer,dt,erp_speed_):
 
             wheel_vth = rad/dt
             speed = wheel_vth * 0.265 #wheel_radius
+            if(diff_encoder > 100000): # first error check
+                speed = 0
             print(diff_encoder, speed)
 
         except ZeroDivisionError:
@@ -63,7 +90,6 @@ def calculation(steer,dt,erp_speed_):
         except ZeroDivisionError:
             speed=0
 
-    speed = erp_speed_
     vx = speed
     vy = 0
     steer = steer*(pi/180)
@@ -71,8 +97,8 @@ def calculation(steer,dt,erp_speed_):
 
     if(steer < 0.):
         try:
-            r = 1.03/math.tan(steer)
-            vth = speed* 0.6/r #0.6 parameter
+            r = 1.05/math.tan(steer)
+            vth = speed* 0.8/r #constant is parameter(weight)
 
             return vx, vy, vth
         except ZeroDivisionError:
@@ -83,9 +109,9 @@ def calculation(steer,dt,erp_speed_):
 
     elif(steer > 0.):
         try:
-            r = 1.03/math.tan(steer)
-            vth = speed* 0.72/r #0.72 parameter
-            # print(r)
+            r = 1.05/math.tan(steer)
+            vth = speed/r #constant is parameter(weight)
+
             return vx, vy, vth
         except ZeroDivisionError:
             vth = 0
@@ -102,11 +128,17 @@ def calculation(steer,dt,erp_speed_):
 if __name__ == '__main__':
     rospy.init_node('odometry_publisher')
 
+    pub_wheel_tf = bool(rospy.get_param('~pub_wheel_odom_tf', False)) # 
+    amcl_mode = bool(rospy.get_param('~use_amcl', False)) # 
+
+
     rospy.Subscriber("ERP42_encoder",Float64,EncCallback) # 4 bytes
     rospy.Subscriber("ERP42_steer",Float32,SteerCallback) # 2 bytes
     rospy.Subscriber("ERP42_speed",Float32,SpeedCallback) # 2 bytes
+    if(not amcl_mode):
+        class_init_pose = initpose() # initial pose
 
-    odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
+    odom_pub = rospy.Publisher("odom/enc", Odometry, queue_size=50)
     odom_broadcaster = tf.TransformBroadcaster()
 
     erp_speed = 0
@@ -157,13 +189,14 @@ if __name__ == '__main__':
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
         # first, we'll publish the transform over tf
-        odom_broadcaster.sendTransform(
-            (x, y, 0.),
-            odom_quat,
-            current_time,
-            "base_footprint",
-            "odom"
-        )
+        if(pub_wheel_tf):
+            odom_broadcaster.sendTransform(
+                (x, y, 0.),
+                odom_quat,
+                current_time,
+                "base_footprint",
+                "odom"
+            )
 
         # next, we'll publish the odometry message over ROS
         odom = Odometry()
