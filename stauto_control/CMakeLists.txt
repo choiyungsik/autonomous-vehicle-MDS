@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
+<<<<<<< HEAD
 project(main_control)
+=======
+project(stauto_control)
+>>>>>>> 681e6b4e10842f5eb63e31c1372ba9d7d1a8f83f
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -73,10 +77,17 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
+<<<<<<< HEAD
  generate_messages(
    DEPENDENCIES
    std_msgs
  )
+=======
+#generate_messages(
+#   DEPENDENCIES
+#   std_msgs
+# )
+>>>>>>> 681e6b4e10842f5eb63e31c1372ba9d7d1a8f83f
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -127,7 +138,11 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
+<<<<<<< HEAD
 #   src/${PROJECT_NAME}/main_control.cpp
+=======
+#   src/${PROJECT_NAME}/STauto_control.cpp
+>>>>>>> 681e6b4e10842f5eb63e31c1372ba9d7d1a8f83f
 # )
 
 ## Add cmake target dependencies of the library
@@ -140,6 +155,11 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/main_control_node.cpp)
 
+<<<<<<< HEAD
+=======
+#add_executable(ERP42_to_PC src/ERP42_to_PC.cpp)
+
+>>>>>>> 681e6b4e10842f5eb63e31c1372ba9d7d1a8f83f
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -151,9 +171,15 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+<<<<<<< HEAD
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+=======
+#target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
+
+#target_link_libraries(ERP42_to_PC ${catkin_LIBRARIES})
+>>>>>>> 681e6b4e10842f5eb63e31c1372ba9d7d1a8f83f
 
 #############
 ## Install ##
