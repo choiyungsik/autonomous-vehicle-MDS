@@ -5,7 +5,7 @@
 
 ### Velodyne lidar & IMU & ERP_to_PC & GPS 
 
-roslaunch stauto_senor stauto_setting.launch
+``roslaunch stauto_senor stauto_setting.launch``
 
 ### USB cam
 
