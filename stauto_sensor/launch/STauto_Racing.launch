@@ -40,11 +40,13 @@
     <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map /odom 10" />
 
     <!-- amcl -->
-    <!-- <include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml"> -->
-        <!-- <arg name="init_x" value="$(arg init_x)"/>
-        <arg name="init_y" value="$(arg init_y)"/>
-        <arg name="init_a" value="$(arg init_a)"/> -->
-    <!-- </include> -->
+    <group if="$(arg use_amcl)">
+        <include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml">
+            <!-- <arg name="init_x" value="$(arg init_x)"/>
+            <arg name="init_y" value="$(arg init_y)"/>
+            <arg name="init_a" value="$(arg init_a)"/> -->
+        </include>
+    </group>
 
     <!-- rviz -->
     <group if="$(arg open_rviz)"> 
