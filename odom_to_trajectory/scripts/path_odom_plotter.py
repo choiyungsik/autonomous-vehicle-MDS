@@ -4,7 +4,7 @@ import rospy
 from tf.transformations import quaternion_from_euler
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry, Path
-from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Pose
 from sensor_msgs.msg import Joy
 
 import sys
@@ -25,7 +25,7 @@ def callback(data):
         pose = PoseStamped()    
 
     #Set a atributes of the msg
-        pose.header.frame_id = "odom"
+        pose.header.frame_id = "base_link"
         pose.pose.position.x = float(data.pose.pose.position.x)
         pose.pose.position.y = float(data.pose.pose.position.y)
         pose.pose.orientation.x = float(data.pose.pose.orientation.x)
@@ -37,7 +37,10 @@ def callback(data):
         if (xAnt != pose.pose.position.x and yAnt != pose.pose.position.y):
                 #Set a atributes of the msg
                 pose.header.seq = path.header.seq + 1
-                path.header.frame_id="odom"
+                if(amcl_mode):
+                    path.header.frame_id="map"
+                else:
+                    path.header.frame_id="odom"
                 path.header.stamp=rospy.Time.now()
                 pose.header.stamp = path.header.stamp
                 path.poses.append(pose)
@@ -45,7 +48,7 @@ def callback(data):
 
         cont=cont+1
 
-        rospy.loginfo("Valor del contador: %i" % cont)
+        # rospy.loginfo("Valor del contador: %i" % cont)
         if cont>max_append:
         	path.poses.pop(0)
 
@@ -66,7 +69,7 @@ def callback_enc(data_enc):
         pose_enc = PoseStamped()    
 
     #Set a atributes of the msg
-        pose_enc.header.frame_id = "odom"
+        pose_enc.header.frame_id = "base_footprint"
         pose_enc.pose.position.x = float(data_enc.pose.pose.position.x)
         pose_enc.pose.position.y = float(data_enc.pose.pose.position.y)
         pose_enc.pose.orientation.x = float(data_enc.pose.pose.orientation.x)
@@ -78,7 +81,10 @@ def callback_enc(data_enc):
         if (xAnt_enc != pose_enc.pose.position.x and yAnt_enc != pose_enc.pose.position.y):
                 #Set a atributes of the msg
                 pose_enc.header.seq = path_enc.header.seq + 1
-                path_enc.header.frame_id="odom"
+                if(amcl_mode):
+                    path_enc.header.frame_id="start"
+                else:
+                    path_enc.header.frame_id="odom"
                 path_enc.header.stamp=rospy.Time.now()
                 pose_enc.header.stamp = path_enc.header.stamp
                 path_enc.poses.append(pose_enc)
@@ -86,7 +92,7 @@ def callback_enc(data_enc):
 
         cont_enc=cont_enc+1
 
-        rospy.loginfo("Valor del contador: %i" % cont_enc)
+        # rospy.loginfo("Valor del contador: %i" % cont_enc)
         if cont_enc>max_append:
         	path_enc.poses.pop(0)
 
@@ -117,6 +123,7 @@ if __name__ == '__main__':
         #Node and msg initialization
         rospy.init_node('path_odom_plotter')
 
+        amcl_mode = bool(rospy.get_param('~use_amcl', False)) # 
 
         #Rosparams that are set in the launch
         #max size of array pose msg from the path
@@ -137,7 +144,10 @@ if __name__ == '__main__':
         msg_enc = Odometry()
 
         #Subscription to the topic
-        msg = rospy.Subscriber('/odom', Odometry, callback) 
+        if(amcl_mode):
+            msg = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, callback) 
+        else:
+            msg = rospy.Subscriber('/odom', Odometry, callback) 
         msg_enc = rospy.Subscriber('/odom/enc', Odometry, callback_enc) 
 
         rate = rospy.Rate(30) # 30hz
