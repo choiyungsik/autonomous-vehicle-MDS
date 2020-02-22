@@ -1,6 +1,6 @@
 <launch>
     <!-- launch file arguments -->
-    <arg name="pub_wheel_odom_tf"  default="false" doc="publish wheel odom tf"/> 
+    <arg name="pub_wheel_odom_tf"  default="true" doc="publish wheel odom tf"/> 
     <arg name="use_amcl"  default="false" doc="using amcl"/>
 
     <!-- robot description load-->
@@ -19,8 +19,8 @@
         <param name="use_amcl" value="$(arg use_amcl)" />
     </node>
 
-    <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true">
-    </node>
+    <!-- <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true"> </node> -->
+    
     <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
         <rosparam command="load" file="$(find stauto_sensor)/launch/params/minicar_imu_ekf_params.yaml" />
         <remap from="/odometry/filtered" to="/odom" />

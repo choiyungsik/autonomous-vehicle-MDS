@@ -135,6 +135,7 @@ if __name__ == '__main__':
     rospy.Subscriber("ERP42_encoder",Float64,EncCallback) # 4 bytes
     rospy.Subscriber("ERP42_steer",Float32,SteerCallback) # 2 bytes
     rospy.Subscriber("ERP42_speed",Float32,SpeedCallback) # 2 bytes
+    
     if(not amcl_mode):
         class_init_pose = initpose() # initial pose
 
@@ -189,6 +190,7 @@ if __name__ == '__main__':
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
         # first, we'll publish the transform over tf
+        print(pub_wheel_tf)
         if(pub_wheel_tf):
             odom_broadcaster.sendTransform(
                 (x, y, 0.),

@@ -7,7 +7,7 @@
     <!-- general -->
     <arg name="pub_wheel_odom_tf"  default="false" doc="publish wheel odom tf"/> 
     <arg name="use_amcl"  default="false" doc="using amcl"/>
-
+    <arg name="controller"  default="pure_pursuit"/>
 
     <!--- Sim Time -->
     <param name="/use_sim_time" value="true" />
@@ -22,20 +22,22 @@
     </include>
 
     <include file="$(find pointcloud_to_laserscan)/launch/sample_node.launch">
+        <remap from="to_scan" to="scan"/>
     </include>
 
     <!-- ************ -->
     <!-- Localization -->
     <!-- ************ -->
     <!-- Map server (for amcl) -->
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find stauto_sensor)/map/map.yaml">
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find stauto_sensor)/map/map.yaml" output ="screen">
+        <param name="frame_id" value="/map" />
     </node>
 
     <node name="path_odom_plotter" type="path_odom_plotter.py" pkg="odom_to_trajectory">
     </node>
 
     <!-- for odom only -->
-    <!-- <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map    /odom 10" /> -->
+    <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map /odom 10" />
 
     <!-- amcl -->
     <group if="$(arg use_amcl)">
@@ -55,36 +57,53 @@
     <!-- ********************** -->
     <!-- Navigation (move_base) -->
     <!-- ********************** -->
+<<<<<<< HEAD
      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />        
+=======
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find stauto_sensor)/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find stauto_sensor)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find stauto_sensor)/params/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find stauto_sensor)/params/global_costmap_params.yaml" command="load" /> 
+>>>>>>> fe5930d65302d796e078a50a9914cffdc8538172
         <!-- Global Planner -->
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="planner_frequency" value="0.0" />
+        <param name="planner_frequency" value="0.0" if="$(eval controller == 'pure_pursuit')"/>
         <param name="planner_patience" value="5.0" />
+<<<<<<< HEAD
         <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" />
         <!-- Local Planner -->
         <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
         <!-- Our carlike robot is not able to rotate in place -->
         <param name="clearing_rotation_allowed" value="false" />
+=======
+        <rosparam file="$(find stauto_sensor)/params/global_planner.yaml" command="load" />
+        <!-- Local Planner -->
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
+        <!-- Our carlike robot is not able to rotate in place -->
+        <param name="clearing_rotation_allowed" value="false" /> 
+>>>>>>> fe5930d65302d796e078a50a9914cffdc8538172
         <!-- external controller -->
         <remap from="/cmd_vel" to="/fake_cmd" />
     </node>
     
     <!--  ****** MPC Node ******  -->
-    <!-- <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen" if="$(eval controller == 'mpc')" >
-        <rosparam file="$(find hypharos_minicar)/launch/params/mpc/mpc_params.yaml" command="load" />
+    <!-- <node name="MPC_Node" pkg="stauto_sensor" paramse" output="screen" if="$(eval controller == 'mpc')" >
+        <rosparam file="$(find stauto_sensor)/params/mpc/mpc_params.yaml" command="load" />
     </node> -->
 
     <!--  ****** Pure Pursuit ******  -->
-    <!-- <node name="Pure_Pursuit" pkg="hypharos_minicar" type="Pure_Pursuit" output="screen" if="$(eval controller == 'pure_pursuit')" >
-        <rosparam file="$(find hypharos_minicar)/launch/params/pure_pursuit/pure_pursuit_params.yaml" command="load" />
+    <node name="Pure_Pursuit" pkg="pure_pursuit" type="pure_pursuit" output="screen" >
+        <rosparam file="$(find stauto_sensor)/params/pure_pursuit/pure_pursuit_params.yaml" command="load" />
         <remap from="/pure_pursuit/odom" to="/odom" />
         <remap from="/pure_pursuit/global_planner" to="/move_base/GlobalPlanner/plan" />
         <remap from="/pure_pursuit/goal" to="/move_base_simple/goal" />
         <remap from="/pure_pursuit/ackermann_cmd" to="/ackermann_cmd" />
-    </node> -->
+    </node>
 
 </launch>
