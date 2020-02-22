@@ -56,47 +56,20 @@
     <!-- ********************** -->
     <!-- Navigation (move_base) -->
     <!-- ********************** -->
-<<<<<<< HEAD
-     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-        <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find hypharos_minicar)/launch/params/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />        
-=======
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-<<<<<<< HEAD
-        <rosparam file="$(find stauto_sensor)/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find stauto_sensor)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find stauto_sensor)/params/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find stauto_sensor)/params/global_costmap_params.yaml" command="load" /> 
->>>>>>> fe5930d65302d796e078a50a9914cffdc8538172
-=======
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />        
->>>>>>> b944cfd6c8c2049061d48994443b4254b7b496d0
         <!-- Global Planner -->
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="planner_frequency" value="0.0" />
         <param name="planner_patience" value="5.0" />
-<<<<<<< HEAD
-<<<<<<< HEAD
         <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" />
-        <!-- Local Planner -->
-        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
-        <!-- Our carlike robot is not able to rotate in place -->
-        <param name="clearing_rotation_allowed" value="false" />
-=======
-        <rosparam file="$(find stauto_sensor)/params/global_planner.yaml" command="load" />
-=======
-        <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" />
->>>>>>> b944cfd6c8c2049061d48994443b4254b7b496d0
         <!-- Local Planner -->
         <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
         <!-- Our carlike robot is not able to rotate in place -->
         <param name="clearing_rotation_allowed" value="false" /> 
->>>>>>> fe5930d65302d796e078a50a9914cffdc8538172
         <!-- external controller -->
         <remap from="/cmd_vel" to="/fake_cmd" />
     </node>
