@@ -31,18 +31,21 @@
     <node name="map_server" pkg="map_server" type="map_server" args="$(find stauto_sensor)/map/map.yaml">
     </node>
 
-    <node name="path_odom_plotter" type="path_odom_plotter.py" pkg="odom_to_trajectory">
+    <node name="path_odom_plotter" type="path_odom_plotter.py" pkg="odom_to_trajectory" output="screen">
+        <param name="use_amcl" value="$(arg use_amcl)" />
     </node>
 
     <!-- for odom only -->
     <!-- <node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 0 0 0 /map    /odom 10" /> -->
 
     <!-- amcl -->
-    <!-- <include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml"> -->
-        <!-- <arg name="init_x" value="$(arg init_x)"/>
-        <arg name="init_y" value="$(arg init_y)"/>
-        <arg name="init_a" value="$(arg init_a)"/> -->
-    <!-- </include> -->
+    <group if="$(arg use_amcl)">
+        <include file="$(find stauto_sensor)/launch/includes/amcl.launch.xml">
+            <!-- <arg name="init_x" value="$(arg init_x)"/>
+            <arg name="init_y" value="$(arg init_y)"/>
+            <arg name="init_a" value="$(arg init_a)"/> -->
+        </include>
+    </group>
 
     <!-- rviz -->
     <group if="$(arg open_rviz)"> 
@@ -53,36 +56,36 @@
     <!-- ********************** -->
     <!-- Navigation (move_base) -->
     <!-- ********************** -->
-    <!-- <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
         <rosparam file="$(find hypharos_minicar)/launch/params/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />         -->
+        <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />        
         <!-- Global Planner -->
-        <!-- <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+        <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="planner_frequency" value="0.0" />
         <param name="planner_patience" value="5.0" />
-        <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" /> -->
+        <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" />
         <!-- Local Planner -->
-        <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" /> -->
+        <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
         <!-- Our carlike robot is not able to rotate in place -->
-        <!-- <param name="clearing_rotation_allowed" value="false" />  -->
+        <param name="clearing_rotation_allowed" value="false" /> 
         <!-- external controller -->
-        <!-- <remap from="/cmd_vel" to="/fake_cmd" />
-    </node> -->
+        <remap from="/cmd_vel" to="/fake_cmd" />
+    </node>
     
     <!--  ****** MPC Node ******  -->
-    <!-- <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen" if="$(eval controller == 'mpc')" >
+    <!-- <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen"  >
         <rosparam file="$(find hypharos_minicar)/launch/params/mpc/mpc_params.yaml" command="load" />
     </node> -->
 
     <!--  ****** Pure Pursuit ******  -->
-    <!-- <node name="Pure_Pursuit" pkg="hypharos_minicar" type="Pure_Pursuit" output="screen" if="$(eval controller == 'pure_pursuit')" >
+    <node name="Pure_Pursuit" pkg="hypharos_minicar" type="Pure_Pursuit" output="screen" >
         <rosparam file="$(find hypharos_minicar)/launch/params/pure_pursuit/pure_pursuit_params.yaml" command="load" />
         <remap from="/pure_pursuit/odom" to="/odom" />
         <remap from="/pure_pursuit/global_planner" to="/move_base/GlobalPlanner/plan" />
         <remap from="/pure_pursuit/goal" to="/move_base_simple/goal" />
         <remap from="/pure_pursuit/ackermann_cmd" to="/ackermann_cmd" />
-    </node> -->
+    </node>
 
 </launch>

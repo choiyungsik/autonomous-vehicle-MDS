@@ -5,11 +5,12 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
+        - /Local Map1
         - /Local Map1/Polygon1
         - /Local Map1/Costmap1
         - /Local Map1/Planner1
@@ -84,7 +85,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
@@ -123,32 +123,17 @@ Visualization Manager:
           Value: true
         imu_link:
           Value: true
-        map:
-          Value: true
         odom:
           Value: true
         velodyne:
           Value: true
-      Marker Scale: 1
+      Marker Scale: 15
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                GPS_link:
-                  {}
-                base_foot_link:
-                  {}
-                camera_link:
-                  {}
-                imu_link:
-                  {}
-                velodyne:
-                  {}
+        {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -223,7 +208,7 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /odompath
+      Topic: /move_base/GlobalPlanner/plan
       Unreliable: false
       Value: true
     - Class: rviz/Group
@@ -303,7 +288,7 @@ Visualization Manager:
           Radius: 0.0299999993
           Shaft Diameter: 0.100000001
           Shaft Length: 0.100000001
-          Topic: /move_base/DWAPlannerROS/local_plan
+          Topic: /odompath/enc
           Unreliable: false
           Value: true
       Enabled: true
@@ -359,7 +344,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.67079496
+      Angle: -1.74579549
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -369,11 +354,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 78.7799606
+      Scale: 15.7023764
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 33.993824
-      Y: 25.4180412
+      X: 39.3721199
+      Y: 77.500618
     Saved: ~
 Window Geometry:
   Displays:
