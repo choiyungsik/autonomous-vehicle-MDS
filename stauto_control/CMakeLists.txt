@@ -140,7 +140,6 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/main_control_node.cpp)
 
-#add_executable(ERP42_to_PC src/ERP42_to_PC.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -155,7 +154,6 @@ include_directories(
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
 
-#target_link_libraries(ERP42_to_PC ${catkin_LIBRARIES})
 
 #############
 ## Install ##
