@@ -139,7 +139,13 @@ if __name__ == '__main__':
 
         if que.empty()==False:
             data = que.get()[0]
-            ser.write(data)
+
+            if (type(data) is bool):
+                pass
+            elif (len(data)>0):
+                ser.write(data)
+            else:
+                pass
 
         t = time.time()
         #print(RoverMessege)
