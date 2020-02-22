@@ -21,7 +21,7 @@ class initpose:
         self.pre_position = [0,0,0]
         self.position = [0,0,0]
         self.orientation_quaternion = [0,0,0,0]
-
+        
         rospy.Subscriber("/initialpose", PoseWithCovarianceStamped,self.initialCallback)
 
     def initialCallback(self,data):
@@ -30,13 +30,9 @@ class initpose:
         self.position = [pose_stemp.pose.pose.position.x, pose_stemp.pose.pose.position.y, pose_stemp.pose.pose.position.z]
         self.orientation_quaternion = [pose_stemp.pose.pose.orientation.x, pose_stemp.pose.pose.orientation.y, pose_stemp.pose.pose.orientation.z, pose_stemp.pose.pose.orientation.w]
 
-        odom_broadcaster.sendTransform(
-            self.position,
-            self.orientation_quaternion,
-            current_time,
-            "odom",
-            "map"
-        )
+
+
+
         print("init")
 
 def EncCallback(data):
@@ -136,11 +132,11 @@ if __name__ == '__main__':
     rospy.Subscriber("ERP42_steer",Float32,SteerCallback) # 2 bytes
     rospy.Subscriber("ERP42_speed",Float32,SpeedCallback) # 2 bytes
     
-    if(not amcl_mode):
-        class_init_pose = initpose() # initial pose
+    class_init_pose = initpose() # initial pose
 
     odom_pub = rospy.Publisher("odom/enc", Odometry, queue_size=50)
     odom_broadcaster = tf.TransformBroadcaster()
+    init_broadcaster = tf.TransformBroadcaster()
 
     erp_speed = 0
     cur_encoder=0
@@ -190,7 +186,6 @@ if __name__ == '__main__':
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, th)
 
         # first, we'll publish the transform over tf
-        print(pub_wheel_tf)
         if(pub_wheel_tf):
             odom_broadcaster.sendTransform(
                 (x, y, 0.),
@@ -199,6 +194,23 @@ if __name__ == '__main__':
                 "base_footprint",
                 "odom"
             )
+        if(not amcl_mode):
+            odom_broadcaster.sendTransform(
+                class_init_pose.position,
+                class_init_pose.orientation_quaternion,
+                current_time,
+                "odom",
+                "map"
+                )
+        else:
+            init_broadcaster.sendTransform(
+                class_init_pose.position,
+                class_init_pose.orientation_quaternion,
+                current_time,
+                "start", # for path 
+                "map"
+            )
+
 
         # next, we'll publish the odometry message over ROS
         odom = Odometry()
