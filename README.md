@@ -61,7 +61,14 @@ param
 
 ``rosbag play -($rosbag name).bag --clock``
 
+## you need hyparos file
+under /src file 
+
+``git clone https://github.com/Hypha-ROS/hypharos_minicar.git``
+
 ## Protocol
 
 ![img](./docs/Protocol_set.png)
+
+
 
