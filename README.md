@@ -61,17 +61,11 @@ param
 
 ``rosbag play -($rosbag name).bag --clock``
 
-## you need hyparos file
+## you need stauto-MDS file
 under /src file 
 
-``git clone https://github.com/Hypha-ROS/hypharos_minicar.git``
+``git clone https://github.com/choiyungsik/stauto-MDS.git``
 
 ## Protocol
 
 ![img](./docs/Protocol_set.png)
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
