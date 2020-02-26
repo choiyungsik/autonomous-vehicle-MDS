@@ -20,8 +20,9 @@
     </node>
 
     <!-- gps odom -->
-    <!-- <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true">
-    </node> -->
+    <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true">
+        <!--<remap from="fix" to="gps/fix" >-->
+    </node>
 
     <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
         <rosparam command="load" file="$(find stauto_sensor)/launch/params/minicar_imu_ekf_params.yaml" />

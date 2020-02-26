@@ -14,7 +14,6 @@ import os
 import sys
 
 import math
-port = "/dev/ttyACM0"
 gps_data_bef = ""
 
 
@@ -92,7 +91,7 @@ fix_type={ '0' : "Invalid",
 if __name__ == '__main__':
     rospy.init_node("gps_node")
 
-    port = rospy.get_param("gps_port",port)
+    port = rospy.get_param("~gps_port")
     print(port)
 
     TCP_info = SocketInfo()
