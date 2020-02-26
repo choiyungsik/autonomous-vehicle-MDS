@@ -2,7 +2,7 @@
 import keyboard
 import serial
 import socket as soc
-
+import rospkg
 #import rospy
 import keyboard
 import time
@@ -132,6 +132,9 @@ if __name__ == '__main__':
     prev_pos = [0.0,0.0]
     Line = 0.0
 
+    rospack = rospkg.RosPack()
+    rospack.list()
+    arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
     f=open("gps_data/gps_data_seoultech.txt",'w')
 
     while isrunning:

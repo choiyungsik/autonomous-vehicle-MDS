@@ -1,7 +1,5 @@
 /*
- * Translates nav_msgs/Odometry in UTM coordinates back into sensor_msgs/NavSat{Fix,Status}
- * Useful for visualizing UTM data on a map or comparing with raw GPS data
- * Added by Dheera Venkatraman (dheera@dheera.net)
+ * Translates sensor_msgs/NavSat{Fix,Status} into nav_msgs/Odometry using UTM
  */
 
 #include <ros/ros.h>
@@ -9,85 +7,178 @@
 #include <message_filters/time_synchronizer.h>
 #include <sensor_msgs/NavSatStatus.h>
 #include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/Imu.h>
 #include <gps_common/conversions.h>
 #include <nav_msgs/Odometry.h>
+#include <tf/transform_broadcaster.h>
+#include <geometry_msgs/Quaternion.h>
+#include <std_msgs/Float32.h>
+#include <iostream>
+#include <math.h>
+#include <float.h>
 
 using namespace gps_common;
 
-static ros::Publisher fix_pub;
+static ros::Publisher odom_pub;
 std::string frame_id, child_frame_id;
-std::string zone_param;
 double rot_cov;
+bool append_zone = false;
+double east;
+double north;
+double pre_x, pre_y;
+int cnt;
+tf::Quaternion q;
+double yaw_val_;
 
-void callback(const nav_msgs::OdometryConstPtr& odom) {
+// void imu_callback(const sensor_msgs::ImuConstPtr& imu){
 
-  if (odom->header.stamp == ros::Time(0)) {
+//   q = tf::Quaternion (imu->orientation.x,imu->orientation.y,imu->orientation.z,imu->orientation.w);
+// }
+
+// void yaw_callback(const std_msgs::Float32ConstPtr &yaw_val){
+
+//   yaw_val_ = yaw_val->data;
+// }
+
+void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
+  if (fix->status.status == sensor_msgs::NavSatStatus::STATUS_NO_FIX) {
+    ROS_DEBUG_THROTTLE(60,"No fix.");
     return;
   }
 
-  if (!fix_pub) {
+  if (fix->header.stamp == ros::Time(0)) {
     return;
   }
 
-  double northing, easting, latitude, longitude;
+  double northing, easting;
   std::string zone;
-  sensor_msgs::NavSatFix fix;
 
-  northing = odom->pose.pose.position.y;
-  easting = odom->pose.pose.position.x;
 
-  if(zone_param.length() > 0) {
-    // utm zone was supplied as a ROS parameter
-    zone = zone_param;
-    fix.header.frame_id = odom->header.frame_id;
-  } else {
-    // look for the utm zone in the frame_id
-    std::size_t pos = odom->header.frame_id.find("/utm_");
-    if(pos==std::string::npos) {
-      ROS_WARN("UTM zone not found in frame_id");
-      return;
-    }
-    zone = odom->header.frame_id.substr(pos + 5, 3);
-    fix.header.frame_id = odom->header.frame_id.substr(0, pos);
+  LLtoUTM(fix->latitude, fix->longitude, northing, easting, zone);
+
+  if(cnt == 0)
+  {
+    east = easting;
+    north = northing;
+    cnt++;
+  }
+  else
+  {
+
   }
 
-  ROS_INFO("zone: %s", zone.c_str());
+  if (odom_pub) {
+    nav_msgs::Odometry odom;
+    odom.header.stamp = fix->header.stamp;
 
-  fix.header.stamp = odom->header.stamp;
+    if (frame_id.empty()) {
+      if(append_zone) {
+        odom.header.frame_id = fix->header.frame_id + "/utm_" + zone;
+      } else {
+        odom.header.frame_id = fix->header.frame_id;
+      }
+    } else {
+      if(append_zone) {
+        odom.header.frame_id = frame_id + "/utm_" + zone;
+      } else {
+        odom.header.frame_id = frame_id;
+      }
+    }
 
-  UTMtoLL(northing, easting, zone, latitude, longitude);
 
-  fix.latitude = latitude;
-  fix.longitude = longitude; 
-  fix.altitude = odom->pose.pose.position.z;
+    odom.header.frame_id = "base_link";
+    odom.child_frame_id = "odom";
 
-  fix.position_covariance[0] = odom->pose.covariance[0];
-  fix.position_covariance[1] = odom->pose.covariance[1];
-  fix.position_covariance[2] = odom->pose.covariance[2];
-  fix.position_covariance[3] = odom->pose.covariance[6];
-  fix.position_covariance[4] = odom->pose.covariance[7];
-  fix.position_covariance[5] = odom->pose.covariance[8];
-  fix.position_covariance[6] = odom->pose.covariance[12];
-  fix.position_covariance[7] = odom->pose.covariance[13];
-  fix.position_covariance[8] = odom->pose.covariance[14];
-  
-  fix.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+    // odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
+    // odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
+    odom.pose.pose.position.x = easting;
+    odom.pose.pose.position.y = northing;
+    odom.pose.pose.position.z = fix->altitude;
 
-  fix_pub.publish(fix);
+    double Yaw = atan2(odom.pose.pose.position.y - pre_y, odom.pose.pose.position.x - pre_x );
+
+
+    static tf::TransformBroadcaster br;
+    tf::Transform transform;
+    transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, 0.0) );
+    q.setRPY(0, 0, Yaw);
+    transform.setRotation(q);
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "odom"));
+
+    odom.pose.pose.orientation.x = q.getX();
+    odom.pose.pose.orientation.y = q.getY();
+    odom.pose.pose.orientation.z = q.getZ();
+    odom.pose.pose.orientation.w = q.getW();
+
+
+    pre_x = easting;
+    pre_y = northing;
+
+    // static tf::TransformBroadcaster br;
+    // tf::Transform transform;
+    // tf::Matrix3x3 m(q);
+    // double roll, pitch, yaw, yaw_;
+
+    // m.getRPY(roll, pitch, yaw);
+    // yaw_ = -yaw_val_*0.9 - 85 * (3.14/180); // because our imu is not right hand rule and align
+
+    // geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromRollPitchYaw(0,0,yaw_);
+    // geometry_msgs::Quaternion odom_quat_;
+    // if(isnan(odom_quat.x) != true){
+    //   odom.pose.pose.orientation = odom_quat;
+    //   odom_quat_ = odom_quat;
+    // }
+    // else{
+    //   odom.pose.pose.orientation = odom_quat_;
+    // }
+
+    // q.setRPY(roll, pitch, yaw_);
+    // transform.setRotation(q);
+    // transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z) );
+    // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "base_footprint"));  // gps odom only with imu_yaw
+
+    // Use ENU covariance to build XYZRPY covariance
+
+
+    boost::array<double, 36> covariance = {{
+      fix->position_covariance[0],
+      fix->position_covariance[1],
+      fix->position_covariance[2],
+      0, 0, 0,
+      fix->position_covariance[3],
+      fix->position_covariance[4],
+      fix->position_covariance[5],
+      0, 0, 0,
+      fix->position_covariance[6],
+      fix->position_covariance[7],
+      fix->position_covariance[8],
+      0, 0, 0,
+      0, 0, 0, rot_cov, 0, 0,
+      0, 0, 0, 0, rot_cov, 0,
+      0, 0, 0, 0, 0, rot_cov
+    }};
+
+    odom.pose.covariance = covariance;
+
+    odom_pub.publish(odom);
+  }
 }
 
 int main (int argc, char **argv) {
-  ros::init(argc, argv, "utm_odometry_to_navsatfix_node");
+  ros::init(argc, argv, "utm_odometry_node");
   ros::NodeHandle node;
   ros::NodeHandle priv_node("~");
 
   priv_node.param<std::string>("frame_id", frame_id, "");
-  priv_node.param<std::string>("zone", zone_param, "");
+  priv_node.param<std::string>("child_frame_id", child_frame_id, "");
+  priv_node.param<double>("rot_covariance", rot_cov, 99999.0);
+  priv_node.param<bool>("append_zone", append_zone, false);
 
-  fix_pub = node.advertise<sensor_msgs::NavSatFix>("odom_fix", 10);
+  odom_pub = node.advertise<nav_msgs::Odometry>("/odom/gps", 10);
 
-  ros::Subscriber odom_sub = node.subscribe("odom", 10, callback);
+  ros::Subscriber fix_sub = node.subscribe("/gps/fix", 10, callback);
+  // ros::Subscriber imu_sub = node.subscribe("/imu/data", 10, imu_callback);
+  // ros::Subscriber yaw_sub = node.subscribe("yaw_degree", 10, yaw_callback);
 
   ros::spin();
 }
-
