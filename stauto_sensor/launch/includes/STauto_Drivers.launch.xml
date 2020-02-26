@@ -44,8 +44,17 @@
             
         </node>
     </group> -->
+<<<<<<< HEAD
 
     <!-- controller to ERP42  -->
     <node pkg="stauto_control" type="PC_to_ERP42.py" name="serial_control" output="screen"> </node>
+=======
+<<<<<<< HEAD
+
+    <!-- controller to ERP42  -->
+    <node pkg="stauto_control" type="PC_to_ERP42.py" name="serial_control" output="screen"> </node>
+=======
+>>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
 
 </launch>

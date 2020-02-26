@@ -19,7 +19,7 @@
 
 ### IMU
 
-``rosrun  pangyo_control get_imu 
+``rosrun  stauto_sensor get_imu 
 ``
 
 ### Getting ERP42 information (encoder, steer, speed, brake, gear)
@@ -29,8 +29,19 @@
 
 ### GPS
 
-``rosrun  stauto_sensor gps_data_pangyo.py 
+``rosrun  stauto_sensor get_gps_data.py 
 ``
+
+### GPS Save
+
+``rosrun stauto_sensor gps_data_save.py 
+``
+
+### GPS Path
+
+``rosrun stauto_sensor gps_path.py 
+``
+
 ### localization
 
 ``roslaunch stauto_sensor STauto_Racing.launch``
@@ -50,7 +61,17 @@ param
 
 ``rosbag play -($rosbag name).bag --clock``
 
+## you need hyparos file
+under /src file 
+
+``git clone https://github.com/Hypha-ROS/hypharos_minicar.git``
+
 ## Protocol
 
 ![img](./docs/Protocol_set.png)
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
