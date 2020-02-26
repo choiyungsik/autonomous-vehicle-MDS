@@ -13,7 +13,7 @@
 using namespace gps_common;
 
 static ros::Publisher odom_pub;
-std::string frame_id, child_frame_id;
+std::string frame_id, child_frame_id, gps_data;
 double rot_cov;
 bool append_zone = false;
 
@@ -93,12 +93,13 @@ int main (int argc, char **argv) {
 
   priv_node.param<std::string>("frame_id", frame_id, "");
   priv_node.param<std::string>("child_frame_id", child_frame_id, "");
+  priv_node.param<std::string>("/gps/fix", gps_data, "");
   priv_node.param<double>("rot_covariance", rot_cov, 99999.0);
   priv_node.param<bool>("append_zone", append_zone, false);
 
-  odom_pub = node.advertise<nav_msgs::Odometry>("odom", 10);
+  odom_pub = node.advertise<nav_msgs::Odometry>("odom/gps", 10);
 
-  ros::Subscriber fix_sub = node.subscribe("fix", 10, callback);
+  ros::Subscriber fix_sub = node.subscribe(gps_data, 10, callback);
 
   ros::spin();
 }
