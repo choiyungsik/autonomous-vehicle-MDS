@@ -5,23 +5,14 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-        - /LaserScan1
->>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
-        - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
-        - /Local Map1
         - /Local Map1/Polygon1
         - /Local Map1/Costmap1
         - /Local Map1/Planner1
-        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 814
   - Class: rviz/Selection
@@ -41,7 +32,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -93,6 +84,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
@@ -131,39 +123,32 @@ Visualization Manager:
           Value: true
         imu_link:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         velodyne:
           Value: true
-<<<<<<< HEAD
-      Marker Scale: 5
-=======
-      Marker Scale: 15
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
+      Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: true
+      Show Names: false
       Tree:
-<<<<<<< HEAD
-        {}
-=======
         map:
-          {}
-        odom:
-          base_footprint:
-            base_link:
-              GPS_link:
-                {}
-              base_foot_link:
-                {}
-              camera_link:
-                {}
-              imu_link:
-                {}
-              velodyne:
-                {}
->>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
+          odom:
+            base_footprint:
+              base_link:
+                GPS_link:
+                  {}
+                base_foot_link:
+                  {}
+                camera_link:
+                  {}
+                imu_link:
+                  {}
+                velodyne:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -238,7 +223,7 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /move_base/GlobalPlanner/plan
+      Topic: /odompath
       Unreliable: false
       Value: true
     - Class: rviz/Group
@@ -318,7 +303,7 @@ Visualization Manager:
           Radius: 0.0299999993
           Shaft Diameter: 0.100000001
           Shaft Length: 0.100000001
-          Topic: /odompath/enc
+          Topic: /move_base/DWAPlannerROS/local_plan
           Unreliable: false
           Value: true
       Enabled: true
@@ -354,29 +339,6 @@ Visualization Manager:
       Topic: /move_base_simple/goal
       Unreliable: false
       Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 255; 170; 0
-      Enabled: true
-      Head Diameter: 0.300000012
-      Head Length: 0.200000003
-      Length: 0.300000012
-      Line Style: Lines
-      Line Width: 0.0299999993
-      Name: Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.0299999993
-      Shaft Diameter: 0.100000001
-      Shaft Length: 0.100000001
-      Topic: /move_base/TrajectoryPlannerROS/local_plan
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -397,7 +359,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.74579549
+      Angle: -1.67079496
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -407,27 +369,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-<<<<<<< HEAD
-      Scale: 16.5056782
+      Scale: 78.7799606
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 24.9368992
-      Y: 78.7353745
-=======
-<<<<<<< HEAD
-      Scale: 15.7023764
-      Target Frame: <Fixed Frame>
-      Value: TopDownOrtho (rviz)
-      X: 39.3721199
-      Y: 77.500618
-=======
-      Scale: 7.28524303
-      Target Frame: <Fixed Frame>
-      Value: TopDownOrtho (rviz)
-      X: 29.2097187
-      Y: 95.8485718
->>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
+      X: 33.993824
+      Y: 25.4180412
     Saved: ~
 Window Geometry:
   Displays:
