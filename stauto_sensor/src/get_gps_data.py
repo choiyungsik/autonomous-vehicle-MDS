@@ -92,7 +92,7 @@ fix_type={ '0' : "Invalid",
 if __name__ == '__main__':
     rospy.init_node("gps_node")
 
-    port = rospy.get_param("~GPS_PORT",port)
+    port = rospy.get_param("gps_port",port)
     print(port)
 
     TCP_info = SocketInfo()

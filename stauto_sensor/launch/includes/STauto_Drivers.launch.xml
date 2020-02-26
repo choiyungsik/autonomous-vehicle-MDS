@@ -21,9 +21,31 @@
 
     <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true">
     </node>
-    <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
         <rosparam command="load" file="$(find stauto_sensor)/launch/params/minicar_imu_ekf_params.yaml" />
         <remap from="/odometry/filtered" to="/odom" />
-    </node> -->
+    </node>
+
+    <!-- <group ns="itu_rover"> 
+        <rosparam command="load" file="$(find stauto_sensor)/launch/params/ekf_params.yaml" />
+        <rosparam command="load" file="$(find stauto_sensor)/launch/params/navsat_params_sim.yaml" />
+        
+        <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_odom" clear_params="true"/>
+
+        <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se_map" clear_params="true">
+            <remap from="odometry/filtered" to="odometry/filtered_map"/>
+        </node>
+
+        <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform" clear_params="true" output="screen" >
+            <remap from="odometry/filtered" to="odometry/filtered_map"/>
+            <remap from="gps/fix" to="/gps/fix"/>
+            <remap from="imu/data" to="/imu/data"/>
+            
+        </node>
+    </group> -->
+
+    <!-- controller to ERP42  -->
+    <node pkg="stauto_control" type="PC_to_ERP42.py" name="serial_control" output="screen"> </node>
 
 </launch>
