@@ -69,9 +69,3 @@ under /src file
 ## Protocol
 
 ![img](./docs/Protocol_set.png)
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
