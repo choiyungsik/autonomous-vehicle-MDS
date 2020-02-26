@@ -8,6 +8,7 @@ Panels:
         - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
         - /Local Map1/Polygon1
@@ -129,11 +130,11 @@ Visualization Manager:
           Value: true
         velodyne:
           Value: true
-      Marker Scale: 1
+      Marker Scale: 4
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
         map:
           odom:
@@ -223,7 +224,7 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /odompath
+      Topic: /move_base/GlobalPlanner/plan
       Unreliable: false
       Value: true
     - Class: rviz/Group
@@ -369,11 +370,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 78.7799606
+      Scale: 11.4848785
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 33.993824
-      Y: 25.4180412
+      X: 37.8709564
+      Y: 84.7281342
     Saved: ~
 Window Geometry:
   Displays:
