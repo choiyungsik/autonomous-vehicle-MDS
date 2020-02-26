@@ -94,9 +94,9 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	IMU_pub IMU_pub;
 
-	nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB0");
+	//nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB0");
 
-	nh_private.getParam("IMU_PORT", port);
+	nh_private.getParam("imu_port", port);
 
 	int sPort = -1;
 	int isread = 0;

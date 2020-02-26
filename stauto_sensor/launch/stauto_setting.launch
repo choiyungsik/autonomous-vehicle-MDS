@@ -3,18 +3,30 @@
 <launch>
     
     <!-- IMU data-->
-    <node pkg="stauto_sensor" type="get_imu" name="imu_data" output="screen"> </node>
+    <node pkg="stauto_sensor" type="get_imu" name="imu_data" output="screen">
+        <param name="imu_port" type="str" value="/dev/ttyUSB0"/> 
+    </node>
 
     <!-- ERP42 data-->
-    <node pkg="stauto_control" type="ERP42_to_PC" name="erp42_data" output="screen"> </node>
+    <node pkg="stauto_control" type="ERP42_to_PC" name="erp42_data" output="screen">
+        <param name="robot_port" type="str" value="/dev/ttyUSB1"/>
+    </node>
+
+    <!-- serial control -->
+    <node pkg="stauto_control" type="PC_to_ERP42" name="serial_control" output="screen">
+        <param name="robot_port" type="str" value="/dev/ttyUSB1"/>
+    </node>
 
     <!-- GPS data-->
-    <node pkg="stauto_sensor" type="get_gps_data" name="gps_data" output="screen"> </node>
+    <node pkg="stauto_sensor" type="get_gps_data" name="gps_data" output="screen"> 
+        <param name="gps_port" type="str" value="/dev/ttyACM0"/>
+    </node>
 
     <!-- Velodyne data-->
-    <include file="$(find velodyne)/velodyne_pointcloud/launch/VLP16_points.launch"> </include>
+    <include file="$(find velodyne)/velodyne_pointcloud/launch/VLP16_points.launch"> 
+    </include>
 
     <!-- RVIZ -->
-    <node name="rviz" pkg="rviz" type="rviz"/>
+    <!-- <node name="rviz" pkg="rviz" type="rviz"/> -->
 
 </launch>
