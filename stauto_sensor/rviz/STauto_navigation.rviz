@@ -7,9 +7,17 @@ Panels:
         - /Global Options1
         - /TF1/Frames1
         - /TF1/Tree1
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+        - /LaserScan1
+>>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
         - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
+        - /Local Map1
         - /Local Map1/Polygon1
         - /Local Map1/Costmap1
         - /Local Map1/Planner1
@@ -33,7 +41,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -85,7 +93,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
@@ -124,32 +131,39 @@ Visualization Manager:
           Value: true
         imu_link:
           Value: true
-        map:
-          Value: true
         odom:
           Value: true
         velodyne:
           Value: true
+<<<<<<< HEAD
       Marker Scale: 5
+=======
+      Marker Scale: 15
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
+<<<<<<< HEAD
+        {}
+=======
         map:
-          odom:
-            base_footprint:
-              base_link:
-                GPS_link:
-                  {}
-                base_foot_link:
-                  {}
-                camera_link:
-                  {}
-                imu_link:
-                  {}
-                velodyne:
-                  {}
+          {}
+        odom:
+          base_footprint:
+            base_link:
+              GPS_link:
+                {}
+              base_foot_link:
+                {}
+              camera_link:
+                {}
+              imu_link:
+                {}
+              velodyne:
+                {}
+>>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -393,11 +407,27 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
+<<<<<<< HEAD
       Scale: 16.5056782
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 24.9368992
       Y: 78.7353745
+=======
+<<<<<<< HEAD
+      Scale: 15.7023764
+      Target Frame: <Fixed Frame>
+      Value: TopDownOrtho (rviz)
+      X: 39.3721199
+      Y: 77.500618
+=======
+      Scale: 7.28524303
+      Target Frame: <Fixed Frame>
+      Value: TopDownOrtho (rviz)
+      X: 29.2097187
+      Y: 95.8485718
+>>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
     Saved: ~
 Window Geometry:
   Displays:

@@ -74,9 +74,17 @@
     </node>
     
     <!--  ****** MPC Node ******  -->
+<<<<<<< HEAD
     <!-- <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen"  >
+=======
+<<<<<<< HEAD
+    <!-- <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen"  >
+=======
+    <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen"  >
+>>>>>>> 74c2efefa17de87439edaa826c95818c41871db7
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
         <rosparam file="$(find hypharos_minicar)/launch/params/mpc/mpc_params.yaml" command="load" />
-    </node> -->
+    </node>
 
     <!--  ****** Pure Pursuit ******  -->
     <node name="Pure_Pursuit" pkg="hypharos_minicar" type="Pure_Pursuit" output="screen" >

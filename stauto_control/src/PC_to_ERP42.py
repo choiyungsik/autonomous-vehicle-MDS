@@ -12,7 +12,7 @@ import time
 import serial
 
 
-port = "/dev/ttyUSB1"
+port = "/dev/ttyUSB0"
 
 S = chr(0x53)
 T = chr(0x54)
@@ -140,8 +140,13 @@ def vel_callback(msg):
 if __name__ == '__main__':
     rospy.init_node('serial_node')
 
+<<<<<<< HEAD
     rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback)
     rospy.Subscriber("/cmd_vel", Twist, vel_callback)
+=======
+    rospy.Subscriber("/pure_pursuit/ackermann_cmd", AckermannDriveStamped, acker_callback)
+    rospy.Subscriber("/pure_pursuit/cmd_vel", Twist, vel_callback)
+>>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
 
     rate = rospy.Rate(20)
 
