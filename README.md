@@ -61,10 +61,6 @@ param
 
 ``rosbag play -($rosbag name).bag --clock``
 
-## you need stauto-MDS file
-under /src file 
-
-``git clone https://github.com/choiyungsik/stauto-MDS.git``
 
 ## Protocol
 
