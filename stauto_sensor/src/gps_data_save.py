@@ -2,7 +2,7 @@
 import keyboard
 import serial
 import socket as soc
-
+import rospkg
 #import rospy
 import keyboard
 import time
@@ -132,7 +132,10 @@ if __name__ == '__main__':
     prev_pos = [0.0,0.0]
     Line = 0.0
 
-    f=open("gps_data/gps_data_seoultech.txt",'w')
+    rospack = rospkg.RosPack()
+    rospack.list()
+    arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
+    f=open(arg_name + "gps_data_seoultech.txt",'w')
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
@@ -190,7 +193,7 @@ if __name__ == '__main__':
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
                 if ((float(data[6])==4) | (float(data[6])==5)):
-                    if (time.time()-prev_time>=1.5):
+                    if (time.time()-prev_time>=0.7):
                         print('good')
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')

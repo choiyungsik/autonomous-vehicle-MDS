@@ -14,6 +14,7 @@ import os
 import sys
 
 import math
+#port = "/dev/ttyACM0"
 gps_data_bef = ""
 
 
@@ -69,7 +70,7 @@ def cb_imu(data):
 def do_work(lat,lon):
 
     gpsmsg.header.stamp = rospy.Time.now()
-    gpsmsg.header.frame_id = "GPS_link"
+    gpsmsg.header.frame_id = "base_link"
     gpsmsg.latitude=lat
     gpsmsg.longitude=lon
     gpsmsg. position_covariance_type=0
@@ -91,7 +92,9 @@ fix_type={ '0' : "Invalid",
 if __name__ == '__main__':
     rospy.init_node("gps_node")
 
-    port = rospy.get_param("~gps_port")
+    #port = rospy.get_param("~GPS_PORT",port)
+    port = str(rospy.get_param("~gps_port","/dev/ttyUSB0"))
+
     print(port)
 
     TCP_info = SocketInfo()
