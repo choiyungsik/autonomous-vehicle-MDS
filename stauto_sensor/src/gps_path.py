@@ -3,6 +3,7 @@
 import rospy
 import tf
 import numpy as np
+import rospkg
 from sensor_msgs.msg import NavSatFix
 from nav_msgs.msg import Odometry, Path
 from geometry_msgs.msg import PoseStamped
@@ -44,9 +45,9 @@ def convert_degree_to_meter(lat,lon):
     return [X,Y]
 
 def odom_callback(data):
-    global step_gps, odom_x, odom_y
-    step_gps+=1
+    global odom_x, odom_y
 
+    #print(odom_x)
     odom_x = data.pose.pose.position.x
     odom_y = data.pose.pose.position.y
 
@@ -63,24 +64,21 @@ def euler_to_quaternion(yaw, pitch, roll):
 def pub_nav(lat,lon):
 
     gpsmsg.header.stamp = rospy.Time.now()
-    gpsmsg.header.frame_id = "GPS_link"
+    gpsmsg.header.frame_id = "base_link"
     gpsmsg.latitude=lat
     gpsmsg.longitude=lon
-    gpsmsg.position_covariance_type=0
+    gpsmsg. position_covariance_type=0
     navs_pub.publish(gpsmsg)
     #print(gpsmsg)
 
 def pub_path(theta):
-    global step_gps
+    global step_gps, odom_x, odom_y, init_time
     qx, qy, qz, qw = euler_to_quaternion(theta, 0, 0)
-
 
 
     pathmsg.header.seq = step_gps
     pathmsg.header.stamp = rospy.Time.now()
-    pathmsg.header.frame_id = "GPS_link"
-
-    pose = PoseStamped()
+    pathmsg.header.frame_id = "base_link"
 
     pose.header.seq = pathmsg.header.seq
     pose.header.stamp = pathmsg.header.stamp
@@ -99,9 +97,24 @@ def pub_path(theta):
 
     path_pub.publish(pathmsg)
 
+    if (step_gps == len(gps_data)-2):
+        goal.header.seq = 1
+        goal.header.stamp = init_time
+        goal.header.frame_id = "base_link"
+
+        goal.pose.position.x = odom_x
+        goal.pose.position.y = odom_y
+        goal.pose.position.z = 0
+
+        goal.pose.orientation.x = qx
+        goal.pose.orientation.y = qy
+        goal.pose.orientation.z = qz
+        goal.pose.orientation.w = qw
+
+        goal_pub.publish(goal)
 
 
-    print(pathmsg)
+    #print(pathmsg)
 
 if __name__ == '__main__':
 
@@ -112,8 +125,11 @@ if __name__ == '__main__':
 
     navs_pub = rospy.Publisher('/gps/fix', NavSatFix, queue_size=1)
     path_pub = rospy.Publisher('/path', Path, queue_size=1)
+    goal_pub = rospy.Publisher('/pure_pursuit/goal', PoseStamped, queue_size=1)
 
-    arg_name = rospy.get_param("~arg_name","gps_data/")
+    rospack = rospkg.RosPack()
+    rospack.list()
+    arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
 
     f = open(arg_name + "gps_data_seoultech.txt","r")
 
@@ -126,10 +142,15 @@ if __name__ == '__main__':
     gpsmsg=NavSatFix()
     pathmsg=Path()
     pose = PoseStamped()
+    goal = PoseStamped()
+    rospy.sleep(0.5)
 
+    init_time=rospy.Time.now()
+    
     while not rospy.is_shutdown():
         #s(_,rot) = listener.lookupTransform('pose', 'base_link', rospy.Time(0))
         #yaw = -tf.transformations.euler_from_quaternion(rot)[2]
+
         if (step_gps<len(gps_data)-1):
 
             gps_n = gps_data[step_gps].split(',')
@@ -150,6 +171,11 @@ if __name__ == '__main__':
             theta.append(atan2(gps_n_1[1]-gps_n[1], gps_n_1[0]-gps_n[0]))
 
             pub_path(theta[step_gps])
+            step_gps=step_gps+1
+
+
+
+
             #Line = sqrt((gps_n[0]-trans[0])**2 + (gps_n[1]-trans[1])**2)
         else:
             pass

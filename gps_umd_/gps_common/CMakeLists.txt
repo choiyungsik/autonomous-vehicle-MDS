@@ -16,6 +16,7 @@ set(DEPS
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
+  tf
   ${DEPS}
 )
 
