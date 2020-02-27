@@ -15,7 +15,7 @@
 #include <std_msgs/Float32.h>
 #include <iostream>
 #include <math.h>
-#include <float.h>
+#include <float.h> 
 
 using namespace gps_common;
 
@@ -25,20 +25,19 @@ double rot_cov;
 bool append_zone = false;
 double east;
 double north;
-double pre_x, pre_y;
 int cnt;
 tf::Quaternion q;
 double yaw_val_;
 
-// void imu_callback(const sensor_msgs::ImuConstPtr& imu){
+void imu_callback(const sensor_msgs::ImuConstPtr& imu){
 
-//   q = tf::Quaternion (imu->orientation.x,imu->orientation.y,imu->orientation.z,imu->orientation.w);
-// }
+  q = tf::Quaternion (imu->orientation.x,imu->orientation.y,imu->orientation.z,imu->orientation.w);
+}
 
-// void yaw_callback(const std_msgs::Float32ConstPtr &yaw_val){
+void yaw_callback(const std_msgs::Float32ConstPtr &yaw_val){
 
-//   yaw_val_ = yaw_val->data;
-// }
+  yaw_val_ = yaw_val->data;
+}
 
 void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
   if (fix->status.status == sensor_msgs::NavSatStatus::STATUS_NO_FIX) {
@@ -52,7 +51,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
 
   double northing, easting;
   std::string zone;
-
+  
 
   LLtoUTM(fix->latitude, fix->longitude, northing, easting, zone);
 
@@ -64,7 +63,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
   }
   else
   {
-
+    
   }
 
   if (odom_pub) {
@@ -86,60 +85,42 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     }
 
 
-    odom.header.frame_id = "base_link";
-    odom.child_frame_id = "odom";
+    odom.header.frame_id = "odom";
+    odom.child_frame_id = "base_footprint";
 
-    // odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
-    // odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
-    odom.pose.pose.position.x = easting;
-    odom.pose.pose.position.y = northing;
+    odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
+    odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
     odom.pose.pose.position.z = fix->altitude;
-
-    double Yaw = atan2(odom.pose.pose.position.y - pre_y, odom.pose.pose.position.x - pre_x );
-
-
-    static tf::TransformBroadcaster br;
-    tf::Transform transform;
-    transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, 0.0) );
-    q.setRPY(0, 0, Yaw);
-    transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "base_link", "odom"));
-
-    odom.pose.pose.orientation.x = q.getX();
-    odom.pose.pose.orientation.y = q.getY();
-    odom.pose.pose.orientation.z = q.getZ();
-    odom.pose.pose.orientation.w = q.getW();
-
-
-    pre_x = easting;
-    pre_y = northing;
-
+    
+    // odom.pose.pose.orientation.x = 0;
+    // odom.pose.pose.orientation.y = 0;
+    // odom.pose.pose.orientation.z = 0;
+    // odom.pose.pose.orientation.w = 1;
+    
     // static tf::TransformBroadcaster br;
-    // tf::Transform transform;
-    // tf::Matrix3x3 m(q);
-    // double roll, pitch, yaw, yaw_;
+    tf::Transform transform;
+    tf::Matrix3x3 m(q);
+    double roll, pitch, yaw, yaw_;
+    
+    m.getRPY(roll, pitch, yaw);
+    yaw_ = -yaw_val_*0.9 - 85 * (3.14/180); // because our imu is not right hand rule and align
 
-    // m.getRPY(roll, pitch, yaw);
-    // yaw_ = -yaw_val_*0.9 - 85 * (3.14/180); // because our imu is not right hand rule and align
+    geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromRollPitchYaw(0,0,yaw_);
+    geometry_msgs::Quaternion odom_quat_;
+    if(isnan(odom_quat.x) != true){
+      odom.pose.pose.orientation = odom_quat;
+      odom_quat_ = odom_quat;
+    }
+    else{
+      odom.pose.pose.orientation = odom_quat_;
+    }
 
-    // geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromRollPitchYaw(0,0,yaw_);
-    // geometry_msgs::Quaternion odom_quat_;
-    // if(isnan(odom_quat.x) != true){
-    //   odom.pose.pose.orientation = odom_quat;
-    //   odom_quat_ = odom_quat;
-    // }
-    // else{
-    //   odom.pose.pose.orientation = odom_quat_;
-    // }
-
-    // q.setRPY(roll, pitch, yaw_);
-    // transform.setRotation(q);
-    // transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z) );
+    q.setRPY(roll, pitch, yaw_);
+    transform.setRotation(q);
+    transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, odom.pose.pose.position.z) );
     // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "base_footprint"));  // gps odom only with imu_yaw
 
     // Use ENU covariance to build XYZRPY covariance
-
-
     boost::array<double, 36> covariance = {{
       fix->position_covariance[0],
       fix->position_covariance[1],
@@ -177,8 +158,9 @@ int main (int argc, char **argv) {
   odom_pub = node.advertise<nav_msgs::Odometry>("/odom/gps", 10);
 
   ros::Subscriber fix_sub = node.subscribe("/gps/fix", 10, callback);
-  // ros::Subscriber imu_sub = node.subscribe("/imu/data", 10, imu_callback);
-  // ros::Subscriber yaw_sub = node.subscribe("yaw_degree", 10, yaw_callback);
+  ros::Subscriber imu_sub = node.subscribe("/imu/data", 10, imu_callback);
+  ros::Subscriber yaw_sub = node.subscribe("yaw_degree", 10, yaw_callback);
 
   ros::spin();
 }
+
