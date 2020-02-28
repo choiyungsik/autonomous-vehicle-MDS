@@ -97,7 +97,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     // odom.pose.pose.orientation.z = 0;
     // odom.pose.pose.orientation.w = 1;
     
-    // static tf::TransformBroadcaster br;
+    static tf::TransformBroadcaster br;
     tf::Transform transform;
     tf::Matrix3x3 m(q);
     double roll, pitch, yaw, yaw_;

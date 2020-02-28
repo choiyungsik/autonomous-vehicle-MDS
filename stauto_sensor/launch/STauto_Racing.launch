@@ -9,7 +9,7 @@
     <arg name="use_amcl"  default="false" doc="using amcl"/>
 
     <!--- Sim Time -->
-    <param name="/use_sim_time" value="true" />  <!--<param name="/use_sim_time" value="false" /> -->
+    <param name="/use_sim_time" value="false" />  <!--<param name="/use_sim_time" value="false" /> -->
     <arg name="open_rviz" default="true"/>
     
     <!-- ********************** -->

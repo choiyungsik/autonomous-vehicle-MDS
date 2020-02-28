@@ -1,11 +1,11 @@
 # Parameters for pure pursuit controller
-L: 0.1446    # Length of car (m)
-lfw: 0.0723 # distance between the front of the vehicle and its center of gravity
+L: 1.2    # Length of car (m)
+lfw: 0.6 # distance between the front of the vehicle and its center of gravity
 Vcmd: 1.5 # reference speed (m/s)
-Lfw: 1.0 # forward look ahead distance (m)
+Lfw: 3.0 # forward look ahead distance (m)
 goal_radius: 1.0 # unit: m
 controller_freq: 20 # unit: Hz
-steering_gain: 1.2
+steering_gain: 1.0
 base_angle: 0.0 # neutral point of servo (rad) 
 cmd_vel_mode: false # whether or not publishing cmd_vel
 smooth_accel: true # whether or not smoothing the acceleration of car
