@@ -61,7 +61,6 @@ param
 
 ``rosbag play -($rosbag name).bag --clock``
 
-
 ## Protocol
 
 ![img](./docs/Protocol_set.png)

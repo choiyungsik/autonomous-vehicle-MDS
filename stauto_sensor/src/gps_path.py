@@ -64,7 +64,7 @@ def euler_to_quaternion(yaw, pitch, roll):
 def pub_nav(lat,lon):
 
     gpsmsg.header.stamp = rospy.Time.now()
-    gpsmsg.header.frame_id = "base_link"
+    gpsmsg.header.frame_id = "map"
     gpsmsg.latitude=lat
     gpsmsg.longitude=lon
     gpsmsg. position_covariance_type=0
@@ -78,7 +78,7 @@ def pub_path(theta):
 
     pathmsg.header.seq = step_gps
     pathmsg.header.stamp = rospy.Time.now()
-    pathmsg.header.frame_id = "base_link"
+    pathmsg.header.frame_id = "map"
 
     pose.header.seq = pathmsg.header.seq
     pose.header.stamp = pathmsg.header.stamp
@@ -98,9 +98,9 @@ def pub_path(theta):
     path_pub.publish(pathmsg)
 
     if (step_gps == len(gps_data)-2):
-        goal.header.seq = 1
+        goal.header.seq = 0
         goal.header.stamp = init_time
-        goal.header.frame_id = "base_link"
+        goal.header.frame_id = "map"
 
         goal.pose.position.x = odom_x
         goal.pose.position.y = odom_y
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     rospy.sleep(0.5)
 
     init_time=rospy.Time.now()
-    
+
     while not rospy.is_shutdown():
         #s(_,rot) = listener.lookupTransform('pose', 'base_link', rospy.Time(0))
         #yaw = -tf.transformations.euler_from_quaternion(rot)[2]

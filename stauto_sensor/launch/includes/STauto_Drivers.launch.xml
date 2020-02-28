@@ -19,7 +19,6 @@
         <param name="use_amcl" value="$(arg use_amcl)" />
     </node>
 
-    <!-- gps odom -->
     <node pkg="gps_common" type="utm_odometry_node" name="utm_odometry_node" clear_params="true">
     </node>
 

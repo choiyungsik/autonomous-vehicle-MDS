@@ -8,8 +8,9 @@
     <arg name="pub_wheel_odom_tf"  default="false" doc="publish wheel odom tf"/> 
     <arg name="use_amcl"  default="false" doc="using amcl"/>
 
+
     <!--- Sim Time -->
-    <param name="/use_sim_time" value="false" />  <!--<param name="/use_sim_time" value="false" /> -->
+    <param name="/use_sim_time" value="true" />
     <arg name="open_rviz" default="true"/>
     
     <!-- ********************** -->
@@ -56,15 +57,15 @@
     <!-- Navigation (move_base) -->
     <!-- ********************** -->
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-        <rosparam file="$(find stauto_mds)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
-        <rosparam file="$(find stauto_mds)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
-        <rosparam file="$(find stauto_mds)/launch/params/local_costmap_params.yaml" command="load" />
-        <rosparam file="$(find stauto_mds)/launch/params/global_costmap_params.yaml" command="load" />        
+        <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find hypharos_minicar)/launch/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find hypharos_minicar)/launch/params/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find hypharos_minicar)/launch/params/global_costmap_params.yaml" command="load" />        
         <!-- Global Planner -->
         <param name="base_global_planner" value="global_planner/GlobalPlanner" />
         <param name="planner_frequency" value="0.0" />
         <param name="planner_patience" value="5.0" />
-        <rosparam file="$(find stauto_mds)/launch/params/global_planner.yaml" command="load" />
+        <rosparam file="$(find hypharos_minicar)/launch/params/global_planner.yaml" command="load" />
         <!-- Local Planner -->
         <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS" />
         <!-- Our carlike robot is not able to rotate in place -->
@@ -74,17 +75,17 @@
     </node>
     
     <!--  ****** MPC Node ******  -->
-    <!-- <node name="MPC_Node" pkg="stauto_mds" type="MPC_Node" output="screen"  >
-        <rosparam file="$(find stauto_mds)/launch/params/mpc/mpc_params.yaml" command="load" />
-    </node> -->
+    <node name="MPC_Node" pkg="hypharos_minicar" type="MPC_Node" output="screen"  >
+        <rosparam file="$(find hypharos_minicar)/launch/params/mpc/mpc_params.yaml" command="load" />
+    </node>
 
     <!--  ****** Pure Pursuit ******  -->
-    <node name="Pure_Pursuit" pkg="stauto_mds" type="Pure_Pursuit" output="screen" >
-        <rosparam file="$(find stauto_mds)/launch/params/pure_pursuit/pure_pursuit_params.yaml" command="load" />
+    <!-- <node name="Pure_Pursuit" pkg="hypharos_minicar" type="Pure_Pursuit" output="screen" if="$(eval controller == 'pure_pursuit')" >
+        <rosparam file="$(find hypharos_minicar)/launch/params/pure_pursuit/pure_pursuit_params.yaml" command="load" />
         <remap from="/pure_pursuit/odom" to="/odom" />
         <remap from="/pure_pursuit/global_planner" to="/move_base/GlobalPlanner/plan" />
         <remap from="/pure_pursuit/goal" to="/move_base_simple/goal" />
         <remap from="/pure_pursuit/ackermann_cmd" to="/ackermann_cmd" />
-    </node>
+    </node> -->
 
 </launch>
