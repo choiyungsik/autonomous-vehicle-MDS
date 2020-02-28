@@ -11,9 +11,6 @@ import math
 import time
 import serial
 
-
-port = "/dev/ttyUSB0"
-
 S = chr(0x53)
 T = chr(0x54)
 X = chr(0x58)
@@ -126,8 +123,8 @@ def acker_callback(msg):
     global speed, steer
 
     speed = msg.drive.speed
-    steer = msg.drive.steering_angle
-    # print(steer)
+    steer = -(msg.drive.steering_angle)
+    print(steer)
 
 def vel_callback(msg):
     global linear, angular
@@ -140,17 +137,12 @@ def vel_callback(msg):
 if __name__ == '__main__':
     rospy.init_node('serial_node')
 
-<<<<<<< HEAD
     rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback)
     rospy.Subscriber("/cmd_vel", Twist, vel_callback)
-=======
-    rospy.Subscriber("/pure_pursuit/ackermann_cmd", AckermannDriveStamped, acker_callback)
-    rospy.Subscriber("/pure_pursuit/cmd_vel", Twist, vel_callback)
->>>>>>> 38e7c83baea853f04c743eb35a4fa1d5d29d0f25
 
     rate = rospy.Rate(20)
 
-    port = rospy.get_param("robot_port",default=port)
+    port = str(rospy.get_param("~robot_port","/dev/ttyUSB1"))
 
     ser = serial.serial_for_url(port, baudrate=115200, timeout=1)
 

@@ -10,7 +10,8 @@ import time
 import serial
 import struct
 
-port="/dev/ttyUSB1"
+#port="/dev/ttyUSB1"
+
 
 S = chr(0x53)
 T = chr(0x54)
@@ -134,7 +135,7 @@ if __name__ == '__main__':
 
     rate = rospy.Rate(20)
 
-    port = rospy.get_param("robot_port",default=port)
+    port = str(rospy.get_param("~robot_port","/dev/ttyUSB1"))
 
     ser = serial.Serial(port, 
                         baudrate=115200, 

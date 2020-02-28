@@ -12,6 +12,9 @@ set(DEPS
   sensor_msgs
   std_msgs
   rospy
+  tf2
+  tf2_msgs
+  tf
 )
 
 find_package(catkin REQUIRED COMPONENTS
