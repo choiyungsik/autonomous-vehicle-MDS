@@ -136,7 +136,6 @@ if __name__ == '__main__':
                 sys.exit()
         pub = rospy.Publisher('/odompath', Path, queue_size=1)
         pub_enc = rospy.Publisher('/odompath/enc', Path, queue_size=1)
-        #pub_gps = rospy.Publisher('/odompath/gps', Path, queue_size=1)
 
 
         path = Path() #creamos el mensaje path de tipo path 

@@ -135,7 +135,7 @@ if __name__ == '__main__':
     rospack = rospkg.RosPack()
     rospack.list()
     arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
-    f=open(arg_name + "gps_data_seoultech.txt",'w')
+    f=open(arg_name+"gps_data_seoultech.txt",'w')
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
@@ -193,7 +193,7 @@ if __name__ == '__main__':
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
                 if ((float(data[6])==4) | (float(data[6])==5)):
-                    if (time.time()-prev_time>=0.7):
+                    if (time.time()-prev_time>=1.5):
                         print('good')
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')
@@ -201,6 +201,7 @@ if __name__ == '__main__':
                         #print('good!')
 
                 if keyboard.is_pressed('esc'):
+                    print('save ok')
                     f.close()
                     break
 

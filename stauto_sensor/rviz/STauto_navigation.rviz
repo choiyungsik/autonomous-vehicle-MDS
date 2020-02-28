@@ -5,15 +5,17 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
+        - /LaserScan1
+        - /Planner Plan1
         - /Global Map1/Costmap1
         - /Global Map1/Planner1
+        - /Local Map1
         - /Local Map1/Polygon1
         - /Local Map1/Costmap1
         - /Local Map1/Planner1
-        - /Planner Plan2
-        - /Planner Plan3
       Splitter Ratio: 0.5
     Tree Height: 814
   - Class: rviz/Selection
@@ -33,7 +35,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -130,26 +132,27 @@ Visualization Manager:
           Value: true
         velodyne:
           Value: true
-      Marker Scale: 4
+      Marker Scale: 15
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
         map:
-          odom:
-            base_footprint:
-              base_link:
-                GPS_link:
-                  {}
-                base_foot_link:
-                  {}
-                camera_link:
-                  {}
-                imu_link:
-                  {}
-                velodyne:
-                  {}
+          {}
+        odom:
+          base_footprint:
+            base_link:
+              GPS_link:
+                {}
+              base_foot_link:
+                {}
+              camera_link:
+                {}
+              imu_link:
+                {}
+              velodyne:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -224,7 +227,7 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /move_base/GlobalPlanner/plan
+      Topic: /odompath
       Unreliable: false
       Value: true
     - Class: rviz/Group
@@ -304,7 +307,7 @@ Visualization Manager:
           Radius: 0.0299999993
           Shaft Diameter: 0.100000001
           Shaft Length: 0.100000001
-          Topic: /move_base/DWAPlannerROS/local_plan
+          Topic: /odompath/enc
           Unreliable: false
           Value: true
       Enabled: true
@@ -340,52 +343,6 @@ Visualization Manager:
       Topic: /move_base_simple/goal
       Unreliable: false
       Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 85; 0; 255
-      Enabled: true
-      Head Diameter: 0.300000012
-      Head Length: 0.200000003
-      Length: 0.300000012
-      Line Style: Lines
-      Line Width: 0.0299999993
-      Name: Planner Plan
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.0299999993
-      Shaft Diameter: 0.100000001
-      Shaft Length: 0.100000001
-      Topic: /odompath
-      Unreliable: false
-      Value: true
-    - Alpha: 1
-      Buffer Length: 1
-      Class: rviz/Path
-      Color: 255; 255; 0
-      Enabled: true
-      Head Diameter: 0.300000012
-      Head Length: 0.200000003
-      Length: 0.300000012
-      Line Style: Lines
-      Line Width: 0.0299999993
-      Name: Planner Plan
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.0299999993
-      Shaft Diameter: 0.100000001
-      Shaft Length: 0.100000001
-      Topic: /odompath/enc
-      Unreliable: false
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -406,7 +363,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.67079496
+      Angle: -1.74579549
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -416,11 +373,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 11.4848785
+      Scale: 7.28524303
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 37.8709564
-      Y: 84.7281342
+      X: 29.2097187
+      Y: 95.8485718
     Saved: ~
 Window Geometry:
   Displays:
