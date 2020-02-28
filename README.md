@@ -37,10 +37,17 @@
 ``rosrun stauto_sensor gps_data_save.py 
 ``
 
+### GPS Save from rosbag to txt
+
+``rosrun stauto_sensor save_gps_from_rosbag.py
+``
+
 ### GPS Path
 
 ``rosrun stauto_sensor gps_path.py 
 ``
+
+
 
 ### localization
 
