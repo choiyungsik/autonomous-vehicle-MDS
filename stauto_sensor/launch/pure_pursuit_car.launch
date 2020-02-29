@@ -2,7 +2,7 @@
 
 
 <launch>
-	<arg name="robot_port" default="/dev/ttyUSB1"/>
+	<arg name="robot_port" default="/dev/ttyUSB2"/>
 	<!--<param name="/use_sim_time" value="true"/>-->
 	<!-- utm_odom data-->
 	
@@ -17,7 +17,7 @@
 
 
 	<!-- Pure persuit-->
-    	<node pkg="stauto-MDS" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
+    	<node pkg="hypharos_minicar" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
 		<remap from="pure_pursuit/odom" to="/odom/gps" />
 	</node>
 
