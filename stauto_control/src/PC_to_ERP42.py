@@ -1,15 +1,15 @@
 #! /usr/bin/env python
 
 import rospy
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32 
+from ackermann_msgs.msg import AckermannDriveStamped
+from geometry_msgs.msg import Twist
 from math import *
 
+import serial
 import math
 import time
 import serial
-
-
-port = "/dev/ttyUSB1"
 
 S = chr(0x53)
 T = chr(0x54)
@@ -45,16 +45,19 @@ def GetGEAR(gear):
 def GetSPEED(speed):
     global count
     SPEED0 = chr(0x00)
-    SPEED1 = chr(speed)
+    SPEED = int(speed*36) # float to integer
+    print(SPEED)
+    SPEED1 = chr(SPEED) # m/s to km/h*10
+
     return SPEED0, SPEED1
 
 def GetSTEER(steer):
-    steer=steer*71
-    steer_max=0b0000011111010000#+2000
+    steer=steer*71*(180/pi) # rad/s to degree/s*71
+    steer_max=0b0000011111010000 # +2000
     steer_0 = 0b0000000000000000
-    steer_min=0b1111100000110000#-2000
+    steer_min=0b1111100000110000 # -2000
 
-    #print(steer)
+    # print(steer)
     if (steer>=0):
         angle=int(steer)
         STEER=steer_0+angle
@@ -93,22 +96,11 @@ def Send_to_ERP42(gear, speed, steer, brake):
     vals = [S, T, X, AorM, ESTOP, GEAR, SPEED0, SPEED1, STEER0, STEER1, BRAKE, ALIVE, ETX0, ETX1]
 
     for i in range(len(vals)):
-        ser.write(vals[i]) #send!
+        ser.write(vals[i]) # send!
+        
    
 
 cur_ENC_backup=0
-def Read_from_ERP42():
-    global Packet, cur_ENC_backup
-
-    Packet=ser.readline()
-
-    if (len(Packet)==18):
-        cur_ENC=ord(Packet[11:12])
-        cur_ENC_backup=cur_ENC
-        return cur_ENC
-
-    else:
-        return cur_ENC_backup
 
 
 ################################################################################
@@ -118,23 +110,39 @@ speed = 0
 steer = 0
 brake = 0
 
-def cmd_callback(data):
-    global gear, speed, steer, brake
+#def cmd_callback(data):
+#    global gear, speed, steer, brake
 
-    gear = data.gear
-    speed = data.speed
-    steer = data.steer
-    brake = data.brake
+#    gear = data.gear
+#    speed = data.speed
+#    steer = data.steer
+#    brake = data.brake
+#    print(steer)
+
+def acker_callback(msg):
+    global speed, steer
+
+    speed = msg.drive.speed
+    steer = -(msg.drive.steering_angle)
     print(steer)
+
+def vel_callback(msg):
+    global linear, angular
+
+    linear = msg.Twist.linear.x
+    angular = msg.Twist.angular.z
+
+
 
 if __name__ == '__main__':
     rospy.init_node('serial_node')
 
-    pub_encoder = rospy.Publisher('ENCODER_DATA', Int32, queue_size=10)
+    rospy.Subscriber("/pure_pursuit/ackermann_cmd", AckermannDriveStamped, acker_callback)
+    rospy.Subscriber("/cmd_vel", Twist, vel_callback)
 
     rate = rospy.Rate(20)
 
-    port = rospy.get_param("~CTRL_PORT",default=port)
+    port = str(rospy.get_param("~robot_port","/dev/ttyUSB2"))
 
     ser = serial.serial_for_url(port, baudrate=115200, timeout=1)
 
@@ -143,6 +151,3 @@ if __name__ == '__main__':
 	#Send to Controller
         Send_to_ERP42(gear, speed, steer, brake)
 	
-	#Read from Controller
-        ENC = Read_from_ERP42()
-        pub_encoder.publish(ENC)

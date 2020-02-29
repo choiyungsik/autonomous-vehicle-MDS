@@ -115,8 +115,8 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     }
 
 
-    odom.header.frame_id = "world";
-    odom.child_frame_id = "base_link";
+    odom.header.frame_id = "map";
+    odom.child_frame_id = "odom";
 
     // odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
     // odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
@@ -209,7 +209,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     transform.setOrigin( tf::Vector3(odom.pose.pose.position.x, odom.pose.pose.position.y, 0.0) );
     q.setRPY(0, 0, angle);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "base_link"));
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", "odom"));
 
     odom.pose.pose.orientation.x = q.getX();
     odom.pose.pose.orientation.y = q.getY();
