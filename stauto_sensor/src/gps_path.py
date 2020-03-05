@@ -66,7 +66,7 @@ def euler_to_quaternion(yaw, pitch, roll):
 def pub_nav(lat,lon):
 
     gpsmsg.header.stamp = rospy.Time.now()
-    gpsmsg.header.frame_id = "map"
+    gpsmsg.header.frame_id = "world"
     gpsmsg.latitude=lat
     gpsmsg.longitude=lon
     gpsmsg. position_covariance_type=0
@@ -80,9 +80,9 @@ def pub_path(theta):
     pose = PoseStamped()
     goal = PoseStamped()
 
-    pathmsg.header.seq = 0
+    pathmsg.header.seq = step_gps
     pathmsg.header.stamp = rospy.Time.now()
-    pathmsg.header.frame_id = "map"
+    pathmsg.header.frame_id = "world"
 
     pose.header.seq = pathmsg.header.seq
     pose.header.stamp = pathmsg.header.stamp
@@ -105,7 +105,7 @@ def pub_path(theta):
     if (step_gps == len(gps_data)-2):
         goal.header.seq = 0
         goal.header.stamp = init_time
-        goal.header.frame_id = "map"
+        goal.header.frame_id = "world"
 
         goal.pose.position.x = gps_n[0]
         goal.pose.position.y = gps_n[1]
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     rospy.init_node('gps_path')
     listener = tf.TransformListener()
 
-    #rospy.Subscriber("odom",Odometry,odom_callback)
+    rospy.Subscriber("odom",Odometry,odom_callback)
 
     navs_pub = rospy.Publisher('/gps/fix', NavSatFix, queue_size=1)
     path_pub = rospy.Publisher('/path', Path, queue_size=1)
@@ -319,7 +319,11 @@ if __name__ == '__main__':
             pub_nav(gps_n[0], gps_n[1]) #from LL to UTM
             gps_n = LLtoUTM(-1,gps_n[0], gps_n[1])
             gps_n_1 = LLtoUTM(-1,gps_n_1[0], gps_n_1[1])
+<<<<<<< HEAD
             #print(gps_n,gps_n_1)
+=======
+            
+>>>>>>> 210cc79fb1f5a6739f3d47d05391b8451645358b
 
             # gps_n = convert_degree_to_meter(gps_n[0],gps_n[1])
             # gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
@@ -331,7 +335,11 @@ if __name__ == '__main__':
             theta.append(atan2(gps_n_1[1]-gps_n[1], gps_n_1[0]-gps_n[0]))
 
             pub_path(theta[step_gps])
+<<<<<<< HEAD
             rospy.sleep(0.01)
+=======
+            rospy.sleep(0.3)
+>>>>>>> 210cc79fb1f5a6739f3d47d05391b8451645358b
             step_gps=step_gps+1
 
 
@@ -339,12 +347,21 @@ if __name__ == '__main__':
 
             #Line = sqrt((gps_n[0]-trans[0])**2 + (gps_n[1]-trans[1])**2)
         else:
+<<<<<<< HEAD
             #pathmsg.header.seq = step_gps
             #pathmsg.header.stamp = rospy.Time.now()
             #pathmsg.header.frame_id = "map"
             #path_pub.publish(pathmsg)
             #rospy.sleep(0.5)
             pass
+=======
+            pathmsg.header.seq = step_gps
+            pathmsg.header.stamp = rospy.Time.now()
+            pathmsg.header.frame_id = "world"
+            path_pub.publish(pathmsg)
+            rospy.sleep(0.5)
+
+>>>>>>> 210cc79fb1f5a6739f3d47d05391b8451645358b
 
 #!/usr/bin/env python
 
