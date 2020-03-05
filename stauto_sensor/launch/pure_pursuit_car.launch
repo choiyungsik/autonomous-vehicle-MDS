@@ -2,14 +2,12 @@
 
 
 <launch>
-	<arg name="robot_port" default="/dev/ttyUSB2"/>
+	<arg name="robot_port" default="/dev/ttyUSB1"/>
 	<!--<param name="/use_sim_time" value="true"/>-->
 	<!-- utm_odom data-->
 	
-	<node pkg="gps_common" type="utm_odometry_node" name="gps_path_odom" output="screen">
-		<remap from="/gps/fix" to="fix" />
-	</node>
-
+	<!--<node pkg="gps_common" type="utm_odometry_node" name="gps_path_odom" output="screen">
+	</node>-->
 
 	<!-- gps_odom data-->
     	<node pkg="gps_common" type="utm_odometry_to_navsatfix_node" name="utm_odometry_node" output="screen">
@@ -17,7 +15,7 @@
 
 
 	<!-- Pure persuit-->
-    	<node pkg="hypharos_minicar" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
+    	<node pkg="stauto-MDS" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
 		<remap from="pure_pursuit/odom" to="/odom/gps" />
 	</node>
 
