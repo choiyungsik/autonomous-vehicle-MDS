@@ -2,7 +2,6 @@
 
 
 <launch>
-	<arg name="robot_port" default="/dev/ttyUSB1"/>
 	<!--<param name="/use_sim_time" value="true"/>-->
 	<!-- utm_odom data-->
 	
@@ -12,10 +11,10 @@
 	<!-- gps_odom data-->
     	<node pkg="gps_common" type="utm_odometry_to_navsatfix_node" name="utm_odometry_node" output="screen">
 	</node>
-
+	
 
 	<!-- Pure persuit-->
-    	<node pkg="stauto-MDS" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
+    	<node pkg="hypharos_minicar" type="Pure_Pursuit" name="get_pure_pursuit" output="screen">
 		<remap from="pure_pursuit/odom" to="/odom/gps" />
 	</node>
 
@@ -31,14 +30,5 @@
 		<remap from="/path" to="/pure_pursuit/global_planner" />
 	</node>
 
-	<!-- ERP42 data-->
-    	<node pkg="stauto_control" type="ERP42_to_PC.py" name="erp42_data" output="screen">
-    		<param name="robot_port" type="str" value="$(arg robot_port)"/>
-    	</node>
-
-    	<!-- serial control -->
-    	<node pkg="stauto_control" type="PC_to_ERP42.py" name="serial_control" output="screen">
-    		<param name="robot_port" type="str" value="$(arg robot_port)"/>
-    	</node>
 
 </launch>
