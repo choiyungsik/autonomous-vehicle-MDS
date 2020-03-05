@@ -54,15 +54,15 @@ double P[2][2] = {0,0,0,0};
 
 /////////////////////////////////////////
 
- void imu_callback(const sensor_msgs::ImuConstPtr& imu){
+// void imu_callback(const sensor_msgs::ImuConstPtr& imu){
 
-   q = tf::Quaternion (imu->orientation.x,imu->orientation.y,imu->orientation.z,imu->orientation.w);
- }
+//   q = tf::Quaternion (imu->orientation.x,imu->orientation.y,imu->orientation.z,imu->orientation.w);
+// }
 
- void yaw_callback(const std_msgs::Float32ConstPtr &yaw_val){
+// void yaw_callback(const std_msgs::Float32ConstPtr &yaw_val){
 
-   yaw_val_ = yaw_val->data;
- }
+//   yaw_val_ = yaw_val->data;
+// }
 
 void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
   if (fix->status.status == sensor_msgs::NavSatStatus::STATUS_NO_FIX) {
@@ -120,14 +120,14 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
 
     // odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
     // odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
-    odom.pose.pose.position.x = easting;
-    odom.pose.pose.position.y = northing;
+    odom.pose.pose.position.x = easting - east;
+    odom.pose.pose.position.y = northing - north;
     odom.pose.pose.position.z = 0;
 
     ///////Low Pass Filter/////////
 
     double tmp = atan2(odom.pose.pose.position.y - pre_y[0], odom.pose.pose.position.x - pre_x[0] );
-
+    
     ts = ros::Time::now();
     double time = ts.toSec() - pre_ts.toSec();
     double Yaw =(tau * (pre_yaw + M_PI) + time * (tmp + M_PI)) / (tau + time) - M_PI;
@@ -187,7 +187,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     // }
 
     // double semi_average = sum/FILTERSIZE;
-
+    
     // average = sum/(FILTERSIZE + 1);
 
     // for(int i = 0; i < FILTERSIZE - 1; i++)
@@ -200,7 +200,7 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
 
     ///////////////////////////////
     pre_yaw = angle;
-    ROS_INFO("%.4f",pre_yaw);
+
     //double Yaw = atan2(odom.pose.pose.position.y - pre_y, odom.pose.pose.position.x - pre_x );
 
 
@@ -293,8 +293,8 @@ int main (int argc, char **argv) {
   odom_pub = node.advertise<nav_msgs::Odometry>("odom/gps", 1);
 
   ros::Subscriber fix_sub = node.subscribe("gps/fix", 1, callback);
-   ros::Subscriber imu_sub = node.subscribe("/imu/data", 10, imu_callback);
-   ros::Subscriber yaw_sub = node.subscribe("yaw_degree", 10, yaw_callback);
+  // ros::Subscriber imu_sub = node.subscribe("/imu/data", 10, imu_callback);
+  // ros::Subscriber yaw_sub = node.subscribe("yaw_degree", 10, yaw_callback);
 
   ros::spin();
 }
