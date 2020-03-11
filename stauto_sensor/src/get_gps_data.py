@@ -14,7 +14,7 @@ import os
 import sys
 
 import math
-port = "/dev/ttyACM0"
+port = "/dev/ttyACM1"
 gps_data_bef = ""
 
 

@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
     maxReconnect=1
     maxConnectTime=1200
-    ser = serial.serial_for_url('/dev/ttyACM0',115200, timeout=0)
+    ser = serial.serial_for_url('/dev/ttyACM1',115200, timeout=0)
     #multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
@@ -193,7 +193,7 @@ if __name__ == '__main__':
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
                 if ((float(data[6])==4) | (float(data[6])==5)):
-                    if (time.time()-prev_time>=1.5):
+                    if (time.time()-prev_time>=0.75):
                         print('good')
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')

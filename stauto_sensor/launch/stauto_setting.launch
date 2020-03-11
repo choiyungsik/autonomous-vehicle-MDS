@@ -3,8 +3,8 @@
 <launch>
     <!-- port configuration -->
     <arg name="imu_port" default="/dev/ttyUSB3"/>
-    <arg name="robot_port" default="/dev/ttyUSB2"/>
-    <arg name="gps_port" default="/dev/ttyACM0"/>
+    <arg name="robot_port" default="/dev/ttyUSB1"/>
+    <!--<arg name="gps_port" default="/dev/ttyACM1"/>-->
     
     <!-- IMU data-->
     <node pkg="stauto_sensor" type="get_imu_24gv4.py" name="imu_data" >
@@ -22,9 +22,9 @@
     </node>
 
     <!-- GPS data-->
-    <node pkg="stauto_sensor" type="get_gps_data.py" name="gps_data" > 
+    <!-- <node pkg="stauto_sensor" type="get_gps_data.py" name="gps_data" > 
         <param name="gps_port" type="str" value="$(arg gps_port)"/>
-    </node>
+    </node> -->
 
     <!-- Velodyne data-->
     <!-- <include file="$(find pointcloud_to_laserscan)/launch/sample_node.launch"> 
