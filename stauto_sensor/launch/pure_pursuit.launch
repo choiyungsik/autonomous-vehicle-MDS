@@ -6,7 +6,7 @@
 	<!-- utm_odom data-->
     <!--<node pkg="gps_common" type="utm_odometry_node" name="gps_path_odom" output="screen">
 	</node>-->
-
+	<param name="/use_sim_time" value="true" />
 
 	<!-- gps_odom data-->
     <node pkg="gps_common" type="utm_odometry_to_navsatfix_node" name="utm_odometry_node" output="screen">

@@ -88,8 +88,8 @@ void callback(const sensor_msgs::NavSatFixConstPtr& fix) {
     odom.header.frame_id = "odom";
     odom.child_frame_id = "base_footprint";
 
-    odom.pose.pose.position.x = -(northing - north) * cos(-0.30535448) + (easting - east) * sin(-0.30535448);
-    odom.pose.pose.position.y = (northing - north) * sin(-0.30535448) + (easting - east) * cos(-0.30535448);
+    odom.pose.pose.position.x = easting;
+    odom.pose.pose.position.y = northing;
     odom.pose.pose.position.z = fix->altitude;
     
     // odom.pose.pose.orientation.x = 0;
