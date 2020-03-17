@@ -5,7 +5,7 @@ import tf
 import numpy as np
 import rospkg
 from sensor_msgs.msg import NavSatFix
-from std_msgs.msg import Float32
+from geometry_msgs.msg import Point
 
 from gps_common import *
 import copy
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
 
     #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
-    path_pub = rospy.Publisher('/path', Float32, queue_size=10)
+    path_pub = rospy.Publisher('/path', Point, queue_size=10)
     #goal_pub = rospy.Publisher('/pure_pursuit/goal', PoseStamped, queue_size=1)
 
     rospack = rospkg.RosPack()
@@ -73,9 +73,11 @@ if __name__ == '__main__':
     step_gps=0
     lat=0
     lon=0
-    theta=[]
+    theta=0
+    theta_gps_n=[0,0,0]
     last_step=len(gps_data)
     gpsmsg=NavSatFix()
+    data=Point()
 
     rospy.sleep(1)
 
@@ -112,39 +114,44 @@ if __name__ == '__main__':
 
             gps_n = gps_data[step_gps].split(',')
             gps_n_1 = gps_data[step_gps+1].split(',')
-            gps_n_2 = gps_data[step_gps+2].split(',')
+            #gps_n_2 = gps_data[step_gps+2].split(',')
 
             # gps_n = [float(gps_n[0]) - float(gps_origin[0]), float(gps_n[1]) - float(gps_origin[1])]
             # gps_n_1 = [float(gps_n_1[0]) - float(gps_origin[0]), float(gps_n_1[1])- float(gps_origin[1])]
             gps_n = [float(gps_n[0]), float(gps_n[1])]
             gps_n_1 = [float(gps_n_1[0]), float(gps_n_1[1])]
-            gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
+            #gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
 
 
-            line_data_x=[gps_n[0],gps_n_1[0],gps_n_2[0]]
-            line_data_y=[gps_n[1],gps_n_1[1],gps_n_2[1]]
+            #line_data_x=[gps_n[0],gps_n_1[0],gps_n_2[0]]
+            #line_data_y=[gps_n[1],gps_n_1[1],gps_n_2[1]]
 
-            fp1 = np.polyfit(line_data_x,line_data_y,2)
+            #fp1 = np.polyfit(line_data_x,line_data_y,2)
 
-            goal_x=(gps_n_2[0]+gps_n_1[0])/2 #pure_pursuit point
-            goal_y= fp1[0]*goal_x**(2)+fp1[1]*goal_x+fp1[2]
+            #goal_x=(gps_n_2[0]+gps_n_1[0])/2 #pure_pursuit point
+            #goal_y= fp1[0]*goal_x**(2)+fp1[1]*goal_x+fp1[2]
 
-            theta = atan2(goal_y-gps_n[1], goal_x-gps_n[0])*180/np.pi
+            theta = atan2(gps_n_1[0]-gps_n[0], gps_n_1[1]-gps_n[1])*180/np.pi
             #print("fp:", fp1,"theta", theta)
-            theta = Float32(theta)
+
             rospy.sleep(0.1)
 
+            data.x=theta
+            data.y=gps_n_1[0]
+            data.z=gps_n_1[1]
+
+            path_pub.publish(data)
+
             gps_n = convert_degree_to_meter(lat,lon)
-            gps_n_1 = convert_degree_to_meter(gps_n_2[0],gps_n_2[1])
+            gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
             #print(lat, lon, gps_n_2[0], gps_n_2[1])
 
             Line = sqrt((gps_n_1[0]-gps_n[0])**(2) + (gps_n_1[1]-gps_n[1])**(2))
             print(Line, step_gps)
-            if(abs(Line) <= 4)and(step_gps<=last_step-4):
+            if(abs(Line) <= 11)and(step_gps<=last_step-4):
                 step_gps=step_gps+1
 
 
-            path_pub.publish(theta)
             #rospy.sleep(1)
             #Line = sqrt((gps_n[0]-trans[0])**2 + (gps_n[1]-trans[1])**2)
         else:

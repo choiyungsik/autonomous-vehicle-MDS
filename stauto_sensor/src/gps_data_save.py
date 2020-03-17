@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
             if (type(data) is bool):
                 pass
-            elif (len(data)>0):
+            elif (len(data)>=0):
                 ser.write(data)
             else:
                 pass
