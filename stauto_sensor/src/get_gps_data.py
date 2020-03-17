@@ -14,7 +14,7 @@ import os
 import sys
 
 import math
-port = "/dev/ttyACM1"
+port = str(rospy.get_param("~imu_port","/dev/ttyACM0"))
 gps_data_bef = ""
 
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     Line = 0.0
 
 
-    gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=1)
+    gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
     gpsmsg=NavSatFix()
 
     rospy.loginfo("initialised")
@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
             if (type(data) is bool):
                 pass
-            elif (len(data)>0):
+            elif (len(data)>=0):
                 ser.write(data)
             else:
                 pass

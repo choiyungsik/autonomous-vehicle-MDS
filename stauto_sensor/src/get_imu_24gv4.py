@@ -7,7 +7,7 @@ import tf2_ros
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     port = rospy.get_param("~GPS_PORT",port)
     ser = serial.serial_for_url(port,115200, timeout=0)
 
-    imu_pub = rospy.Publisher("/imu/data", Imu, queue_size=1)
+    imu_pub = rospy.Publisher("/imu/data", Imu, queue_size=10)
 
     br = tf2_ros.TransformBroadcaster()
 
@@ -65,8 +65,8 @@ if __name__ == '__main__':
             rpy[1]=round(float(data[2]),3)
             rpy[2]=round(float(data[3]),3)
 
-            roll=-rpy[0]*np.pi/180
-            pitch=rpy[1]*np.pi/180
+            roll=rpy[0]*np.pi/180
+            pitch=-rpy[1]*np.pi/180
             yaw=-rpy[2]*np.pi/180
 
             qx,qy,qz,qw = euler_to_quaternion(roll, pitch, yaw)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
             imu.angular_velocity.x = w_speed[0]
             imu.angular_velocity.y = w_speed[1]
-            imu.angular_velocity.z = -w_speed[2]
+            imu.angular_velocity.z = w_speed[2]
 
             accel[0]=round(float(data[7]),3)
             accel[1]=round(float(data[8]),3)

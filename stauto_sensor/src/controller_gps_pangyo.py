@@ -68,7 +68,7 @@ def cb_pos(position):
 
 def cb_yaw(yaw_value):
     global yaw
-    yaw = yaw_value.data*180/3.141592
+    yaw = yaw_value.data*180/np.pi
 
     #print(yaw)
     #print(yaw)
@@ -165,17 +165,17 @@ if __name__ == '__main__':
 
                         #1 -> 1 meter
                         '''
-                        angle_cur_n = atan2(gps2[1]-gps0[1], gps2[0]-gps0[0])*180/3.141592
+                        angle_cur_n = atan2(gps2[1]-gps0[1], gps2[0]-gps0[0])*180/np.pi
                         '''
-                        angle_cur_n = atan2(float(gps_data[step_gps+1].split()[1])-float(gps_data[step_gps].split()[1]), float(gps_data[step_gps+1].split()[0])-float(gps_data[step_gps].split()[0]))*180/3.141592
+                        angle_cur_n = atan2(float(gps_data[step_gps+1].split()[1])-float(gps_data[step_gps].split()[1]), float(gps_data[step_gps+1].split()[0])-float(gps_data[step_gps].split()[0]))*180/np.pi
 
 
 
 
 
 
-                        angle_cur_n_1 = atan2(float(gps_data[step_gps+1].split()[1])-curl_gps[1], float(gps_data[step_gps+1].split()[0])-curl_gps[0])*180/3.141592
-                        #deangle_cur_n = atan2(float(gps_data[step_gps+1].split()[1])-float(gps_data[step_gps].split()[1]), float(gps_data[step_gps+1].split()[0])-float(gps_data[step_gps].split()[0]))*180/3.141592
+                        angle_cur_n_1 = atan2(float(gps_data[step_gps+1].split()[1])-curl_gps[1], float(gps_data[step_gps+1].split()[0])-curl_gps[0])*180/np.pi
+                        #deangle_cur_n = atan2(float(gps_data[step_gps+1].split()[1])-float(gps_data[step_gps].split()[1]), float(gps_data[step_gps+1].split()[0])-float(gps_data[step_gps].split()[0]))*180/np.pi
 
 
 
@@ -190,6 +190,21 @@ if __name__ == '__main__':
                         #yaw_error=error_angle
                         #current gps : trans[0],[1] / goal : gps_n
                         sub_yaw=yaw+error_yaw
+
+                        if(((-90>=imu_theta>=-180) or (180>=imu_theta>=90)) and ((-90>=gps_theta>=-180) or (180>=gps_theta>=90))):
+                            if((imu_theta>=0) and (gps_theta<0)):
+                                goal_theta=-((180-imu_theta)+(180+gps_theta))
+                            elif((imu_theta<0) and (gps_theta>=0)):
+                                goal_theta=(180+imu_theta)+(180-gps_theta)
+                        else:
+                            goal_theta=imu_theta-gps_theta
+
+                        if (goal_theta>=28):
+                            goal_theta=28
+                        elif(goal_theta<=-28):
+                            goal_theta=-28
+
+
                         if ((angle_cur_n<0) & (sub_yaw<0)):
                             error_angle=angle_cur_n-sub_yaw
                         elif ((angle_cur_n<0) & (sub_yaw>=0)):
@@ -257,18 +272,19 @@ if __name__ == '__main__':
                             l=1 #edit
                             '''
                             if(error_angle<=0):
-                                delta=atan2(2.0*l*sin(-error_angle*3.141592/180),ld)*180/3.141592
+                                delta=atan2(2.0*l*sin(-error_angle*np.pi/180),ld)*180/np.pi
                             else:
-                                delta=atan2(2.0*l*sin(-error_angle*3.141592/180),ld)*180/3.141592
+                                delta=atan2(2.0*l*sin(-error_angle*np.pi/180),ld)*180/np.pi
 
-                            delta=atan2(2.0*l*sin(-error_angle*3.141592/180),ld)*180/3.141592
+                            delta=atan2(2.0*l*sin(-error_angle*np.pi/180),ld)*180/np.pi
                             if (delta>28):
                                 delta=28
                             elif (delta<-28):
                                 delta=-28
                             '''
-                            delta=atan2(2.0*l*sin(error_angle*3.141592/180),ld)*180/3.141592
+                            delta=atan2(2.0*l*sin(error_angle*np.pi/180),ld)*180/np.pi
                             p=error_angle*2
+
                             if (p>28):
                                 p=28
                             elif (p<-28):
