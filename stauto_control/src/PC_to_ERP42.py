@@ -137,12 +137,12 @@ def vel_callback(msg):
 if __name__ == '__main__':
     rospy.init_node('serial_node')
 
-    rospy.Subscriber("/pure_pursuit/ackermann_cmd", AckermannDriveStamped, acker_callback)
+    rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback)
     rospy.Subscriber("/cmd_vel", Twist, vel_callback)
 
     rate = rospy.Rate(20)
 
-    port = str(rospy.get_param("~robot_port","/dev/ttyUSB2"))
+    port = str(rospy.get_param("~robot_port","/dev/ttyUSB1"))
 
     ser = serial.serial_for_url(port, baudrate=115200, timeout=1)
 

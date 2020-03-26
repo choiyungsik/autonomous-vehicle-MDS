@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
     maxReconnect=1
     maxConnectTime=1200
-    ser = serial.serial_for_url('/dev/ttyACM1',115200, timeout=0)
+    ser = serial.serial_for_url('/dev/ttyACM0',115200, timeout=0)
     #multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
