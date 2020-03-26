@@ -6,6 +6,7 @@ import numpy as np
 import rospkg
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Point
+from std_msgs.msg import Float32
 
 from gps_common import *
 import copy
@@ -61,6 +62,7 @@ if __name__ == '__main__':
 
     #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
     path_pub = rospy.Publisher('/path', Point, queue_size=10)
+    prize_pub = rospy.Publisher('/prize', Float32, queue_size=10)
     #goal_pub = rospy.Publisher('/pure_pursuit/goal', PoseStamped, queue_size=1)
 
     rospack = rospkg.RosPack()
@@ -74,6 +76,9 @@ if __name__ == '__main__':
     lat=0
     lon=0
     theta=0
+    gps_nn=[0,0]
+    gps_nn_1=[0,0]
+    prize_gps_nn=[0,0]
     theta_gps_n=[0,0,0]
     last_step=len(gps_data)
     gpsmsg=NavSatFix()
@@ -114,41 +119,67 @@ if __name__ == '__main__':
 
             gps_n = gps_data[step_gps].split(',')
             gps_n_1 = gps_data[step_gps+1].split(',')
-            #gps_n_2 = gps_data[step_gps+2].split(',')
+            gps_n_2 = gps_data[step_gps+2].split(',')
 
             # gps_n = [float(gps_n[0]) - float(gps_origin[0]), float(gps_n[1]) - float(gps_origin[1])]
             # gps_n_1 = [float(gps_n_1[0]) - float(gps_origin[0]), float(gps_n_1[1])- float(gps_origin[1])]
             gps_n = [float(gps_n[0]), float(gps_n[1])]
             gps_n_1 = [float(gps_n_1[0]), float(gps_n_1[1])]
-            #gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
+            gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
 
-
+            #print(lat,lon, gps_n)
             #line_data_x=[gps_n[0],gps_n_1[0],gps_n_2[0]]
             #line_data_y=[gps_n[1],gps_n_1[1],gps_n_2[1]]
+            prev_step = convert_degree_to_meter(gps_n[0],gps_n[1])
+            next_step = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
+            #print(gps_n_1[1])
+            gps_nn[0] = (prev_step[0] - 460000)/100
+            gps_nn[1] = (prev_step[1] - 383000)/100
+            gps_nn_1[0] = (next_step[0] - 460000)/100
+            gps_nn_1[1] = (next_step[1] - 383000)/100
 
             #fp1 = np.polyfit(line_data_x,line_data_y,2)
 
             #goal_x=(gps_n_2[0]+gps_n_1[0])/2 #pure_pursuit point
             #goal_y= fp1[0]*goal_x**(2)+fp1[1]*goal_x+fp1[2]
 
-            theta = atan2(gps_n_1[0]-gps_n[0], gps_n_1[1]-gps_n[1])*180/np.pi
+            theta = atan2(gps_nn_1[0]-gps_nn[0], gps_nn_1[1]-gps_nn[1])*180/np.pi
             #print("fp:", fp1,"theta", theta)
 
             rospy.sleep(0.1)
 
             data.x=theta
-            data.y=gps_n_1[0]
-            data.z=gps_n_1[1]
+            data.y=gps_n_2[0]
+            data.z=gps_n_2[1]
 
             path_pub.publish(data)
-
+            #print(lat,lon)
             gps_n = convert_degree_to_meter(lat,lon)
+           
             gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
             #print(lat, lon, gps_n_2[0], gps_n_2[1])
 
-            Line = sqrt((gps_n_1[0]-gps_n[0])**(2) + (gps_n_1[1]-gps_n[1])**(2))
+            prize_gps_nn[0] = (gps_n[0] - 460000)/100
+            prize_gps_nn[1] = (gps_n[1] - 383000)/100
+            
+            prize_theta = atan2(gps_nn_1[0]-prize_gps_nn[0], gps_nn_1[1]-prize_gps_nn[1])*180/np.pi
+            #print(prize_theta, theta)
+            if((int(theta)*int(prize_theta))>=0.):
+                final_prize_theta=theta-prize_theta
+            else:
+                if(((-90>=theta>=-180) or (180>=theta>=90)) and ((-90>=prize_theta>=-180) or (180>=prize_theta>=90))):
+                    if((theta>=0) and (prize_theta<0)):
+                        final_prize_theta=-((180-theta)+(180+prize_theta))
+                    elif((theta<0) and (prize_theta>=0)):
+                        final_prize_theta=(180+theta)+(180-prize_theta)
+                else:
+                    final_prize_theta=theta-prize_theta
+
+            prize_pub.publish(final_prize_theta)
+
+            Line = sqrt((gps_n_1[1]-gps_n[1])**(2) + (gps_n_1[0]-gps_n[0])**(2))
             print(Line, step_gps)
-            if(abs(Line) <= 11)and(step_gps<=last_step-4):
+            if(abs(Line) <=3)and(step_gps<=last_step-4):
                 step_gps=step_gps+1
 
 

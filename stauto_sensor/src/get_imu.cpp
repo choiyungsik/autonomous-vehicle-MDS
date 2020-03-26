@@ -56,7 +56,6 @@ tf::Quaternion yaw_val;
 double d_theta, theta=0;
 double yaw_gps_prev=0.0;
 int step_prev = 0;
-std::vector<double> eulervec(6);
 
 class IMU_pub
 {
@@ -86,7 +85,6 @@ class IMU_pub
   tf::Quaternion q;
 };
 
-int time1;
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "get_imu");
@@ -94,7 +92,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	IMU_pub IMU_pub;
 
-	nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB0");
+	nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB3");
 
 	nh_private.getParam("IMU_PORT", port);
 
@@ -110,7 +108,7 @@ int main(int argc, char **argv)
 		{
 			isread = read(sPort, readL, 60);
 
-			// sPort.write('a', 1);  // A class method can be used to send as well. This write is cleaner and more C++
+			//sPort.write('a', 1);  // A class method can be used to send as well. This write is cleaner and more C++
 
 			if (isread < 0 || readL[0] != '*')
 			{
@@ -131,9 +129,6 @@ int main(int argc, char **argv)
 
 
 				std::string buff(readL,size);
-				std::cout << "My name is: " << buff << std::endl;
-
-				// ROS_INFO("%s",buff);
 				//0~size-1까지
 				buff.erase(0,1);
 
@@ -149,45 +144,20 @@ int main(int argc, char **argv)
 						a++;
 					}
 				}
-				sensor_msgs::Imu imu;
+        sensor_msgs::Imu imu;
+				/*
+				RPY[0] = buff.substr(0, pos[0]);
+				RPY[1] = buff.substr(poyaw_v
+				tf::Quaternion q = tf::Quaternion(quat[0],quat[1],quat[2],quat[3]);
 
-				imu.header.stamp = ros::Time::now();
-				imu.header.frame_id = "imu_link";
+				//IMU_pub.pub_quat(q);
+				tf::Matrix3x3 m(q);
+				m.getRPY(yaw, pitch, roll);
+				yaw = yaw/2;
 
-
-				// imu.orientation_covariance = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-				// imu.angular_velocity_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
-				// imu.linear_acceleration_covariance = {0.0025, 0, 0, 0, 0.0025, 0, 0, 0, 0.0025};
-
-				// RPY[0] = buff.substr(0, pos[0]);
-				// RPY[1] = buff.substr(pos[0] + 1, (pos[1] - pos[0] - 1));
-				// RPY[2] = buff.substr(pos[1] + 1, (pos[2] - pos[1] - 1));
-				// RPY[3] = buff.substr(pos[2] + 1, (pos[3] - pos[2] - 1));
-				// accel[0] = buff.substr(pos[3] + 1, (pos[4] - pos[3] - 1));
-				// accel[1] = buff.substr(pos[4] + 1, (pos[5] - pos[4] - 1));
-				// accel[2] = buff.substr(pos[5] + 43, size - 1);
-				// tf::Quaternion q = tf::Quaternion(quat[0],quat[1],quat[2],quat[3]);
-				// imu.orientation.x = atof(RPY[0].c_str());
-				// imu.orientation.y = atof(RPY[1].c_str());
-				// imu.orientation.z = atof(RPY[2].c_str());
-				// imu.orientation.w = atof(RPY[3].c_str());
-
-				// ax = atof(accel[0].c_str());
-				// ay = atof(accel[1].c_str());
-				// az = atof(accel[2].c_str());
-
-				// imu.linear_acceleration.x = ax * 9.8;
-				// imu.linear_acceleration.y = ay * 9.8;
-				// imu.linear_acceleration.z = az * 9.8;
-
-				// //IMU_pub.pub_quat(q);
-				// tf::Matrix3x3 m(q);
-				// m.getRPY(yaw, pitch, roll);
-				// yaw = yaw/2;
-
-				// tf::Quaternion q_yaw = tf::Quaternion(yaw,0.0,0.0);
-				// yaw_val.yaw = yaw;
-
+				tf::Quaternion q_yaw = tf::Quaternion(yaw,0.0,0.0);
+				yaw_val.yaw = yaw;
+				*/
 				// string -> 쿼터니언 변환
 
 				RPY[0] = buff.substr(0, pos[0]);
@@ -201,44 +171,13 @@ int main(int argc, char **argv)
 				roll = atof(RPY[0].c_str());
 				pitch = atof(RPY[1].c_str());
 				yaw = atof(RPY[2].c_str());
-
-
-				imu.orientation.x = roll / 180 * M_PI;//sqrt((pow(roll,2)+pow(pitch,2)+pow(yaw,2)));
-				imu.orientation.y = pitch / 180 * M_PI;//sqrt((pow(roll,2)+pow(pitch,2)+pow(yaw,2)));
-				imu.orientation.z = yaw / 180 * M_PI;//sqrt((pow(roll,2)+pow(pitch,2)+pow(yaw,2)));
-
-				tf::Quaternion myQuaternion;
-				myQuaternion.setRPY( imu.orientation.x, imu.orientation.y, imu.orientation.z );
-
-				imu.orientation.x = myQuaternion.x();
-				imu.orientation.y = myQuaternion.y();
-				imu.orientation.z = myQuaternion.z();
-				imu.orientation.w = myQuaternion.w();
-
 				ax = atof(accel[0].c_str());
 				ay = atof(accel[1].c_str());
 				az = atof(accel[2].c_str());
 
-				imu.linear_acceleration.x = ax * 9.81;
-				imu.linear_acceleration.y = ay * 9.81;
-				imu.linear_acceleration.z = az * 9.81;
-
-				eulervec[0] = imu.orientation.x;
-				eulervec[1] = imu.orientation.y;
-				eulervec[2] = imu.orientation.z;
-
-				imu.angular_velocity.x = (eulervec[0] - eulervec[3]) / 0.006;
-				imu.angular_velocity.y = (eulervec[1] - eulervec[4]) / 0.006;
-				imu.angular_velocity.z = (eulervec[2] - eulervec[5]) / 0.006;
-
-				eulervec[3] = imu.orientation.x;
-				eulervec[4] = imu.orientation.y;
-				eulervec[5] = imu.orientation.z;
-
 				roll = roll / 180 * M_PI;
 				pitch = pitch / 180 * M_PI;
 				yaw = yaw / 180 * M_PI;
-
 
 				/////////////////////////////////////////////////////////
 				if (yaw_first != 0 && (iscal == false))
@@ -293,35 +232,41 @@ int main(int argc, char **argv)
 
 
 
-				// ROS_INFO("dt :  %.4f, d_Theta: %.4f, theta' = %.4f", dt, d_theta, d_theta*dt);
+				ROS_INFO("dt :  %.4f, d_Theta: %.4f, theta' = %.4f", dt, d_theta, d_theta*dt);
 
 				if (theta >= M_PI)
 					theta = theta - 2 * M_PI;
 				if (theta <= -M_PI)
 					theta = theta + 2 * M_PI;
 
-				// ROS_INFO("HPF :  %.4f Yaw : %.4f", -theta, yaw_degree*180/3.141592);
-
+				ROS_INFO("HPF :  %.4f Yaw : %.4f", -theta, -yaw_degree*180/3.141592);
+        yaw_val.setRPY(0,0,-yaw_degree);
 				// 칼만 필터 식 적용
 				//ROS_INFO("KALMAN :  %.4f Yaw : %.4f", -angle_kalman, -yaw*180/M_PI);
 				std_msgs::Float32 yaw_value;
-				yaw_value.data = -theta;
+				yaw_value.data = -theta-(4*180/3.141592);
 
         std_msgs::Float32 yaw_degree;
 				yaw_degree.data = yaw;
 
-				yaw_val.setRPY(0,0,-theta);
+
 				geometry_msgs::Quaternion yaw_imu = geometry_msgs::Quaternion();
 				yaw_imu.w = yaw_val.getW();
 				yaw_imu.x = yaw_val.getX();
 				yaw_imu.y = yaw_val.getY();
 				yaw_imu.z = yaw_val.getZ();
 
+
+        imu.orientation.x = yaw_val.getX();
+				imu.orientation.y = yaw_val.getY();
+				imu.orientation.z = yaw_val.getZ();
+				imu.orientation.w = yaw_val.getW();
+
 				if(isStart == true)
 				{
-					IMU_pub.pub_imu_raw.publish(imu);
-					IMU_pub.pub_yaw.publish(yaw_imu);
-					IMU_pub.pub_yaw_value.publish(yaw_value);
+          IMU_pub.pub_imu_raw.publish(imu);
+					//IMU_pub.pub_yaw.publish(yaw_imu);
+					//IMU_pub.pub_yaw_value.publish(yaw_value);
           IMU_pub.pub_yaw_degree.publish(yaw_degree);
 					//IMU_pub.pub_quat(yaw_val);
 				}
@@ -375,12 +320,12 @@ IMU_pub::IMU_pub()
 	timer2.start();
 	sub_dead = nh_.subscribe<geometry_msgs::Twist>("dead_value", 1, &IMU_pub::valueCallback, this);
 	//sub_yaw_gps = nh_.subscribe<geometry_msgs::Twist>("dead_value", 1, &IMU_pub::valueCallback, this);
-	pub_yaw = nh_.advertise<geometry_msgs::Quaternion>("yaw_imu",1);
-	pub_yaw_value = nh_.advertise<std_msgs::Float32>("yaw_value",1);
+	//pub_yaw = nh_.advertise<geometry_msgs::Quaternion>("yaw_imu",1);
+	//pub_yaw_value = nh_.advertise<std_msgs::Float32>("yaw_value",1);
   pub_yaw_degree = nh_.advertise<std_msgs::Float32>("yaw_degree",1);
-	pub_imu_raw = nh_.advertise<sensor_msgs::Imu>("/imu/data",1);
-	sub_yaw_gps = nh_.subscribe<std_msgs::Float32>("yaw_gps", 1, &IMU_pub::yaw_gpsCallback, this);
-	sub_yaw_first = nh_.subscribe<std_msgs::Float32>("yaw_first", 1, &IMU_pub::yaw_firstCallback, this);
+  pub_imu_raw = nh_.advertise<sensor_msgs::Imu>("/imu/data",1);
+	//sub_yaw_gps = nh_.subscribe<std_msgs::Float32>("yaw_gps", 1, &IMU_pub::yaw_gpsCallback, this);
+	//sub_yaw_first = nh_.subscribe<std_msgs::Float32>("yaw_first", 1, &IMU_pub::yaw_firstCallback, this);
 
 	t_imu = 0;
 	t_dead = 0;
