@@ -193,7 +193,7 @@ if __name__ == '__main__':
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
                 if ((float(data[6])==4) | (float(data[6])==5)):
-                    if (time.time()-prev_time>=0.75):
+                    if (time.time()-prev_time>=1):
                         print('good')
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')
