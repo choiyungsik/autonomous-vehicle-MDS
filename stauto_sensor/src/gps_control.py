@@ -99,7 +99,7 @@ if __name__ == '__main__':
     gps_n_1=[0,0]
     lat=0
     lon=0
-    error_yaw=-1
+    error_yaw=-3
 
     rospy.sleep(1)
 
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         
         goal_theta=goal_theta+error_yaw #yaw offset
 
-        final_angle = prize_theta*0.3 + goal_theta*1
+        final_angle = prize_theta*0.4 + goal_theta*1
 
 
 
