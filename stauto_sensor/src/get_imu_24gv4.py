@@ -7,7 +7,7 @@ import tf2_ros
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
@@ -60,14 +60,14 @@ if __name__ == '__main__':
             imu.header.stamp = rospy.Time.now()
             imu.header.frame_id = "imu_link"
             data=IMU_message.split(",")
-
+            #print(data)
             rpy[0]=round(float(data[1]),3)
             rpy[1]=round(float(data[2]),3)
             rpy[2]=round(float(data[3]),3)
 
             roll=rpy[0]*np.pi/180
             pitch=-rpy[1]*np.pi/180
-            yaw=-rpy[2]*np.pi/180
+            yaw=-rpy[2]*np.pi/180+4*np.pi/180
 
             qx,qy,qz,qw = euler_to_quaternion(roll, pitch, yaw)
 
