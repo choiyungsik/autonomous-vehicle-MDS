@@ -1,5 +1,5 @@
-#! /usr/bin/env python
-import keyboard
+#! /usr/bin/env python3
+#import keyboard
 import serial
 import socket as soc
 import rospy
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     maxReconnect=1
     maxConnectTime=1200
     ser = serial.serial_for_url(port,115200, timeout=0)
-    #multiprocessing.set_start_method('spawn', True)
+    multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
     que_pos = Queue()
@@ -154,17 +154,21 @@ if __name__ == '__main__':
 
     while isrunning:
         RoverMessage=ser.readline().decode('ascii')
-
+        
         if que.empty()==False:
             data = que.get()[0]
 
             if (type(data) is bool):
                 pass
-            elif (len(data)>=0):
-                ser.write(data)
             else:
-                pass
+                ser.write(data)
 
+        
+        '''
+        if que.empty()==False:
+            data = que.get()[0]
+            ser.write(data)
+        '''
         t = time.time()
         #print(RoverMessage)
         try:
@@ -196,8 +200,10 @@ if __name__ == '__main__':
 
                 nclient.setPosition(lat_degree,lon_degree)
                 #if(isReady==False): print(Line)
-                if (fix_type[data[6]] >=2):
+                #print(data[6])
+                if (int(data[6]) >=1):
                     do_work(lat_degree,lon_degree)
+                    #print('111111111111')
 
         except:
             print ("Missed" ,"\r")

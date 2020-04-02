@@ -176,7 +176,7 @@ if __name__ == '__main__':
                     final_prize_theta=theta-prize_theta
 
             prize_pub.publish(final_prize_theta)
-
+            #print(gps_n_1[1], gps_n[1])
             Line = sqrt((gps_n_1[1]-gps_n[1])**(2) + (gps_n_1[0]-gps_n[0])**(2))
             print(Line, step_gps)
             if(abs(Line) <=2.5)and(step_gps<=last_step-4):
