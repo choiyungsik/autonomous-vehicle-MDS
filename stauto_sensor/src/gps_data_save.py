@@ -91,18 +91,19 @@ if __name__ == '__main__':
     #print("main : {}".format(os.getpid()))
 
     ntripArgs = {}
-    #ntripArgs['lat']=37.16
-    #ntripArgs['lon']=127.30
+    #ntripArgs['lat']=37.236134
+    #ntripArgs['lon']=126.774126
     #SUWON
-    ntripArgs['lat']=37.6185
-    ntripArgs['lon']=127.0983
+    ntripArgs['lat']=37.630873
+    ntripArgs['lon']=127.076533
     #SOUL
 
     ntripArgs['height']=73.901
     ntripArgs['host']=False
     ntripArgs['ssl']=False
 
-    ntripArgs['user']="gnss"+":"+"gnss"
+    #ntripArgs['user']="gnss"+":"+"gnss"
+    ntripArgs['user']="agc770@naver.com"+":"+"gnss"
     ntripArgs['caster']="gnssdata.or.kr"
     ntripArgs['port']=int("2101")
 
@@ -139,7 +140,7 @@ if __name__ == '__main__':
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
-        
+
         if que.empty()==False:
             data = que.get()[0]
 
@@ -148,7 +149,7 @@ if __name__ == '__main__':
             else:
                 ser.write(data)
 
-        
+
         '''
         if que.empty()==False:
             data = que.get()[0]
