@@ -1,10 +1,10 @@
-#! /usr/bin/env python
-import keyboard
+#! /usr/bin/env python3
+#import keyboard
 import serial
 import socket as soc
 import rospkg
 #import rospy
-import keyboard
+#import keyboard
 import time
 from ntrip.NtripClient import *
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     maxReconnect=1
     maxConnectTime=1200
     ser = serial.serial_for_url('/dev/ttyACM0',115200, timeout=0)
-    #multiprocessing.set_start_method('spawn', True)
+    multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
     que_pos = Queue()
@@ -139,16 +139,21 @@ if __name__ == '__main__':
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
-
+        
         if que.empty()==False:
             data = que.get()[0]
 
             if (type(data) is bool):
                 pass
-            elif (len(data)>=0):
-                ser.write(data)
             else:
-                pass
+                ser.write(data)
+
+        
+        '''
+        if que.empty()==False:
+            data = que.get()[0]
+            ser.write(data)
+        '''
 
         t = time.time()
         #print(RoverMessege)
@@ -192,7 +197,7 @@ if __name__ == '__main__':
 
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
-                if ((float(data[6])==4) | (float(data[6])==5)):
+                if ((float(data[6])==4) or (float(data[6])==5) or (float(data[6])==2) or (float(data[6])==1)):
                     if (time.time()-prev_time>=1):
                         print('good')
                         f.write(str(lat_degree))

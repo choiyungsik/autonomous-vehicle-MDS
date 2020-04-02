@@ -132,7 +132,7 @@ if __name__ == '__main__':
         
         goal_theta=goal_theta+error_yaw #yaw offset
 
-        final_angle = prize_theta*0.4 + goal_theta*1
+        final_angle = prize_theta*0.5 + goal_theta
 
 
 
