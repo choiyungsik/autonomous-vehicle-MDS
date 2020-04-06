@@ -94,8 +94,14 @@ if __name__ == '__main__':
     #ntripArgs['lat']=37.236134
     #ntripArgs['lon']=126.774126
     #SUWON
-    ntripArgs['lat']=37.630873
-    ntripArgs['lon']=127.076533
+    #ntripArgs['lat']=37.630873
+    #ntripArgs['lon']=127.076533
+    #SOUL
+    #ntripArgs['lat']=37.16
+    #ntripArgs['lon']=127.30
+    #SUWON
+    ntripArgs['lat']=37.6185
+    ntripArgs['lon']=127.0983
     #SOUL
 
     ntripArgs['height']=73.901
@@ -108,7 +114,7 @@ if __name__ == '__main__':
     ntripArgs['port']=int("2101")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-    ntripArgs['mountpoint']="SOUL-RTCM31"
+    ntripArgs['mountpoint']="SOUL-RTCM32"
 
     ntripArgs['V2']=True
 
