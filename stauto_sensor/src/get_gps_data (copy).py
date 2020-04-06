@@ -14,7 +14,7 @@ import os
 import sys
 
 import math
-port = str(rospy.get_param("~imu_port","/dev/ttyACM1"))
+port = str(rospy.get_param("~imu_port","/dev/ttyACM0"))
 gps_data_bef = ""
 
 
@@ -125,12 +125,12 @@ if __name__ == '__main__':
     #ntripArgs['mountpoint']="SUWN-RTCM31"
     ntripArgs['mountpoint']="SOUL-RTCM32"
 
-    ntripArgs['V2']=False
+    ntripArgs['V2']=True
 
     ntripArgs['verbose']=False
     ntripArgs['headerOutput']=None
 
-    maxReconnect=0
+    maxReconnect=1
     maxConnectTime=1200
     ser = serial.serial_for_url(port,115200, timeout=0)
     multiprocessing.set_start_method('spawn', True)
