@@ -136,6 +136,8 @@ if __name__ == '__main__':
     isReady=False
     count_ready = 0
     t=time.time()
+    prev_time_rtk=0
+    reRTK_count=True
     prev_pos = [0.0,0.0]
     Line = 0.0
 
@@ -211,12 +213,29 @@ if __name__ == '__main__':
                         f.write(','+str(lon_degree)+'\n')
                         prev_time=time.time()
                         #print('good!')
+               
+                if int(data[6])==1:
+                    #print(proc)
+                    print(reRTK_count)
+                    if reRTK_count:
+                        print(1111111111111111111111111)
+                        reRTK_count=False
+                        prev_time_rtk=time.time()
+
+                        que = Queue()
+                        que_pos = Queue()
+
+                        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
+                        proc.start()
+
+                if (time.time()-prev_time_rtk)>=5:
+                    reRTK_count=True
 
                 if keyboard.is_pressed('esc'):
                     print('save ok')
                     f.close()
                     break
-
+                
         except:
             pass
             #print ("Missed" ,"\r")
