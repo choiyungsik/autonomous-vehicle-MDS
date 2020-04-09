@@ -99,7 +99,7 @@ if __name__ == '__main__':
     gps_n_1=[0,0]
     lat=0
     lon=0
-    error_yaw=-3
+    error_yaw=-2
 
     rospy.sleep(1)
 
