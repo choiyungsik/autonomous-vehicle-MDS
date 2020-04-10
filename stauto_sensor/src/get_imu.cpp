@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	IMU_pub IMU_pub;
 
-	nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB3");
+	nh_private.param<std::string>("IMU_PORT", port, "/dev/ttyUSB4");
 
 	nh_private.getParam("IMU_PORT", port);
 
