@@ -91,6 +91,12 @@ if __name__ == '__main__':
     #print("main : {}".format(os.getpid()))
 
     ntripArgs = {}
+    #ntripArgs['lat']=37.236134
+    #ntripArgs['lon']=126.774126
+    #SUWON
+    #ntripArgs['lat']=37.630873
+    #ntripArgs['lon']=127.076533
+    #SOUL
     #ntripArgs['lat']=37.16
     #ntripArgs['lon']=127.30
     #SUWON
@@ -102,12 +108,13 @@ if __name__ == '__main__':
     ntripArgs['host']=False
     ntripArgs['ssl']=False
 
-    ntripArgs['user']="gnss"+":"+"gnss"
+    #ntripArgs['user']="gnss"+":"+"gnss"
+    ntripArgs['user']="agc770@naver.com"+":"+"gnss"
     ntripArgs['caster']="gnssdata.or.kr"
     ntripArgs['port']=int("2101")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-    ntripArgs['mountpoint']="SOUL-RTCM31"
+    ntripArgs['mountpoint']="SOUL-RTCM32"
 
     ntripArgs['V2']=True
 
@@ -129,6 +136,8 @@ if __name__ == '__main__':
     isReady=False
     count_ready = 0
     t=time.time()
+    prev_time_rtk=0
+    reRTK_count=True
     prev_pos = [0.0,0.0]
     Line = 0.0
 
@@ -139,7 +148,7 @@ if __name__ == '__main__':
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
-        
+
         if que.empty()==False:
             data = que.get()[0]
 
@@ -148,7 +157,7 @@ if __name__ == '__main__':
             else:
                 ser.write(data)
 
-        
+
         '''
         if que.empty()==False:
             data = que.get()[0]
@@ -204,12 +213,29 @@ if __name__ == '__main__':
                         f.write(','+str(lon_degree)+'\n')
                         prev_time=time.time()
                         #print('good!')
+               
+                if int(data[6])==1:
+                    #print(proc)
+                    print(reRTK_count)
+                    if reRTK_count:
+                        print(1111111111111111111111111)
+                        reRTK_count=False
+                        prev_time_rtk=time.time()
+
+                        que = Queue()
+                        que_pos = Queue()
+
+                        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
+                        proc.start()
+
+                if (time.time()-prev_time_rtk)>=5:
+                    reRTK_count=True
 
                 if keyboard.is_pressed('esc'):
                     print('save ok')
                     f.close()
                     break
-
+                
         except:
             pass
             #print ("Missed" ,"\r")

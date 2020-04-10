@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
             roll=rpy[0]*np.pi/180
             pitch=-rpy[1]*np.pi/180
-            yaw=-rpy[2]*np.pi/180+4*np.pi/180
+            yaw=-rpy[2]*np.pi/180
 
             qx,qy,qz,qw = euler_to_quaternion(roll, pitch, yaw)
 
