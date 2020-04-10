@@ -4,9 +4,9 @@
 
   <node pkg="swri_transform_util" type="initialize_origin.py" name="initialize_origin" >
     <param name="local_xy_frame" value="/map"/>
-    <param name="local_xy_origin" value="swri"/>
+    <param name="local_xy_origin" value="seoultech"/>
     <rosparam param="local_xy_origins">
-      [{ name: swri,
+      [{ name: seoultech,
          latitude: 37.630845,
          longitude: 127.076501,
          altitude: 0,
@@ -15,3 +15,4 @@
   </node>
 
 </launch>
+  
