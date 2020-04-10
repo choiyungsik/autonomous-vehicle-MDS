@@ -72,10 +72,10 @@ def gps_callback(data):
     lat = data.latitude
     lon = data.longitude
 
-def prize_callback(data):
-    global prize_theta
+def pure_pursuit_callback(data):
+    global pure_pursuit_theta
 
-    prize_theta=data.data
+    pure_pursuit_theta=data.data
 
 if __name__ == '__main__':
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     rospy.Subscriber("/path",Point,path_callback)
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
     rospy.Subscriber("/imu/data",Imu,imu_callback)
-    rospy.Subscriber("/prize",Float32,prize_callback)
+    rospy.Subscriber("/pure_pursuit",Float32,pure_pursuit_callback)
 
     #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
     ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
@@ -95,28 +95,31 @@ if __name__ == '__main__':
 
     imu_theta=0.
     gps_theta=0.
-    prize_theta=0.
+    pure_pursuit_theta=0.
     gps_n_1=[0,0]
     lat=0
     lon=0
-    error_yaw=0
+    error_yaw=-2
 
     rospy.sleep(1)
 
     init_time=rospy.Time.now()
 
     while not rospy.is_shutdown():
+
+
         if((int(imu_theta)*int(gps_theta))>=0.):
             goal_theta=imu_theta-gps_theta
         else:
-            if(((-90>=imu_theta>=-180+error_yaw) or (180+error_yaw>=imu_theta>=90)) and ((-90>=gps_theta>=-180+error_yaw) or (180+error_yaw>=gps_theta>=90))):
+            #if(((-90>=imu_theta>=-180+error_yaw) or (180+error_yaw>=imu_theta>=90)) and ((-90>=gps_theta>=-180+error_yaw) or (180+error_yaw>=gps_theta>=90))):
+            if(((-90>=imu_theta>=-180) or (180>=imu_theta>=90)) and ((-90>=gps_theta>=-180) or (180>=gps_theta>=90))):
                 if((imu_theta>=0) and (gps_theta<0)):
                     goal_theta=-((180-imu_theta)+(180+gps_theta))
                 elif((imu_theta<0) and (gps_theta>=0)):
                     goal_theta=(180+imu_theta)+(180-gps_theta)
             else:
                 goal_theta=imu_theta-gps_theta
-        
+
         #gps_n_1=convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
         #curl_theta=atan2(gps_n_1[0]-lat, gps_n_1[1]-lon)*180/np.pi
 
@@ -128,11 +131,11 @@ if __name__ == '__main__':
         #        prize_theta=90-prize_theta
         #    else:
         #        prize_theta=-(90+prize_theta)
-        print(prize_theta)
-        
+        print(pure_pursuit_theta)
+
         goal_theta=goal_theta+error_yaw #yaw offset
 
-        final_angle = prize_theta*0.5 + goal_theta
+        final_angle = pure_pursuit_theta*1.0 + goal_theta*0
 
 
 
@@ -141,13 +144,13 @@ if __name__ == '__main__':
             final_angle=28
         elif(final_angle<=-28):
             final_angle=-28
-        
 
 
 
 
-        print("imu",int(imu_theta),"gps",int(gps_theta),"goal",int(goal_theta),"pirze",int(prize_theta))
-        ackermann.drive.speed = 2
+
+        print("imu",int(imu_theta),"gps",int(gps_theta),"goal",float(pure_pursuit_theta)*180/np.pi,"final",int(final_angle))
+        ackermann.drive.speed = 3.5
         ackermann.drive.steering_angle = -final_angle*np.pi/180
 
         ackermann_pub.publish(ackermann)

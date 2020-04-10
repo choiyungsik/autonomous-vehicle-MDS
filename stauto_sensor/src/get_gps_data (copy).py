@@ -75,7 +75,7 @@ def do_work(lat,lon):
     gpsmsg.longitude=lon
     gpsmsg. position_covariance_type=0
     gps_pub.publish(gpsmsg)
-    #print(gpsmsg)
+    print(gpsmsg)
 
 
 fix_type={ '0' : "Invalid",
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     #ntripArgs['mountpoint']="SUWN-RTCM31"
     ntripArgs['mountpoint']="SOUL-RTCM32"
 
-    ntripArgs['V2']=False
+    ntripArgs['V2']=True
 
     ntripArgs['verbose']=False
     ntripArgs['headerOutput']=None
@@ -147,8 +147,7 @@ if __name__ == '__main__':
     t=time.time()
     prev_pos = [0.0,0.0]
     Line = 0.0
-    prev_time=0
-    reRTK_count=True
+
 
     gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
     gpsmsg=NavSatFix()
@@ -165,13 +164,11 @@ if __name__ == '__main__':
 
         if que.empty()==False:
             data = que.get()[0]
-            #print(type(data))
 
             if (type(data) is bool):
                 pass
             else:
                 ser.write(data)
-                #print(1)
 
 
         '''
@@ -205,9 +202,7 @@ if __name__ == '__main__':
                 lon_degree = round(deg_lon + (min_lon / 60.0),7)
 
                 #print("{} {}".format(lat_degree,lon_degree))
-
                 print ("Fix Type : %s  North : %.7f  East : %.7f \r"% (fix_type[data[6]],lat_degree,lon_degree))
-                #print(data[6])
                 que_pos.put([lat,lon])
 
                 nclient.setPosition(lat_degree,lon_degree)
@@ -216,24 +211,6 @@ if __name__ == '__main__':
                 if (int(data[6]) >=1):
                     do_work(lat_degree,lon_degree)
                     #print('111111111111')
-
-                if int(data[6])==1:
-                    #print(proc)
-                    print(reRTK_count)
-                    if reRTK_count:
-                        print(1111111111111111111111111)
-                        reRTK_count=False
-                        prev_time=time.time()
-
-                        que = Queue()
-                        que_pos = Queue()
-
-                        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
-                        proc.start()
-
-                if time.time()-prev_time>=5:
-                    reRTK_count=True
-
 
         except:
             print ("Missed" ,"\r")
