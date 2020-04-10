@@ -195,7 +195,7 @@ if __name__ == '__main__':
             Ld = sqrt((gps_n_1[1]-gps_n[1])**(2) + (gps_n_1[0]-gps_n[0])**(2))
             L = 1.3
 
-            error_yaw = 2
+            error_yaw = 6.6
             delta=atan(2*L*sin(alpha)/Ld)*(180/np.pi)+error_yaw
             pure_pursuit_pub.publish(delta)
             print(Ld, step_gps, delta)

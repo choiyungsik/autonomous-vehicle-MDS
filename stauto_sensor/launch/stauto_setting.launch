@@ -2,14 +2,14 @@
 
 <launch>
     <!-- port configuration -->
-    <arg name="imu_port" default="/dev/ttyUSB0"/>
-    <arg name="robot_port" default="/dev/ttyUSB3"/>
+    <arg name="imu_port" default="/dev/ttyUSB4"/>
+    <arg name="robot_port" default="/dev/ttyUSB0"/>
     <!--<arg name="gps_port" default="/dev/ttyACM1"/>-->
     
     <!-- IMU data-->
-    <node pkg="stauto_sensor" type="get_imu_24gv4.py" name="imu_data" >
+    <!--<node pkg="stauto_sensor" type="get_imu_24gv4.py" name="imu_data" >
         <param name="imu_port" type="str" value="$(arg imu_port)"/> 
-    </node> 
+    </node> -->
 
     <!-- ERP42 data-->
     <node pkg="stauto_control" type="ERP42_to_PC.py" name="erp42_data" >
