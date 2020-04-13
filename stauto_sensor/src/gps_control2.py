@@ -99,7 +99,7 @@ if __name__ == '__main__':
     gps_n_1=[0,0]
     lat=0
     lon=0
-    error_yaw=-2
+    error_yaw=0
 
     rospy.sleep(1)
 
@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
 
         print("imu",int(imu_theta),"gps",int(gps_theta),"goal",float(pure_pursuit_theta)*180/np.pi,"final",int(final_angle))
-        ackermann.drive.speed = 3.5
+        ackermann.drive.speed = 2
         ackermann.drive.steering_angle = -final_angle*np.pi/180
 
         ackermann_pub.publish(ackermann)
