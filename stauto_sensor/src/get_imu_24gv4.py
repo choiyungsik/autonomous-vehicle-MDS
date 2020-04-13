@@ -11,7 +11,8 @@ port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
-
+error_yaw=-75.5 #non magnetic -201.5
+#error_yaw=-92.6
 def euler_to_quaternion(roll,pitch,yaw):
 
     qx = np.sin(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) - np.cos(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
@@ -63,7 +64,12 @@ if __name__ == '__main__':
             #print(data)
             rpy[0]=round(float(data[1]),3)
             rpy[1]=round(float(data[2]),3)
-            rpy[2]=round(float(data[3]),3)
+            rpy[2]=round(float(data[3]),3)+error_yaw
+            #print(rpy[2])
+            if (rpy[2] >= 180):
+                rpy[2] = rpy[2] - 2*180
+            elif (rpy[2] <= -180):
+                rpy[2] = rpy[2] + 2*180
 
             roll=rpy[0]*np.pi/180
             pitch=-rpy[1]*np.pi/180
