@@ -48,6 +48,8 @@
 
 #include <iostream>
 #include <fstream>
+#include<algorithm>
+
 
 #include "darknet_ros_msgs/BoundingBoxes.h"
 #include "darknet_ros_msgs/BoundingBox.h"
@@ -101,10 +103,15 @@ private:
     int xmax;
     int ymin;
     int ymax;
-    int detected_num;
+    int object_num;
+
+    int delay_num;
+    int row;
+    int column;
 
     std::vector<std::vector<int>> bb_arr;
-    std::vector<string> label_vec;
+    std::vector<std::vector<float>> obj_cor;
+    std::vector<std::string> label_vec;
 
 
 
@@ -128,7 +135,7 @@ public:
         std::string imageOutTopic = camera_in_topic + "/projected_image";
         image_pub = nh.advertise<sensor_msgs::Image>(imageOutTopic, 1);
 
-        Bbox_sub = nh.subscribe("/darknet_ros/bounding_boxes", 1, &lidarImageProjection::Bbox_callback,this);
+        Bbox_sub = nh.subscribe("/darknet_ros/bounding_boxes", 10, &lidarImageProjection::Bbox_callback,this);
 
         sync = new message_filters::Synchronizer<SyncPolicy>(SyncPolicy(10), *cloud_sub, *image_sub);
         sync->registerCallback(boost::bind(&lidarImageProjection::callback, this, _1, _2));
@@ -175,6 +182,23 @@ public:
                          image_width,
                          distCoeff,
                          projection_matrix);
+
+        row = 20;
+        delay_num = 0;
+
+        for (int i = 0; i < row; i++) {
+            std::vector<int> element(4,0);
+            bb_arr.push_back(element);
+        }
+
+        for (int i = 0; i < row; i++) {
+            std::vector<float> element(4,0);
+            obj_cor.push_back(element);
+        }
+        
+        for (int i = 0; i < row; i++) {
+            label_vec.push_back("");
+        }
     }
 
     void readCameraParams(std::string cam_config_file_path,
@@ -258,10 +282,59 @@ public:
 
         int x = xy_f.x;
         int y = xy_f.y;
+        
+        object_num = -1;
+        int x_center = 0;
+        int y_center = 0;
+        int width = 0;
+        int height = 0;
 
         for (int row = 0; row <= 1; row++){
             for (int col = 0; col <= 1; col++){
                 if((x+col)< rgb.cols && (y+row) < rgb.rows) {
+                    for(int num = 0; num < label_vec.size(); num++) {
+                        x_center = (bb_arr[num][0] + bb_arr[num][1]) / 2;
+                        y_center = (bb_arr[num][2] + bb_arr[num][3]) / 2;
+                        width  = bb_arr[num][1] - bb_arr[num][0];
+                        height = bb_arr[num][3] - bb_arr[num][2];
+
+
+                        // if(x_center < 5) {
+                        //     x_center = 5;
+                        // }
+
+                        // else if(x_center > 715) {
+                        //     x_center = 715;
+                        // }
+
+                        // if(y_center < 5) {
+                        //     y_center = 5;
+                        // }
+
+                        // else if(y_center > 1275) {
+                        //     y_center = 1275;
+                        // }
+                        // if(bb_arr[num][0] + 10 <= x + col && x + col <= bb_arr[num][1] - 10 && bb_arr[num][2] + 10 <= y + row && y + row <= bb_arr[num][2] - 10) {
+                        //     object_num = num;
+                        //     std::cout << object_num <<std::endl;
+                        // }
+
+                        // if(x_center - width/2 <= x + col && x + col <= x_center + width/2 && y_center -height/2 <= y + row && y + row<= y_center + height/2) {
+                        //     object_num = num;
+                        //     // std::cout << object_num <<std::endl;
+                        // }
+
+                        // if(width/2 < 30 || height/2 < 30) {
+                        //     std::cout << "out of boarder!!!!!!!!!!!!!!!!!!!!" << std::endl;
+                        // }
+
+                        if(x_center -30 <= x + col && x + col <= x_center + 30 && y_center -30 <= y + row && y + row<= y_center + 30) {
+                            object_num = num;
+                            // std::cout << object_num <<std::endl;
+                        }   // center -+ 30 size bbox
+
+
+                    }
                     if(xmin <= x + col && x + col <= xmax && ymin <= y + row && y + row<= ymax && detected ){
                         // std::cout << xmin << "   " << x + col << std::endl;
                         cv::Vec3b c = rgb.at<cv::Vec3b>(cv::Point(x + col, y + row));
@@ -304,18 +377,57 @@ public:
     }
 
     void colorPointCloud() {
+        tf::TransformBroadcaster br;
+        tf::Transform transform;
+        tf::Quaternion q;
+        q.setRPY(0, 0, 0);
+        transform.setRotation(q);
+        
+
         out_cloud_pcl.points.clear();
         out_cloud_pcl.resize(objectPoints_L.size());
 
         for(size_t i = 0; i < objectPoints_L.size(); i++) {
             // std::cout << imagePoints[i] << std::endl;
+            // std::cout << "asd" << object_num <<std::endl;
             cv::Vec3b rgb = atf(image_in, imagePoints[i]);
             pcl::PointXYZRGB pt_rgb(rgb.val[2], rgb.val[1], rgb.val[0]);
             pt_rgb.x = objectPoints_L[i].x;
             pt_rgb.y = objectPoints_L[i].y;
             pt_rgb.z = objectPoints_L[i].z;
+        
+            if(object_num >= 0) {
+                obj_cor[object_num][0] += pt_rgb.x;
+                obj_cor[object_num][1] += pt_rgb.y;
+                obj_cor[object_num][2] += pt_rgb.z;
+                obj_cor[object_num][3] += 1;
+
+                // std::cout << label_vec[object_num] << " " <<  pt_rgb.z << std::endl;
+                // br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "velodyne", label_vec[object_num]));
+            }   
             out_cloud_pcl.push_back(pt_rgb);
+        }           
+
+        for(int i = 0; i < obj_cor.size(); i++) {               
+            float x_mean = obj_cor[i][0]/obj_cor[i][3];
+            float y_mean = obj_cor[i][1]/obj_cor[i][3];
+            float z_mean = obj_cor[i][2]/obj_cor[i][3];
+
+            transform.setOrigin( tf::Vector3(x_mean, y_mean, z_mean) );
+
+            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "velodyne", label_vec[i]));
+        }           // mean coordinate
+
+        obj_cor.clear();
+
+        for (int i = 0; i < row; i++) {
+            std::vector<float> element(4,0);
+            obj_cor.push_back(element);
         }
+
+        // bb_arr.clear();
+        // label_vec.clear();
+
     }
 
     void colorLidarPointsOnImage(double min_range,
@@ -340,7 +452,6 @@ public:
         imagePoints.clear();
         publishTransforms();
         image_in = cv_bridge::toCvShare(image_msg, "bgr8")->image;
-
 
         double fov_x, fov_y;
         fov_x = 2*atan2(image_width, 2*projection_matrix.at<double>(0, 0))*180/CV_PI;
@@ -420,6 +531,24 @@ public:
         sensor_msgs::ImagePtr msg =
                 cv_bridge::CvImage(std_msgs::Header(), "bgr8", image_in).toImageMsg();
         image_pub.publish(msg);
+
+        delay_num += 1;
+
+        if(delay_num > 10) {
+            label_vec.clear();
+            for (int i = 0; i < row; i++) {
+                    label_vec.push_back("");
+                }
+            bb_arr.clear();
+            for (int i = 0; i < row; i++) {
+                std::vector<int> element(4,0);
+                bb_arr.push_back(element);
+            }
+            
+            std::cout << "clear~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" <<std::endl;
+            delay_num = 0;
+        }
+        
 //        cv::Mat image_resized;
 //        cv::resize(lidarPtsImg, image_resized, cv::Size(), 0.25, 0.25);
 //        cv::imshow("view", image_resized);
@@ -427,32 +556,25 @@ public:
     }
 
     void Bbox_callback(const darknet_ros_msgs::BoundingBoxes::ConstPtr& msg){
-        detected_num = 0;
-        bb_arr(10, std::vector<int>(4, 0));
-        label_vec(10);
-        for(int i=0;i<msg->bounding_boxes.size();i++){
-            bb_arr[i][0] = msg->bounding_boxes[i].xmin;
-            bb_arr[i][1] = msg->bounding_boxes[i].xmax;
-            bb_arr[i][2] = msg->bounding_boxes[i].ymin;
-            bb_arr[i][3] = msg->bounding_boxes[i].ymax;
-            label_vec[i] = msg->bounding_boxes[i].Class;
+        
+        for(int i=0; i < msg->bounding_boxes.size(); i++) {
+            if(msg->bounding_boxes[i].Class == "person") {
+                bb_arr[i][0] = msg->bounding_boxes[i].xmin; 
+                bb_arr[i][1] = msg->bounding_boxes[i].xmax;
+                bb_arr[i][2] = msg->bounding_boxes[i].ymin;
+                bb_arr[i][3] = msg->bounding_boxes[i].ymax;
+                label_vec[i] = msg->bounding_boxes[i].Class;
 
-            if(msg->bounding_boxes[i].Class == "person"){
-                xmin = msg->bounding_boxes[i].xmin;
-                xmax = msg->bounding_boxes[i].xmax;
-                ymin = msg->bounding_boxes[i].ymin;
-                ymax = msg->bounding_boxes[i].ymax;
-                detected_num += 1;
             }
+        }
 
+        for(int i=0; i < label_vec.size(); i++) {
+            if(label_vec[i].find("_") == std::string::npos && label_vec[i] != "") {
+                label_vec[i] = label_vec[i] + "_" + std::to_string(i);
+            }
+            // std::cout << i << label_vec[i] <<std::endl;
+        }
 
-        }
-        if(detected_num > 0){
-            detected = true;
-        }
-        else{
-            detected = false;
-        }
     }
 };
 
