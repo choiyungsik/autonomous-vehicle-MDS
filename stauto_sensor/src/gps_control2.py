@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
 
         print("imu",int(imu_theta),"gps",int(gps_theta),"goal",float(pure_pursuit_theta)*180/np.pi,"final",int(final_angle))
-        ackermann.drive.speed = 2
+        ackermann.drive.speed = 3
         ackermann.drive.steering_angle = -final_angle*np.pi/180
 
         ackermann_pub.publish(ackermann)
