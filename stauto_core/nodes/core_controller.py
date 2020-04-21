@@ -54,7 +54,7 @@ class CoreController():
 
         elif self.current_state == self.Machine_State.cruise.value:
             print('In Core, Cruise Mode!!')
-            self.is_green_triggered = False # Turn back on the green_light mode
+            self.is_green_triggered = False     # Turn back on the green_light mode
 
     def main(self):
         while not rospy.is_shutdown():

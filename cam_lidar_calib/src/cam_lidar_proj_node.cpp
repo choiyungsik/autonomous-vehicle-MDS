@@ -48,6 +48,9 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
+using namespace std;
 
 #include "darknet_ros_msgs/BoundingBoxes.h"
 #include "darknet_ros_msgs/BoundingBox.h"
