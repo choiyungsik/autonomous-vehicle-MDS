@@ -55,6 +55,11 @@ def gps_callback(data):
     lat = data.latitude
     lon = data.longitude
 
+def speed_callback(data):
+    global speed
+
+    speed = data.data/10
+
 def imu_callback(data):
     global imu_theta
     orientation_list = [data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w]
@@ -62,6 +67,24 @@ def imu_callback(data):
 
     imu_theta=yaw*(180/np.pi)
     #print(yaw)
+def culculate_next_step(gps_n, gps_n_3, fp1, ld, utm_gps_cur):
+    min_line=100
+    utm_next_gps=[0,0]
+    #print(gps_n, gps_n_3)
+    #for i in range(gps_n, gps_n_3, 0.3):
+    for i in np.arange(gps_n, gps_n_3, 0.2):
+        
+        goal_y= fp1[0]*i**(2)+fp1[1]*i+fp1[2]
+        #goal_y= fp1[0]*i+fp1[1]
+        #print(goal_y)
+        line=sqrt((goal_y-utm_gps_cur[1])**(2) + (i-utm_gps_cur[0])**(2))
+
+        if (line<min_line):
+            min_line=line
+            utm_next_gps=[i, goal_y]
+            
+    #print(utm_next_gps)
+    return utm_next_gps
 
 if __name__ == '__main__':
 
@@ -70,6 +93,7 @@ if __name__ == '__main__':
 
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
     rospy.Subscriber("/imu/data",Imu,imu_callback)
+    rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
 
     #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
     path_pub = rospy.Publisher('/path', Point, queue_size=10)
@@ -91,6 +115,21 @@ if __name__ == '__main__':
     error_yaw=0
     alpha=0
     delta=0
+    speed=0
+    prev_ld_position=[0,0]
+    '''
+    utm_gps_n=[0,0]
+    utm_gps_n_1=[0,0]
+    utm_gps_n_2=[0,0]
+    utm_gps_n_3=[0,0]
+    utm_gps_cur=[0,0]
+    utm_next_gps=[0,0]
+    '''
+
+    going_gps_n=[0,0]
+    going_gps=[0,0]
+
+
     gps_nn=[0,0]
     gps_nn_1=[0,0]
     prize_gps_nn=[0,0]
@@ -109,94 +148,82 @@ if __name__ == '__main__':
 
         if (step_gps<last_step-4):
 
-            '''
+
             gps_n = gps_data[step_gps].split(',')
             gps_n_1 = gps_data[step_gps+1].split(',')
             gps_n_2 = gps_data[step_gps+2].split(',')
             gps_n_3 = gps_data[step_gps+3].split(',')
-            gps_n_4 = gps_data[step_gps+4].split(',')
+
             # gps_n = [float(gps_n[0]) - float(gps_origin[0]), float(gps_n[1]) - float(gps_origin[1])]
             # gps_n_1 = [float(gps_n_1[0]) - float(gps_origin[0]), float(gps_n_1[1])- float(gps_origin[1])]
             gps_n = [float(gps_n[0]), float(gps_n[1])]
             gps_n_1 = [float(gps_n_1[0]), float(gps_n_1[1])]
             gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
             gps_n_3 = [float(gps_n_3[0]), float(gps_n_3[1])]
-            gps_n_4 = [float(gps_n_4[0]), float(gps_n_4[1])]
 
-            line_data_x=[gps_n[0],gps_n_1[0],gps_n_2[0],gps_n_4[0],gps_n_4[0]]
-            line_data_y=[gps_n[1],gps_n_1[1],gps_n_2[1],gps_n_3[1],gps_n_4[1]]
+
+            utm_gps_n = convert_degree_to_meter(gps_n[0],gps_n[1])
+            utm_gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
+            utm_gps_n_2 = convert_degree_to_meter(gps_n_2[0],gps_n_2[1])
+            utm_gps_n_3 = convert_degree_to_meter(gps_n_3[0],gps_n_3[1])
+            utm_gps_cur = convert_degree_to_meter(lat,lon)
+
+            line_data_x=[utm_gps_n[0],utm_gps_n_1[0],utm_gps_n_2[0],utm_gps_n_3[0]]
+            line_data_y=[utm_gps_n[1],utm_gps_n_1[1],utm_gps_n_2[1],utm_gps_n_3[1]]
 
             fp1 = np.polyfit(line_data_x,line_data_y,2)
+            
+            ld = speed*0.237+2.5
+            #print(speed,ld)
+            utm_next_gps = culculate_next_step(utm_gps_n[0], utm_gps_n_3[0], fp1, ld, utm_gps_cur)
 
-            goal_x=(gps_n_3[0]+gps_n_2[0])/2 #pure_pursuit point
-            goal_y= fp1[0]*goal_x**(2)+fp1[1]*goal_x+fp1[2]
-            '''
-
-            gps_n = gps_data[step_gps].split(',')
-            gps_n_1 = gps_data[step_gps+1].split(',')
-            gps_n_2 = gps_data[step_gps+2].split(',')
-
-            # gps_n = [float(gps_n[0]) - float(gps_origin[0]), float(gps_n[1]) - float(gps_origin[1])]
-            # gps_n_1 = [float(gps_n_1[0]) - float(gps_origin[0]), float(gps_n_1[1])- float(gps_origin[1])]
-            gps_n = [float(gps_n[0]), float(gps_n[1])]
-            gps_n_1 = [float(gps_n_1[0]), float(gps_n_1[1])]
-            gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
-
-            #print(lat,lon, gps_n)
-            #line_data_x=[gps_n[0],gps_n_1[0],gps_n_2[0]]
-            #line_data_y=[gps_n[1],gps_n_1[1],gps_n_2[1]]
-            prev_step = convert_degree_to_meter(gps_n[0],gps_n[1])
-            next_step = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
-            #print(gps_n_1[1])
-            gps_nn[0] = (prev_step[0] - 460000)/100
-            gps_nn[1] = (prev_step[1] - 383000)/100
-            gps_nn_1[0] = (next_step[0] - 460000)/100
-            gps_nn_1[1] = (next_step[1] - 383000)/100
-
-            #fp1 = np.polyfit(line_data_x,line_data_y,2)
-
-            #goal_x=(gps_n_2[0]+gps_n_1[0])/2 #pure_pursuit point
-            #goal_y= fp1[0]*goal_x**(2)+fp1[1]*goal_x+fp1[2]
-
-            step_theta = atan2(gps_nn_1[0]-gps_nn[0], gps_nn_1[1]-gps_nn[1])*180/np.pi
-            #print("fp:", fp1,"theta", theta)
+            going_gps[0]=(utm_gps_cur[0] - 460000)/100
+            going_gps[1]=(utm_gps_cur[1] - 383000)/100
+            #going_gps_n[0]=(utm_next_gps[0] - 460000)/100
+            #going_gps_n[1]=(utm_next_gps[1] - 383000)/100
+            
+            #test
+            going_gps_n[0]=(utm_gps_n_2[0] - 460000)/100
+            going_gps_n[1]=(utm_gps_n_2[1] - 383000)/100
 
             rospy.sleep(0.1)
 
-            data.x=step_theta
+            data.x=0
             data.y=gps_n_2[0]
             data.z=gps_n_2[1]
 
             path_pub.publish(data)
-            #print(lat,lon)
-            gps_n = convert_degree_to_meter(lat,lon)
 
-            gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
-            #print(lat, lon, gps_n_2[0], gps_n_2[1])
-
-            prize_gps_nn[0] = (gps_n[0] - 460000)/100
-            prize_gps_nn[1] = (gps_n[1] - 383000)/100
-
-            prize_theta = atan2(gps_nn_1[0]-prize_gps_nn[0], gps_nn_1[1]-prize_gps_nn[1])*180/np.pi
-            #print(prize_theta, theta)
-            if((int(imu_theta)*int(prize_theta))>=0.):
-                alpha=imu_theta-prize_theta
+            print(going_gps_n[0], going_gps[0],going_gps_n[1],going_gps[1])
+            going_gps_theta = atan2(going_gps_n[0]-going_gps[0], going_gps_n[1]-going_gps[1])*180/np.pi
+            #print(going_gps_theta, imu_theta)
+            if((int(imu_theta)*int(going_gps_theta))>=0.):
+                alpha=imu_theta-going_gps_theta
             else:
-                if(((-90>=imu_theta>=-180) or (180>=imu_theta>=90)) and ((-90>=prize_theta>=-180) or (180>=prize_theta>=90))):
-                    if((imu_theta>=0) and (prize_theta<0)):
-                        alpha=-((180-imu_theta)+(180+prize_theta))
-                    elif((imu_theta<0) and (prize_theta>=0)):
-                        alpha=(180+imu_theta)+(180-prize_theta)
+                if(((-90>=imu_theta>=-180) or (180>=imu_theta>=90)) and ((-90>=going_gps_theta>=-180) or (180>=going_gps_theta>=90))):
+                    if((imu_theta>=0) and (going_gps_theta<0)):
+                        alpha=-((180-imu_theta)+(180+going_gps_theta))
+                    elif((imu_theta<0) and (going_gps_theta>=0)):
+                        alpha=(180+imu_theta)+(180-going_gps_theta)
                 else:
-                    alpha=imu_theta-prize_theta
+                    alpha=imu_theta-going_gps_theta
 
             alpha=alpha*(np.pi/180)
-            #print(gps_n_1[1], gps_n[1])
-            Ld = sqrt((gps_n_1[1]-gps_n[1])**(2) + (gps_n_1[0]-gps_n[0])**(2))
-            L = 1.3
+            #print(alpha)
 
+            Ld = sqrt((utm_gps_n_1[1]-utm_gps_cur[1])**(2) + (utm_gps_n_1[0]-utm_gps_cur[0])**(2))
+            L=1.3
+
+            speed_ld = speed*0.237
+            alpha_ld = abs(alpha*180/np.pi)*0.05
+
+            if(alpha_ld>=2):
+                alpha_ld=2
+            
+            ld = speed*0.237+3-alpha_ld
+            print(speed_ld,alpha_ld, ld)
             error_yaw = 0
-            delta=atan(2*L*sin(alpha)/Ld)*(180/np.pi)+error_yaw
+            delta=atan(2*L*sin(alpha)/ld)*(180/np.pi)+error_yaw
             pure_pursuit_pub.publish(delta)
             print(Ld, step_gps, delta)
             if(abs(Ld) <=2.5)and(step_gps<=last_step-4):

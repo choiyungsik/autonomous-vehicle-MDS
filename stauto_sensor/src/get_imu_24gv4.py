@@ -7,7 +7,7 @@ import tf2_ros
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
