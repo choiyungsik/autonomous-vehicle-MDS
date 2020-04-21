@@ -1,6 +1,0 @@
-#ifndef CORE_NODE_CONTROLLER_H_
-#define CORE_NODE_CONTROLLER_H_
-
-
-
-#endif
