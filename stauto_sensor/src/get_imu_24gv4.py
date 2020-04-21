@@ -5,13 +5,14 @@ import numpy as np
 import rospy
 import tf2_ros
 from sensor_msgs.msg import Imu
+from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
-error_yaw=-75.5 #non magnetic -201.5
+error_yaw=0 #non magnetic -201.5
 #error_yaw=-92.6
 def euler_to_quaternion(roll,pitch,yaw):
 
@@ -21,6 +22,12 @@ def euler_to_quaternion(roll,pitch,yaw):
     qw = np.cos(roll/2) * np.cos(pitch/2) * np.cos(yaw/2) + np.sin(roll/2) * np.sin(pitch/2) * np.sin(yaw/2)
 
     return [qx, qy, qz, qw]
+
+def imu_error_callback(data):
+    global error_yaw, rpy
+    error_yaw +=-rpy[2] + data.data
+    #print(error_yaw)
+
 
 def pub_tf_transform(roll,pitch,yaw,w_speed,accel):
 
@@ -46,6 +53,7 @@ if __name__ == '__main__':
     port = rospy.get_param("~GPS_PORT",port)
     ser = serial.serial_for_url(port,115200, timeout=0)
 
+    rospy.Subscriber("yaw_error",Float32,imu_error_callback)
     imu_pub = rospy.Publisher("/imu/data", Imu, queue_size=10)
 
     br = tf2_ros.TransformBroadcaster()
