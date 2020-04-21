@@ -88,7 +88,7 @@ if __name__ == '__main__':
     rospy.Subscriber("/pure_pursuit",Float32,pure_pursuit_callback)
 
     #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
-    ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
+    ackermann_pub = rospy.Publisher('/ackermann_cmd_state', AckermannDriveStamped, queue_size=10)
     #goal_pub = rospy.Publisher('/pure_pursuit/goal', PoseStamped, queue_size=1)
 
     ackermann=AckermannDriveStamped()
@@ -144,9 +144,6 @@ if __name__ == '__main__':
             final_angle=28
         elif(final_angle<=-28):
             final_angle=-28
-
-
-
 
 
         print("imu",int(imu_theta),"gps",int(gps_theta),"goal",float(pure_pursuit_theta)*180/np.pi,"final",int(final_angle))

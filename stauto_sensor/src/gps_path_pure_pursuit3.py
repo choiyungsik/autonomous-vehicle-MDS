@@ -235,4 +235,3 @@ if __name__ == '__main__':
         else:
             pass
 
-#!/usr/bin/env python
