@@ -52,9 +52,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <vector>
-using namespace std;
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::PointCloud2,
                                                         sensor_msgs::Image> SyncPolicy;
