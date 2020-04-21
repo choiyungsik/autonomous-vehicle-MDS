@@ -56,7 +56,10 @@
 ``rosrun stauto_sensor gps_path.py 
 ``
 
+### Lidar + camera fusion
 
+`` roslaunch darknet_ros yolo_v3.launch ``
+``roslaunch cam_lidar_calib cam_lidar_proj_basler.launch``
 
 ### localization
 
