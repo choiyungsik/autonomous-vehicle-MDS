@@ -11,6 +11,8 @@
 
 ``rosrun stauto_senor get_gps_data.py``
 
+``rosrun stauto_senor get_imu_24gv4.py`` or ``rosrun stauto_senor get_imu_24gv2.py``
+
 ``rosrun stauto_senor gps_path_pure_pursuit3.py``
 
 ``rosrun stauto_senor gps_control2.py``
