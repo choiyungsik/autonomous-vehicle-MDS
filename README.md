@@ -8,8 +8,11 @@
 ### Commands Pure_Pursuit Control VersionC
 
 ``roslaunch stauto_senor stauto_setting.launch``
+
 ``rosrun stauto_senor get_gps_data.py``
-``rosrun stauto_senor gps_path_pure_pursuit2.py``
+
+``rosrun stauto_senor gps_path_pure_pursuit3.py``
+
 ``rosrun stauto_senor gps_control2.py``
 
 ### Velodyne lidar & IMU & ERP_to_PC & GPS 
