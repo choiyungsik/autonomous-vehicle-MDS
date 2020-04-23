@@ -335,7 +335,7 @@ public:
 
 
                     }
-                    if(xmin <= x + col && x + col <= xmax && ymin <= y + row && y + row<= ymax && detected ){
+                    if(object_num > 0 ){
                         // std::cout << xmin << "   " << x + col << std::endl;
                         cv::Vec3b c = rgb.at<cv::Vec3b>(cv::Point(x + col, y + row));
                         for (int i = 0; i < 3; i++){
