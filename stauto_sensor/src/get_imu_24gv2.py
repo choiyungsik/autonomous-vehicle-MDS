@@ -2,13 +2,13 @@
 
 import serial
 import numpy as np
-import rospy
+import rospy, time
 import tf2_ros
 from sensor_msgs.msg import Imu
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
@@ -60,28 +60,66 @@ if __name__ == '__main__':
 
     r=rospy.Rate(1)
 
+    prev_time=time.time()
+    prev_sign=True
+    prev_roll=0
+    prev_pitch=0
+    prev_yaw=0
+    d_yaw=0
+    theta_sign=True
+    theta=0
     imu=Imu()
 
     while not rospy.is_shutdown():
         IMU_message=ser.readline()
+        #print(len(IMU_message))
 
-        if (len(IMU_message)>55):
+        if (len(IMU_message)>35):
             imu.header.stamp = rospy.Time.now()
             imu.header.frame_id = "imu_link"
             data=IMU_message.split(",")
-            #print(data)
-            rpy[0]=round(float(data[1]),3)
-            rpy[1]=round(float(data[2]),3)
-            rpy[2]=round(float(data[3]),3)+error_yaw
+
+            if(prev_sign is True):
+                prev_roll=round(float(data[0][1:]),3)
+                prev_pitch=round(float(data[1]),3)
+                prev_yaw=round(float(data[2]),3)
+                prev_sign=False
+
+            rpy[0]=round(float(data[0][1:]),3)
+            rpy[1]=round(float(data[1]),3)
+            rpy[2]=round(float(data[2]),3)+error_yaw
+            #print(rpy)
+
             #print(rpy[2])
             if (rpy[2] >= 180):
                 rpy[2] = rpy[2] - 2*180
             elif (rpy[2] <= -180):
                 rpy[2] = rpy[2] + 2*180
 
+###############high pass filter###############
+            if(theta_sign is True):
+                theta=-rpy[2]
+                theta_sign=False
+
+            d_yaw=rpy[2]-prev_yaw
+
+            if(abs(d_yaw)<=0.0005):
+                d_yaw=0
+            theta -=d_yaw
+
+            if (theta >= 180):
+                theta = theta - 2*180
+            elif (theta <= -180):
+                theta = theta + 2*180
+
+############################################
+
+
             roll=rpy[0]*np.pi/180
             pitch=-rpy[1]*np.pi/180
-            yaw=-rpy[2]*np.pi/180
+            #yaw=-rpy[2]*np.pi/180
+            yaw = theta*np.pi/180
+
 
             qx,qy,qz,qw = euler_to_quaternion(roll, pitch, yaw)
 
@@ -90,29 +128,37 @@ if __name__ == '__main__':
             imu.orientation.z = qz
             imu.orientation.w = qw
 
-            w_speed[0]=round(float(data[4]),3)
-            w_speed[1]=round(float(data[5]),3)
-            w_speed[2]=round(float(data[6]),3)
+
+            w_speed[0]=(rpy[0]-prev_roll)/(time.time()-prev_time)
+            w_speed[1]=(rpy[1]-prev_pitch)/(time.time()-prev_time)
+            w_speed[2]=(rpy[2]-prev_yaw)/(time.time()-prev_time)
+
+            prev_roll=rpy[0]
+            prev_pitch=rpy[1]
+            prev_yaw=rpy[2]
+            prev_time=time.time()
 
             imu.angular_velocity.x = w_speed[0]
             imu.angular_velocity.y = w_speed[1]
             imu.angular_velocity.z = w_speed[2]
 
-            accel[0]=round(float(data[7]),3)
-            accel[1]=round(float(data[8]),3)
-            accel[2]=round(float(data[9]),3)
+            accel[0]=round(float(data[3]),3)
+            accel[1]=round(float(data[4]),3)
+            accel[2]=round(float(data[5]),3)
 
             imu.linear_acceleration.x = accel[0]
             imu.linear_acceleration.y = accel[1]
             imu.linear_acceleration.z = accel[2]
 
-            battery=round(float(data[10]),3)
             imu_pub.publish(imu)
             pub_tf_transform(roll,pitch,yaw,w_speed,accel)
-            print("yaw:",rpy[2], "battery:",battery )
+            #print("yaw:",rpy[2])
+            print("yaw:",-theta)
+
+
 
         else:
             pass
+
     else:
         pass
-        #mainloop()
