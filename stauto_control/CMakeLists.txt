@@ -39,7 +39,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##     * add a exec_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
-     find_package(catkin REQUIRED COMPONENTS
+  find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rospy
 	std_msgs
@@ -139,7 +139,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/main_control_node.cpp)
-add_executable(final_control src/final_control.cpp)
+add_executable(path_plan_node src/path_plan_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,7 +153,7 @@ add_executable(final_control src/final_control.cpp)
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
-target_link_libraries(final_control ${catkin_LIBRARIES})
+target_link_libraries(path_plan_node ${catkin_LIBRARIES})
 
 #############
 ## Install ##

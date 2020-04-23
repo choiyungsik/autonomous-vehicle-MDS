@@ -67,7 +67,7 @@ def imu_callback(data):
 
     imu_theta=yaw*(180/np.pi)
     #print(yaw)
-def culculate_next_step(gps_n, gps_n_3, fp1, ld, utm_gps_cur):
+def calculate_next_step(gps_n, gps_n_3, fp1, ld, utm_gps_cur):
     min_line=100
     utm_next_gps=[0,0]
     #print(gps_n, gps_n_3)
@@ -95,10 +95,10 @@ if __name__ == '__main__':
     rospy.Subscriber("/imu/data",Imu,imu_callback)
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
 
-    #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
     path_pub = rospy.Publisher('/path', Point, queue_size=10)
     pure_pursuit_pub = rospy.Publisher('/pure_pursuit', Float32, queue_size=10)
     #goal_pub = rospy.Publisher('/pure_pursuit/goal', PoseStamped, queue_size=1)
+    #navs_pub = rospy.Publisher('/fix', NavSatFix, queue_size=1)
 
     rospack = rospkg.RosPack()
     rospack.list()
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             
             ld = speed*0.237+2.5
             #print(speed,ld)
-            utm_next_gps = culculate_next_step(utm_gps_n[0], utm_gps_n_3[0], fp1, ld, utm_gps_cur)
+            utm_next_gps = calculate_next_step(utm_gps_n[0], utm_gps_n_3[0], fp1, ld, utm_gps_cur)
 
             going_gps[0]=(utm_gps_cur[0] - 460000)/100
             going_gps[1]=(utm_gps_cur[1] - 383000)/100
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                 else:
                     alpha=imu_theta-going_gps_theta
 
-            alpha=alpha*(np.pi/180)
+            alpha=alpha*(np.pi/180)  # alpha => degree
             #print(alpha)
 
             Ld = sqrt((utm_gps_n_1[1]-utm_gps_cur[1])**(2) + (utm_gps_n_1[0]-utm_gps_cur[0])**(2))
@@ -226,6 +226,7 @@ if __name__ == '__main__':
             delta=atan(2*L*sin(alpha)/ld)*(180/np.pi)+error_yaw
             pure_pursuit_pub.publish(delta)
             print(Ld, step_gps, delta)
+            
             if(abs(Ld) <=2.5)and(step_gps<=last_step-4):
                 step_gps=step_gps+1
 
