@@ -4,6 +4,7 @@ import serial
 import socket as soc
 import rospy
 import time
+from std_msgs.msg import UInt32
 from sensor_msgs.msg import NavSatFix
 from ntrip.NtripClient import *
 
@@ -77,6 +78,26 @@ def do_work(lat,lon):
     gps_pub.publish(gpsmsg)
     #print(gpsmsg)
 
+def pub_accuracy(accuracy):
+    global prev_accuracy
+
+
+    if(prev_accuracy != accuracy):
+
+        if (accuracy==1):
+            gps_accuracy_pub.publish(0)
+        elif (accuracy==2):
+            gps_accuracy_pub.publish(1)
+        elif (accuracy==5):
+            gps_accuracy_pub.publish(2)
+        elif (accuracy==4):
+            gps_accuracy_pub.publish(3)
+
+        prev_accuracy=accuracy
+    else:
+        pass
+
+
 
 fix_type={ '0' : "Invalid",
            '1' : "GPS fix (SPS)",
@@ -93,7 +114,7 @@ if __name__ == '__main__':
     rospy.init_node("gps_node")
 
     port = rospy.get_param("~GPS_PORT",port)
-    print(port)
+    #print(port)
 
     TCP_info = SocketInfo()
     TCP_sock = soc.socket(soc.AF_INET, soc.SOCK_STREAM)
@@ -149,8 +170,10 @@ if __name__ == '__main__':
     Line = 0.0
     prev_time=0
     reRTK_count=True
+    prev_accuracy=0
 
     gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
+    gps_accuracy_pub=rospy.Publisher('/gps/accuracy', UInt32, queue_size=10)
     gpsmsg=NavSatFix()
 
     rospy.loginfo("initialised")
@@ -215,13 +238,14 @@ if __name__ == '__main__':
                 #print(data[6])
                 if (int(data[6]) >=1):
                     do_work(lat_degree,lon_degree)
-                    #print('111111111111')
+                    pub_accuracy(int(data[6]))
 
-                if int(data[6])==1:
+
+                if (int(data[6])==1):
                     #print(proc)
-                    print(reRTK_count)
+                    #print(reRTK_count)
                     if reRTK_count:
-                        print(1111111111111111111111111)
+                        print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         reRTK_count=False
                         prev_time=time.time()
 
