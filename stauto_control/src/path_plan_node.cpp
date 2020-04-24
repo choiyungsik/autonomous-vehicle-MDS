@@ -39,7 +39,6 @@
 #include <tf/transform_listener.h>
 #include <nav_msgs/Path.h>
 #include <std_msgs/UInt32.h>
-#include <std_msgs/Bool.h>
 #include <geometry_msgs/PoseStamped.h>
 //#include <vision_msgs/BoundingBox2D.h>
 
@@ -56,7 +55,7 @@ class PathPlan
         nav_msgs::Path global_path,lane_path,local_path;
         std_msgs::UInt32 gps_accuracy, lane_accuracy;
         geometry_msgs::PoseStamped cur_step;
-        std_msgs::Bool gps_accu_received, lane_accu_received;
+        bool global_path_flag, cur_step_flag, gps_accu_received, lane_accu_received;
         int controller_freq;
 
 
@@ -78,12 +77,14 @@ PathPlan::PathPlan()
 {
     ros::NodeHandle pn("~");
     pn.param("controller_freq",controller_freq,10);
+    global_path_flag = true;
+    cur_step_flag = true;
 
     global_path_sub = nh.subscribe("global_path", 1, &PathPlan::GlobalCB,this);
     lane_path_sub = nh.subscribe("lane_path", 1, &PathPlan::LaneCB,this);
     gps_accuracy_sub = nh.subscribe("/gps/accuracy", 1, &PathPlan::GaccuracyCB,this);
     lane_accuracy_sub = nh.subscribe("/lane/accuracy", 1, &PathPlan::LaccuracyCB,this);
-    robot_step_sub = nh.subscribe("current_step", 1, &PathPlan::RobotStepCB,this);    
+    robot_step_sub = nh.subscribe("current_step", 1, &PathPlan::RobotStepCB,this);
 
     timer1 = nh.createTimer(ros::Duration((1.0)/controller_freq),&PathPlan::controlLoopCB,this);
 
@@ -95,23 +96,30 @@ nav_msgs::Path PathPlan::LocalPathPlan (const nav_msgs::Path global_path, const 
     local_path = nav_msgs::Path();
     int index = 0;
 
+    ROS_INFO("cur_step.pose.position.z : %d ", (int)cur_step.pose.position.z);
 
-    for(int idx = (int)cur_step.pose.position.z ; idx < (int)cur_step.pose.position.z + 4; idx++)
+    for(int idx = (int)cur_step.pose.position.z ; idx < ((int)cur_step.pose.position.z + 4); idx++)
     {
-
-        local_path.poses[index].pose.position.x = global_path.poses[idx].pose.position.x;
-        local_path.poses[index].pose.position.y = global_path.poses[idx].pose.position.y;
+        ROS_INFO("The idx : %d", idx);
+        local_path.poses[index].pose.position.x = global_path.poses[3].pose.position.x;
+        local_path.poses[index].pose.position.y = global_path.poses[3].pose.position.y;
         //local_path.poses[index].pose.position.z = global_path.poses[idx].pose.position.z;
 
         index++;
     }
 
+    ROS_INFO("The local_path size %d ", local_path.poses.size());
     return local_path;
 }
 
 void PathPlan::GlobalCB(const nav_msgs::Path::ConstPtr& GpathMsg)
 {
-    this->global_path = *GpathMsg;
+    if(global_path_flag)
+    {
+      this->global_path = *GpathMsg;
+      global_path_flag = !global_path_flag;
+      //ROS_INFO("The global_path size %d", global_path.poses.size());
+    }
 }
 
 void PathPlan::LaneCB(const nav_msgs::Path::ConstPtr& LpathMsg)
@@ -132,18 +140,24 @@ void PathPlan::LaccuracyCB(const std_msgs::UInt32::ConstPtr& LaccuracyMsg )
 void PathPlan::RobotStepCB(const geometry_msgs::PoseStamped::ConstPtr& RobotStepMsg)
 {
     this -> cur_step = *RobotStepMsg;
+    //ROS_INFO("%d", (int)cur_step.pose.position.z);
 }
 
-void PathPlan::controlLoopCB(const ros::TimerEvent&) 
+void PathPlan::controlLoopCB(const ros::TimerEvent&)
 {
     if(gps_accuracy.data >= 1 && global_path.poses.size() != 0 && cur_step.pose.position.x !=0 )
     {
-        local_path = LocalPathPlan(global_path,cur_step);
-        local_path_pub.publish(local_path);
+        ROS_INFO("controlLoopCB is inside the loop");
+        if(cur_step_flag)
+        {
+          local_path = LocalPathPlan(global_path,cur_step);
+          cur_step_flag = !cur_step_flag;
+        }
+        //local_path_pub.publish(local_path);
     }
     else if(gps_accuracy.data < 1 )
     {
-        ROS_INFO("GPS Accuracy is 0");
+        ROS_INFO("%d",gps_accuracy.data);
     }
 
 }
