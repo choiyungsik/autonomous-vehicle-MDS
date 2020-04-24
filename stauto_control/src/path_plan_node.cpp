@@ -39,6 +39,7 @@
 #include <tf/transform_listener.h>
 #include <nav_msgs/Path.h>
 #include <std_msgs/UInt32.h>
+#include <std_msgs/Bool.h>
 #include <geometry_msgs/PoseStamped.h>
 //#include <vision_msgs/BoundingBox2D.h>
 
@@ -50,10 +51,13 @@ class PathPlan
         ros::NodeHandle nh;
         ros::Subscriber global_path_sub,lane_path_sub,gps_accuracy_sub,lane_accuracy_sub,robot_step_sub; //object_info
         ros::Publisher local_path_pub;
+        ros::Timer timer1;
 
         nav_msgs::Path global_path,lane_path,local_path;
         std_msgs::UInt32 gps_accuracy, lane_accuracy;
-        geometry_msgs::PoseStamped robot_step;
+        geometry_msgs::PoseStamped cur_step;
+        std_msgs::Bool gps_accu_received, lane_accu_received;
+        int controller_freq;
 
 
         void GlobalCB(const nav_msgs::Path::ConstPtr& GpathMsg);
@@ -61,24 +65,48 @@ class PathPlan
         void GaccuracyCB(const std_msgs::UInt32::ConstPtr& GaccuracyMsg );
         void LaccuracyCB(const std_msgs::UInt32::ConstPtr& LaccuracyMsg );
         void RobotStepCB(const geometry_msgs::PoseStamped::ConstPtr& RobotStepMsg);
-        //void controlLoopCB(const ros::TimerEvent&);
-        //oid ObjectCB(const nav_msgs::Path::ConstPtr& GpathMsg);
+        void controlLoopCB(const ros::TimerEvent&);
+        //void ObjectCB(const nav_msgs::Path::ConstPtr& GpathMsg);
 
     public:
         PathPlan();
-        nav_msgs::Path LocalPathPlan();
+        nav_msgs::Path LocalPathPlan(const nav_msgs::Path global_path, const geometry_msgs::PoseStamped cur_step);
 
 };
 
 PathPlan::PathPlan()
 {
+    ros::NodeHandle pn("~");
+    pn.param("controller_freq",controller_freq,10);
+
     global_path_sub = nh.subscribe("global_path", 1, &PathPlan::GlobalCB,this);
     lane_path_sub = nh.subscribe("lane_path", 1, &PathPlan::LaneCB,this);
-    gps_accuracy_sub = nh.subscribe("gps_accuracy", 1, &PathPlan::GaccuracyCB,this);
-    lane_accuracy_sub = nh.subscribe("lane_accuracy", 1, &PathPlan::LaccuracyCB,this);
-    robot_step_sub = nh.subscribe("robot_step", 1, &PathPlan::RobotStepCB,this);
+    gps_accuracy_sub = nh.subscribe("/gps/accuracy", 1, &PathPlan::GaccuracyCB,this);
+    lane_accuracy_sub = nh.subscribe("/lane/accuracy", 1, &PathPlan::LaccuracyCB,this);
+    robot_step_sub = nh.subscribe("current_step", 1, &PathPlan::RobotStepCB,this);    
 
+    timer1 = nh.createTimer(ros::Duration((1.0)/controller_freq),&PathPlan::controlLoopCB,this);
+
+    local_path_pub = nh.advertise<nav_msgs::Path>("/local_path",1);
+}
+
+nav_msgs::Path PathPlan::LocalPathPlan (const nav_msgs::Path global_path, const geometry_msgs::PoseStamped cur_step)
+{
     local_path = nav_msgs::Path();
+    int index = 0;
+
+
+    for(int idx = (int)cur_step.pose.position.z ; idx < (int)cur_step.pose.position.z + 4; idx++)
+    {
+
+        local_path.poses[index].pose.position.x = global_path.poses[idx].pose.position.x;
+        local_path.poses[index].pose.position.y = global_path.poses[idx].pose.position.y;
+        //local_path.poses[index].pose.position.z = global_path.poses[idx].pose.position.z;
+
+        index++;
+    }
+
+    return local_path;
 }
 
 void PathPlan::GlobalCB(const nav_msgs::Path::ConstPtr& GpathMsg)
@@ -103,12 +131,22 @@ void PathPlan::LaccuracyCB(const std_msgs::UInt32::ConstPtr& LaccuracyMsg )
 
 void PathPlan::RobotStepCB(const geometry_msgs::PoseStamped::ConstPtr& RobotStepMsg)
 {
-    this -> robot_step = *RobotStepMsg;
-
+    this -> cur_step = *RobotStepMsg;
 }
 
+void PathPlan::controlLoopCB(const ros::TimerEvent&) 
+{
+    if(gps_accuracy.data >= 1 && global_path.poses.size() != 0 && cur_step.pose.position.x !=0 )
+    {
+        local_path = LocalPathPlan(global_path,cur_step);
+        local_path_pub.publish(local_path);
+    }
+    else if(gps_accuracy.data < 1 )
+    {
+        ROS_INFO("GPS Accuracy is 0");
+    }
 
-//void PathPlan::controlLoopCB(const ros::TimerEvent&) {}
+}
 
 int main(int argc,char** argv)
 {

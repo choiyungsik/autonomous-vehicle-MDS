@@ -117,7 +117,7 @@ if __name__ == '__main__':
                     goal_theta=-((180-imu_theta)+(180+gps_theta))
                 elif((imu_theta<0) and (gps_theta>=0)):
                     goal_theta=(180+imu_theta)+(180-gps_theta)
-            else:
+            else:#!/usr/bin/env python
                 goal_theta=imu_theta-gps_theta
 
         #gps_n_1=convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
@@ -153,5 +153,3 @@ if __name__ == '__main__':
         ackermann_pub.publish(ackermann)
     else:
         pass
-
-#!/usr/bin/env python
