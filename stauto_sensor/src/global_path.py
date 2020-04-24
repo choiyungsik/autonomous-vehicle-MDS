@@ -127,10 +127,10 @@ def path_converter(gps, step_gps, last_step):
 
     if(step_gps == last_step-1):
         path_pub.publish(pathmsg)
-        print(pathmsg.poses[1])
+        print("TACHO TUESDAY!!!!!!!!!!!")
 
 def current_step_pub(step_gps):
-    global prev_step_gps
+
     current_pose = PoseStamped()
 
     current_pose.header.seq = 0
@@ -145,8 +145,11 @@ def current_step_pub(step_gps):
     current_pose.pose.orientation.y = 0
     current_pose.pose.orientation.z = 0
     current_pose.pose.orientation.w = 0
-    if(step_gps != prev_step_gps):
-        step_pub.publish(current_pose)
+
+
+    step_pub.publish(current_pose)
+    print(current_pose)
+
     prev_step_gps=step_gps
 if __name__ == '__main__':
 
@@ -169,12 +172,11 @@ if __name__ == '__main__':
     lat = 0
     lon = 0
     step_gps = 0
-    prev_step_gps=0
     path_pub_sign=True
 
     pathmsg=Path()
 
-    rospy.sleep(0.5)
+    rospy.sleep(1)
 
     init_time=rospy.Time.now()
 

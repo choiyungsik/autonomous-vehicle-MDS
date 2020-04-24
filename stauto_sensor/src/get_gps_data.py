@@ -80,24 +80,18 @@ def do_work(lat,lon):
 
 def pub_accuracy(accuracy):
     global prev_accuracy
+    current_gps_accuracy=0
 
+    if (accuracy==1):
+        current_gps_accuracy=0
+    elif (accuracy==2):
+        current_gps_accuracy=1
+    elif (accuracy==5):
+        current_gps_accuracy=2
+    elif (accuracy==4):
+        current_gps_accuracy=3
 
-    if(prev_accuracy != accuracy):
-
-        if (accuracy==1):
-            gps_accuracy_pub.publish(0)
-        elif (accuracy==2):
-            gps_accuracy_pub.publish(1)
-        elif (accuracy==5):
-            gps_accuracy_pub.publish(2)
-        elif (accuracy==4):
-            gps_accuracy_pub.publish(3)
-
-        prev_accuracy=accuracy
-    else:
-        pass
-
-
+    gps_accuracy_pub.publish(current_gps_accuracy)
 
 fix_type={ '0' : "Invalid",
            '1' : "GPS fix (SPS)",
