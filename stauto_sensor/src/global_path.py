@@ -14,11 +14,13 @@ import copy
 from math import *
 
 def gps_callback(data):
-    global lat, lon
+    global lat, lon, utm_lat_lon
 
     #print(odom_x)
     lat = data.latitude
     lon = data.longitude
+
+    utm_lat_lon = convert_degree_to_meter(lat, lon)
 
 def convert_degree_to_meter(lat,lon):
 
@@ -150,7 +152,16 @@ def current_step_pub(step_gps):
     step_pub.publish(current_pose)
     print(current_pose)
 
-    prev_step_gps=step_gps
+def pub_utm_cur_gps(lat,lon):
+
+    utm_gpsmsg.header.stamp = rospy.Time.now()
+    utm_gpsmsg.header.frame_id = "gps_link"
+    utm_gpsmsg.latitude=lat
+    utm_gpsmsg.longitude=lon
+    utm_gpsmsg. position_covariance_type=0
+    utm_cur_gps_pub.publish(utm_gpsmsg)
+    #print(gpsmsg)
+
 if __name__ == '__main__':
 
     rospy.init_node('Global_path')
@@ -158,7 +169,7 @@ if __name__ == '__main__':
 
     path_pub = rospy.Publisher('global_path', Path, queue_size=10)
     step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
-
+    utm_cur_gps_pub = rospy.Publisher("/gps/current_robot_position",NavSatFix,queue_size=10)
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
 
     rospack = rospkg.RosPack()
@@ -171,10 +182,12 @@ if __name__ == '__main__':
     last_step=len(gps_data)
     lat = 0
     lon = 0
+    utm_lat_lon=[0,0]
     step_gps = 0
     path_pub_sign=True
 
     pathmsg=Path()
+    utm_gpsmsg=NavSatFix()
 
     rospy.sleep(1)
 
@@ -197,6 +210,7 @@ if __name__ == '__main__':
 
             current_step_pub(step_gps)
 
+            pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
 
     else:
         pass

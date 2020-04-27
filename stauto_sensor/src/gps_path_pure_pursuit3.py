@@ -117,10 +117,10 @@ def find_gps_step():
         line_data_y=[utm_gps_n[1],utm_gps_n_1[1],utm_gps_n_2[1]]
 
         fp1 = np.polyfit(line_data_x,line_data_y,1)
-        
-    
+
+
         y= fp1[0]*step_gps+fp1[1]
-        
+
         length=abs(fp1[0]*utm_gps_cur[0] - utm_gps_cur[1] + fp1[1])/sqrt(fp1[0]**(2)+(-1)**(2)) #find length
         '''
 
@@ -179,12 +179,12 @@ if __name__ == '__main__':
 
 
     theta_gps_n=[0,0,0]
-    
+
     gpsmsg=NavSatFix()
     data=Point()
 
     rospy.sleep(1)
-    
+
     init_time=rospy.Time.now()
     step_gps=find_gps_step()
     while not rospy.is_shutdown():
@@ -215,7 +215,7 @@ if __name__ == '__main__':
 
             line_data_x=[utm_gps_n[0],utm_gps_n_1[0],utm_gps_n_2[0],utm_gps_n_3[0]]
             line_data_y=[utm_gps_n[1],utm_gps_n_1[1],utm_gps_n_2[1],utm_gps_n_3[1]]
-            '''
+
             fp1 = np.polyfit(line_data_x,line_data_y,2)
 
             ld = speed*0.237+2.5
@@ -284,7 +284,7 @@ if __name__ == '__main__':
             delta=atan(2*L*sin(alpha)/ld)*(180/np.pi)+error_yaw
             pure_pursuit_pub.publish(delta)
             print(Ld, step_gps, delta)
-            
+
             if(abs(Ld) <=2.5)and(step_gps<=last_step-4):
                 step_gps=step_gps+1
 
@@ -293,4 +293,3 @@ if __name__ == '__main__':
             #Line = sqrt((gps_n[0]-trans[0])**2 + (gps_n[1]-trans[1])**2)
         else:
             pass
-
