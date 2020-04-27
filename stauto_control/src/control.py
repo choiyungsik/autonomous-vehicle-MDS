@@ -58,7 +58,7 @@ if __name__ == '__main__':
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
 
     start_yaw = rospy.Publisher('yaw_error', Float32, queue_size=10)
-    ackermann_pub = rospy.Publisher('/ackermann_cmd_state', AckermannDriveStamped, queue_size=10)
+    ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
 
     ackermann=AckermannDriveStamped()
 
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         elif(final_angle<=-28):
             final_angle=-28
 
-        ackermann.drive.speed = 3
+        ackermann.drive.speed = 2.8
         ackermann.drive.steering_angle = -final_angle*np.pi/180
         ackermann_pub.publish(ackermann)
 

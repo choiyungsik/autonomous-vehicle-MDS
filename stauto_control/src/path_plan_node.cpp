@@ -164,7 +164,7 @@ void PathPlan::RobotStepCB(const geometry_msgs::PoseStamped::ConstPtr& RobotStep
 
 void PathPlan::controlLoopCB(const ros::TimerEvent&)
 {
-    if(gps_accuracy.data >= 1 && global_path.poses.size() != 0 && cur_step.pose.position.x !=0 )
+    if(gps_accuracy.data >= 0 && global_path.poses.size() != 0 && cur_step.pose.position.x !=0 )
     {
         ROS_INFO("controlLoopCB is inside the loop");
 
@@ -172,10 +172,10 @@ void PathPlan::controlLoopCB(const ros::TimerEvent&)
         //ROS_INFO("Local_path : %d", local_path.poses.size());
         local_path_pub.publish(local_path);
     }
-    else if(gps_accuracy.data < 1 )
-    {
-        ROS_INFO("%d",gps_accuracy.data);
-    }
+    // else if(gps_accuracy.data < 1 )
+    // {
+    //     ROS_INFO("%d",gps_accuracy.data);
+    // }
 
 }
 
