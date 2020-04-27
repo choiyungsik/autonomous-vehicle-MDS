@@ -94,6 +94,7 @@ PathPlan::PathPlan()
 nav_msgs::Path PathPlan::LocalPathPlan (const nav_msgs::Path global_path, const geometry_msgs::PoseStamped cur_step)
 {
     local_path = nav_msgs::Path();
+    geometry_msgs::PoseStamped pose = geometry_msgs::PoseStamped();
     int index = 0;
 
     ROS_INFO("cur_step.pose.position.z : %d ", (int)cur_step.pose.position.z);
@@ -101,8 +102,23 @@ nav_msgs::Path PathPlan::LocalPathPlan (const nav_msgs::Path global_path, const 
     for(int idx = (int)cur_step.pose.position.z ; idx < ((int)cur_step.pose.position.z + 4); idx++)
     {
         ROS_INFO("The idx : %d", idx);
-        local_path.poses[index].pose.position.x = global_path.poses[3].pose.position.x;
-        local_path.poses[index].pose.position.y = global_path.poses[3].pose.position.y;
+
+
+        ROS_INFO("global_path_x : %f ", global_path.poses[idx].pose.position.x);
+        ROS_INFO("global_path_y : %f ", global_path.poses[idx].pose.position.y);
+
+
+        pose.header.seq = 0;
+        pose.header.stamp = ros::Time::now();
+        pose.header.frame_id = "base_link";
+
+        pose.pose.position.x = global_path.poses[idx].pose.position.x;
+        pose.pose.position.y = global_path.poses[idx].pose.position.y;
+        pose.pose.position.z = global_path.poses[idx].pose.position.z;
+
+
+        local_path.poses.push_back(pose);
+        //local_path.poses[0].pose.position.y = global_path.poses[idx].pose.position.y;
         //local_path.poses[index].pose.position.z = global_path.poses[idx].pose.position.z;
 
         index++;
@@ -118,7 +134,10 @@ void PathPlan::GlobalCB(const nav_msgs::Path::ConstPtr& GpathMsg)
     {
       this->global_path = *GpathMsg;
       global_path_flag = !global_path_flag;
-      //ROS_INFO("The global_path size %d", global_path.poses.size());
+      // for(int i=0; i<global_path.poses.size()-1; i++)
+      // {
+      //   ROS_INFO("The global_path %d :  %f", i,this->global_path.poses[i]);
+      // }
     }
 }
 
@@ -148,12 +167,10 @@ void PathPlan::controlLoopCB(const ros::TimerEvent&)
     if(gps_accuracy.data >= 1 && global_path.poses.size() != 0 && cur_step.pose.position.x !=0 )
     {
         ROS_INFO("controlLoopCB is inside the loop");
-        if(cur_step_flag)
-        {
-          local_path = LocalPathPlan(global_path,cur_step);
-          cur_step_flag = !cur_step_flag;
-        }
-        //local_path_pub.publish(local_path);
+
+        local_path = LocalPathPlan(global_path,cur_step);
+        //ROS_INFO("Local_path : %d", local_path.poses.size());
+        local_path_pub.publish(local_path);
     }
     else if(gps_accuracy.data < 1 )
     {

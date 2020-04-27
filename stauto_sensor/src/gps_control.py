@@ -116,7 +116,7 @@ if __name__ == '__main__':
                     goal_theta=(180+imu_theta)+(180-gps_theta)
             else:
                 goal_theta=imu_theta-gps_theta
-        
+
         #gps_n_1=convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
         #curl_theta=atan2(gps_n_1[0]-lat, gps_n_1[1]-lon)*180/np.pi
 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
         #    else:
         #        prize_theta=-(90+prize_theta)
         print(prize_theta)
-        
+
         goal_theta=goal_theta+error_yaw #yaw offset
 
         final_angle = prize_theta*0.5 + goal_theta
@@ -141,7 +141,7 @@ if __name__ == '__main__':
             final_angle=28
         elif(final_angle<=-28):
             final_angle=-28
-        
+
 
 
 
@@ -153,5 +153,3 @@ if __name__ == '__main__':
         ackermann_pub.publish(ackermann)
     else:
         pass
-
-#!/usr/bin/env python
