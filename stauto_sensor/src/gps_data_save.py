@@ -109,12 +109,12 @@ if __name__ == '__main__':
     ntripArgs['ssl']=False
 
     #ntripArgs['user']="gnss"+":"+"gnss"
-    ntripArgs['user']="agc770@naver.com"+":"+"gnss"
+    ntripArgs['user']="gnss"+":"+"gnss"
     ntripArgs['caster']="gnssdata.or.kr"
     ntripArgs['port']=int("2101")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-    ntripArgs['mountpoint']="SOUL-RTCM32"
+    ntripArgs['mountpoint']="SOUL-RTCM31"
 
     ntripArgs['V2']=True
 

@@ -176,7 +176,7 @@ if __name__ == '__main__':
     rospack.list()
     arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
 
-    f = open(arg_name + "gps_data_seoultech_fron_rotary.txt","r")
+    f = open(arg_name + "gps_data_seoultech.txt","r")
 
     gps_data = f.readlines()
     last_step=len(gps_data)

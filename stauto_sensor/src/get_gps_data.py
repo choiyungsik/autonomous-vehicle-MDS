@@ -132,15 +132,15 @@ if __name__ == '__main__':
     ntripArgs['host']=False
     ntripArgs['ssl']=False
 
-    #ntripArgs['user']="gnss"+":"+"gnss"
-    ntripArgs['user']="agc770@naver.com"+":"+"gnss"
+    ntripArgs['user']="gnss"+":"+"gnss"
+    #ntripArgs['user']="agc770@naver.com"+":"+"gnss"
     ntripArgs['caster']="gnssdata.or.kr"
     ntripArgs['port']=int("2101")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-    ntripArgs['mountpoint']="SOUL-RTCM32"
+    ntripArgs['mountpoint']="SOUL-RTCM31"
 
-    ntripArgs['V2']=False
+    ntripArgs['V2']=True
 
     ntripArgs['verbose']=False
     ntripArgs['headerOutput']=None
@@ -237,7 +237,7 @@ if __name__ == '__main__':
 
                 if (int(data[6])==1):
                     #print(proc)
-                    #print(reRTK_count)
+                    print(reRTK_count)
                     if reRTK_count:
                         print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         reRTK_count=False
