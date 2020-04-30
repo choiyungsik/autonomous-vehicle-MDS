@@ -78,7 +78,7 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    rospy.sleep(1)
+    rospy.sleep(1.5)
 
     init_time=rospy.Time.now()
 

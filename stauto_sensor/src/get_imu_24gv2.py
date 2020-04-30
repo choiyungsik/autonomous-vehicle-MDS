@@ -8,7 +8,11 @@ from sensor_msgs.msg import Imu
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 
+<<<<<<< HEAD
 port = str(rospy.get_param("~imu_port","/dev/ttyUSB2"))
+=======
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
+>>>>>>> 0335c58e01e6e92b5925c447b7d3d52857bbbd04
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
