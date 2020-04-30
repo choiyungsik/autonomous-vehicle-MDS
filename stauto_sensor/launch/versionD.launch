@@ -11,7 +11,7 @@
     </node>
 
     <!-- control -->
-    <node pkg="stauto_control" type="control.py" name="control_node" >
+    <node pkg="stauto_control" type="control.py" name="control_node" output="screen">
     </node>
 
     <!-- GPS data-->
