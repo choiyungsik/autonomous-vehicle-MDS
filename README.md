@@ -3,6 +3,27 @@
 
 ## Commands
 
+
+### Commands Pure_Pursuit Control VersionD
+
+``roslaunch stauto_senor stauto_setting.launch``
+
+``rosrun stauto_senor get_gps_data.py``
+
+``roslaunch stauto_senor versionD.launch``
+
+### Commands Pure_Pursuit Control VersionC
+
+``roslaunch stauto_senor stauto_setting.launch``
+
+``rosrun stauto_senor get_gps_data.py``
+
+``rosrun stauto_senor get_imu_24gv4.py`` or ``rosrun stauto_senor get_imu_24gv2.py``
+
+``rosrun stauto_senor gps_path_pure_pursuit3.py``
+
+``rosrun stauto_senor gps_control2.py``
+
 ### Velodyne lidar & IMU & ERP_to_PC & GPS 
 
 ``roslaunch stauto_senor stauto_setting.launch``
@@ -19,7 +40,7 @@
 
 ### IMU
 
-``rosrun  stauto_sensor get_imu 
+``rosrun  stauto_sensor get_imu_24gv4.py 
 ``
 
 ### Getting ERP42 information (encoder, steer, speed, brake, gear)
@@ -37,10 +58,16 @@
 ``rosrun stauto_sensor gps_data_save.py 
 ``
 
-### GPS Path
+### GPS Save from rosbag to txt
 
-``rosrun stauto_sensor gps_path.py 
+``rosrun stauto_sensor save_gps_from_rosbag.py
 ``
+
+
+### Lidar + camera fusion
+
+`` roslaunch darknet_ros yolo_v3.launch ``
+``roslaunch cam_lidar_calib cam_lidar_proj_basler.launch``
 
 ### localization
 
@@ -60,7 +87,6 @@ param
 ## ROSBAG play
 
 ``rosbag play -($rosbag name).bag --clock``
-
 
 ## Protocol
 
