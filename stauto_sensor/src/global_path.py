@@ -57,10 +57,10 @@ def convert_degree_to_meter(lat,lon):
     return [X,Y]
 
 
-def find_gps_step():
-    global last_step
+def find_gps_step(last_step, cur_gps):
     min_length=100
     cur_step=0
+    
     for step_gps in range(last_step-4):
         gps_n = gps_data[step_gps].split(',')
         gps_n_1 = gps_data[step_gps+1].split(',')
@@ -95,7 +95,11 @@ def find_gps_step():
         length=abs(fp1[0]*utm_gps_cur[0] - utm_gps_cur[1] + fp1[1])/sqrt(fp1[0]**(2)+(-1)**(2)) #find length
         '''
 
-        if(length<min_length):
+        if(length<min_length and cur_gps==0):
+            min_length=length
+            cur_step=step_gps+1
+
+        elif (length<min_length and cur_gps-2 <= step_gps <= cur_gps+2):
             min_length=length
             cur_step=step_gps+1
 
@@ -129,7 +133,7 @@ def path_converter(gps, step_gps, last_step):
 
     if(step_gps == last_step-1):
         path_pub.publish(pathmsg)
-        print("TACHO TUESDAY!!!!!!!!!!!")
+        print("global path finish!!!!!!!!!!!")
 
 def current_step_pub(step_gps):
 
@@ -205,8 +209,9 @@ if __name__ == '__main__':
                 step_gps=step_gps+1
             else:
                 path_pub_sign=False
+                step_gps=0
         else:
-            step_gps=find_gps_step()
+            step_gps=find_gps_step(last_step, step_gps)
 
             current_step_pub(step_gps)
 

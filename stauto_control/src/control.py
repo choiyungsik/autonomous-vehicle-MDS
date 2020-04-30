@@ -92,6 +92,8 @@ if __name__ == '__main__':
 
         #test
 
+        going_gps_n[0]=(local_path[0][0] - 460000)/100
+        going_gps_n[1]=(local_path[0][1] - 383000)/100
         going_gps_n1[0]=(local_path[1][0] - 460000)/100
         going_gps_n1[1]=(local_path[1][1] - 383000)/100
         going_gps_n2[0]=(local_path[2][0] - 460000)/100
@@ -100,10 +102,10 @@ if __name__ == '__main__':
         going_gps_n3[1]=(local_path[3][1] - 383000)/100
 
 
-        going_gps_theta = atan2(going_gps_n2[0]-going_gps[0], going_gps_n2[1]-going_gps[1])*180/np.pi
+        going_gps_theta = atan2(going_gps_n3[0]-going_gps[0], going_gps_n3[1]-going_gps[1])*180/np.pi
 
         if (start_yaw_sign==True):
-            start_theta = atan2(going_gps_n3[0]-going_gps_n1[0], going_gps_n3[1]-going_gps_n1[1])*180/np.pi
+            start_theta = atan2(going_gps_n2[0]-going_gps_n[0], going_gps_n2[1]-going_gps_n[1])*180/np.pi
             print(start_theta)
             start_yaw.publish(-start_theta)
             start_yaw_sign=False
