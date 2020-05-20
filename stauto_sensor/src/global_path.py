@@ -7,11 +7,42 @@ import rospkg
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
+import tf2_ros
+from pyproj import Proj
+from pyproj import transform
+from geometry_msgs.msg import TransformStamped
 #from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 from gps_common import *
 import copy
 from math import *
+
+WGS84 = { 'proj':'latlong', 'datum':'WGS84', 'ellps':'WGS84', }
+GRS80 = { 'proj':'tmerc', 'lat_0':'38', 'lon_0':'127', 'k':1, 'x_0':0,
+    'y_0':0, 'ellps':'GRS80', 'units':'m' }
+#'lat_0':'38.000036', 'lon_0':'127.00038'
+def grs80_to_wgs84(x, y):
+   return transform( Proj(**GRS80), Proj(**WGS84), x, y )
+
+def wgs84_to_grs80(x, y):
+   return transform( Proj(**WGS84), Proj(**GRS80), y, x )
+
+def pub_tf_transform(lat,lon):
+    br = tf2_ros.TransformBroadcaster()
+
+    t = TransformStamped()  # pose of turntable_frame w.r.t. turntable_base
+    t.header.stamp = rospy.Time.now()
+    t.header.frame_id = 'world'
+    t.child_frame_id  = 'GPS_link'
+    t.transform.translation.x = lat
+    t.transform.translation.y = lon
+    t.transform.translation.z = 0
+    t.transform.rotation.x = 0
+    t.transform.rotation.y = 0
+    t.transform.rotation.z = 0
+    t.transform.rotation.w = 1
+
+    br.sendTransform(t)
 
 def gps_callback(data):
     global lat, lon, utm_lat_lon
@@ -19,48 +50,13 @@ def gps_callback(data):
     #print(odom_x)
     lat = data.latitude
     lon = data.longitude
-
-    utm_lat_lon = convert_degree_to_meter(lat, lon)
-
-def convert_degree_to_meter(lat,lon):
-
-    alpha = lat*pi/180
-    beta = lon*pi/180
-
-    a = 6377397.155
-    f = 1/299.1528128
-    b = a*(1-f)
-    k = 1
-    x_plus = 500000
-    y_plus = 200000
-
-    e1 = (a**2-b**2)/a**2
-    e2 = (a**2-b**2)/b**2
-    alpha0 = 38 *pi/180
-    beta0 = (125+0.002890277)*pi/180
-
-    T = pow(tan(alpha),2)
-    C = e1/(1-e1)*pow(cos(alpha),2)
-    AA = (beta-beta0)*cos(alpha)  #both radian
-
-    N = a/sqrt( 1-e1*sin(alpha)**2 )
-    M = a*(alpha*(1-e1/4-3*e1**2/64-5*e1**3/256)-sin(2*alpha)*(3*e1/8+3*e1**2/32+45*e1**3/1024)
-        +sin(4*alpha)*(15*e1**2/256+45*e1**3/1024)-35*e1**3*sin(6*alpha)/3072)
-
-    M0 = a*(alpha0*(1-e1/4-3*e1**2/64-5*e1**3/256)-sin(2*alpha0)*(3*e1/8+3*e1**2/32+45*e1**3/1024)
-         +sin(4*alpha0)*(15*e1**2/256+45*e1**3/1024)-35*e1**3*sin(6*alpha0)/3072)
-
-    Y = y_plus + k*N*(AA+AA**3*(1-T+C)/6+pow(AA,5)*(5-18*T+T*T+72*C-58*e2)/120)
-    X = x_plus + k*(M-M0+N*tan(alpha)*(AA*AA/2 + pow(AA,4)*(5-T+9*C+4*C*C)/24 +
-        pow(AA,6)*(61-58*T+T*T+600*C-330*e2)/720))
-
-    return [X,Y]
-
+    #print(lat, lon)
+    utm_lat_lon = wgs84_to_grs80(lat, lon)
 
 def find_gps_step(last_step, cur_gps):
     min_length=100
     cur_step=0
-    
+
     for step_gps in range(last_step-4):
         gps_n = gps_data[step_gps].split(',')
         gps_n_1 = gps_data[step_gps+1].split(',')
@@ -74,10 +70,10 @@ def find_gps_step(last_step, cur_gps):
         gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
 
 
-        utm_gps_n = convert_degree_to_meter(gps_n[0],gps_n[1])
-        utm_gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
-        utm_gps_n_2 = convert_degree_to_meter(gps_n_2[0],gps_n_2[1])
-        utm_gps_cur = convert_degree_to_meter(lat,lon)
+        utm_gps_n = wgs84_to_grs80(gps_n[0],gps_n[1])
+        utm_gps_n_1 = wgs84_to_grs80(gps_n_1[0],gps_n_1[1])
+        utm_gps_n_2 = wgs84_to_grs80(gps_n_2[0],gps_n_2[1])
+        utm_gps_cur = wgs84_to_grs80(lat,lon)
 
         length1 = sqrt((utm_gps_cur[0]-utm_gps_n[0])**(2)+(utm_gps_cur[1]-utm_gps_n[1])**(2))
         length2 = sqrt((utm_gps_cur[0]-utm_gps_n_1[0])**(2)+(utm_gps_cur[1]-utm_gps_n_1[1])**(2))
@@ -109,15 +105,16 @@ def path_converter(gps, step_gps, last_step):
     #print(step_gps)
     pathmsg.header.seq = step_gps
     pathmsg.header.stamp = rospy.Time.now()
-    pathmsg.header.frame_id = "base_link"
+    pathmsg.header.frame_id = "map"
 
     pose = PoseStamped()
     pose.header.seq = step_gps
     pose.header.stamp = rospy.Time.now()
-    pose.header.frame_id = "base_link"
+    pose.header.frame_id = "map"
 
-    x,y=convert_degree_to_meter(gps[0],gps[1])
+    x,y=wgs84_to_grs80(gps[0],gps[1])
     pose.pose.position.x = x
+    print(x)
     pose.pose.position.y = y
     pose.pose.position.z = 0
 
@@ -216,6 +213,7 @@ if __name__ == '__main__':
             current_step_pub(step_gps)
 
             pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
+            pub_tf_transform(lat,lon)
 
     else:
         pass

@@ -1,6 +1,63 @@
 from math import *
 import numpy as np
 
+from pyproj import Proj
+from pyproj import transform
+
+WGS84 = { 'proj':'latlong', 'datum':'WGS84', 'ellps':'WGS84', }
+
+# conamul
+TM127 = { 'proj':'tmerc', 'lat_0':'38N', 'lon_0':'127.0028902777777777776E',
+   'ellps':'bessel', 'x_0':'200000', 'y_0':'500000', 'k':'1.0',
+   'towgs84':'-146.43,507.89,681.46'}
+
+# naver
+TM128 = { 'proj':'tmerc', 'lat_0':'38N', 'lon_0':'128E', 'ellps':'bessel',
+   'x_0':'400000', 'y_0':'600000', 'k':'0.9999',
+   'towgs84':'-146.43,507.89,681.46'}
+
+
+GRS80 = { 'proj':'tmerc', 'lat_0':'38', 'lon_0':'127', 'k':1, 'x_0':200000,
+    'y_0':600000, 'ellps':'GRS80', 'units':'m' }
+
+def wgs84_to_tm128(longitude, latitude):
+   return transform( Proj(**WGS84), Proj(**TM128), longitude, latitude )
+
+def tm128_to_wgs84(x, y):
+   return transform( Proj(**TM128), Proj(**WGS84), x, y )
+
+def wgs84_to_tm127(longitude, latitude):
+   return map(lambda x:2.5*x,
+        transform( Proj(**WGS84), Proj(**TM127), longitude, latitude ))
+
+def tm127_to_wgs84(x, y):
+   return transform( Proj(**TM127), Proj(**WGS84), x/2.5, y/2.5 )
+
+def grs80_to_wgs84(x, y):
+   return transform( Proj(**GRS80), Proj(**WGS84), x, y )
+
+def wgs84_to_grs80(x, y):
+   return transform( Proj(**WGS84), Proj(**GRS80), y, x )
+
+def wgs84_to_cyworld(longitude, latitude):
+   x_min = 4456260.72
+   y_min = 1161720.00
+   long_min = 123.78323
+   lat_min = 32.27345
+   max_grid_length = 112721.92
+   x = (longitude-long_min)*max_grid_length/3.1308 + x_min
+   y = (latitude-lat_min)*max_grid_length/3.1308 + y_min
+   return x, y
+
+def cyworld_to_wgs84(x, y):
+   x_min = 4456260.72;
+   y_min = 1161720.00;
+   long_min = 123.78323;
+   lat_min = 32.27345;
+   max_grid_length = 112721.92;
+   longitude = long_min + (x-x_min)*3.1308 / max_grid_length;
+   latitude = lat_min + (y-y_min)*3.1308 / max_grid_length;
+   return longitude, latitude
 
 
 
@@ -45,8 +102,8 @@ b=[37.6309665,127.0765384]
 c=[37.630978,127.0760636]
 d=[37.6310089,127.0759147]
 
-
 gps_n = convert_degree_to_meter(a[0],a[1])
+print(gps_n)
 gps_n_1 = convert_degree_to_meter(b[0],b[1])
 gps_n[0] = (gps_n[0] - 460000)/100
 gps_n[1] = (gps_n[1] - 383000)/100
@@ -60,13 +117,37 @@ gps_nn[1] = (gps_nn[1] - 383000)/100
 gps_nn_1[0] = (gps_nn_1[0] - 460000)/100
 gps_nn_1[1] = (gps_nn_1[1] - 383000)/100
 
-print(atan2(gps_n_1[1]-gps_n[1], gps_n_1[0]-gps_n[0])*180/np.pi)
-print(atan2(gps_nn_1[1]-gps_nn[1], gps_nn_1[0]-gps_nn[0])*180/np.pi)
+theta1=atan2(gps_n_1[1]-gps_n[1], gps_n_1[0]-gps_n[0])*180/np.pi
+print(theta1)
+theta2=atan2(gps_nn_1[1]-gps_nn[1], gps_nn_1[0]-gps_nn[0])*180/np.pi
+print(theta2)
+print(theta1-theta2)
 
+
+grs80_n=wgs84_to_grs80(a[0],a[1])
+grs80_n_1=wgs84_to_grs80(b[0],b[1])
+print(grs80_n)
+print(grs80_n_1)
+
+print(1)
+print(grs80_to_wgs84(grs80_n[0],grs80_n[1]))
+print(grs80_to_wgs84(grs80_n_1[0],grs80_n_1[1]))
+print(1)
+grs80_nn=wgs84_to_grs80(c[0],c[1])
+grs80_nn_1=wgs84_to_grs80(d[0],d[1])
+print(grs80_nn)
+print(grs80_nn_1)
+
+theta11=atan2(grs80_n_1[0]-grs80_n[0],grs80_n_1[1]-grs80_n[1])*180/np.pi
+theta22=atan2(grs80_nn_1[0]-grs80_nn[0],grs80_nn_1[1]-grs80_nn[1])*180/np.pi
+print(theta11)
+print(theta22)
+print(theta11-theta22)
+print()
 ##1>0
-print(atan2(b[1]-a[1],b[0]-a[0])*180/np.pi)
-print(atan2(d[1]-c[1],d[0]-c[0])*180/np.pi)
+#print(atan2(b[1]-a[1],b[0]-a[0])*180/np.pi)
+#print(atan2(d[1]-c[1],d[0]-c[0])*180/np.pi)
 
 ##0>1
-print(atan2(b[0]-a[0],b[1]-a[1])*180/np.pi)
-print(atan2(d[0]-c[0],d[1]-c[1])*180/np.pi)
+#print(atan2(b[0]-a[0],b[1]-a[1])*180/np.pi)
+#print(atan2(d[0]-c[0],d[1]-c[1])*180/np.pi)

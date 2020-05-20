@@ -41,7 +41,7 @@ def local_path_callback(data):
     #print(local_path)
     #print(sqrt((local_path[0][0]-local_path[3][0])**(2) + (local_path[0][1]-local_path[3][1])**(2)))
 def cur_gps_position_callback(data):
-    global cur_gps_position, cu
+    global cur_gps_position
 
     cur_gps_position[0] = data.latitude
     cur_gps_position[1] = data.longitude
@@ -78,39 +78,40 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
+    max_speed=2.5
+    min_speed=1.5
     rospy.sleep(1.5)
 
     init_time=rospy.Time.now()
 
     while not rospy.is_shutdown():
 
-        going_gps[0]=(cur_gps_position[0] - 460000)/100
-        going_gps[1]=(cur_gps_position[1] - 383000)/100
+        going_gps[0]=cur_gps_position[0]
+        going_gps[1]=cur_gps_position[1]
 
         #going_gps_n2[0]=(utm_next_gps[0] - 460000)/100
         #going_gps_n2[1]=(utm_next_gps[1] - 383000)/100
 
         #test
 
-        going_gps_n[0]=(local_path[0][0] - 460000)/100
-        going_gps_n[1]=(local_path[0][1] - 383000)/100
-        going_gps_n1[0]=(local_path[1][0] - 460000)/100
-        going_gps_n1[1]=(local_path[1][1] - 383000)/100
-        going_gps_n2[0]=(local_path[2][0] - 460000)/100
-        going_gps_n2[1]=(local_path[2][1] - 383000)/100
-        going_gps_n3[0]=(local_path[3][0] - 460000)/100
-        going_gps_n3[1]=(local_path[3][1] - 383000)/100
+        going_gps_n[0]=local_path[0][0]
+        going_gps_n[1]=local_path[0][1]
+        going_gps_n1[0]=local_path[1][0]
+        going_gps_n1[1]=local_path[1][1]
+        going_gps_n2[0]=local_path[2][0]
+        going_gps_n2[1]=local_path[2][1]
+        going_gps_n3[0]=local_path[3][0]
+        going_gps_n3[1]=local_path[3][1]
 
-
-        going_gps_theta = atan2(going_gps_n3[0]-going_gps[0], going_gps_n3[1]-going_gps[1])*180/np.pi
-
+        going_gps_theta = atan2(going_gps_n3[1]-going_gps[1], going_gps_n3[0]-going_gps[0])*180/np.pi
+        #print(going_gps_theta,imu_theta)
         if (start_yaw_sign==True):
-            start_theta = atan2(going_gps_n2[0]-going_gps_n[0], going_gps_n2[1]-going_gps_n[1])*180/np.pi
+            start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
             print(start_theta)
             start_yaw.publish(-start_theta)
             start_yaw_sign=False
 
-        #print(going_gps_theta, imu_theta)
+        print(going_gps_theta, imu_theta)
         if((int(imu_theta)*int(going_gps_theta))>=0.):
             alpha=imu_theta-going_gps_theta
         else:
@@ -124,22 +125,19 @@ if __name__ == '__main__':
 
         alpha=alpha*(np.pi/180)  # alpha => degree
         #print(alpha)
-
+        #print(local_path[0][0],cur_gps_position[0],local_path[0][1],cur_gps_position[1])
         L=1.3
         Ld=sqrt((local_path[0][0]-cur_gps_position[0])**(2) + (local_path[0][1]-cur_gps_position[1])**(2))
+
         speed_ld = speed*0.237
         alpha_ld = abs(alpha*180/np.pi)*0.05
 
         if(alpha_ld>=2):
             alpha_ld=2
 
-        ld = speed*0.237+3-alpha_ld
+        ld = speed_ld+3-alpha_ld
         #print(speed_ld,alpha_ld, ld)
-        error_yaw = 0
-        gps_theta=atan(2*L*sin(alpha)/ld)*(180/np.pi)+error_yaw
-
-        print(Ld, gps_theta)
-
+        gps_theta=atan(2*L*sin(alpha)/ld)*(180/np.pi)
 
         final_angle = gps_theta*1.0 + camera_theta*0
 
@@ -148,7 +146,13 @@ if __name__ == '__main__':
         elif(final_angle<=-28):
             final_angle=-28
 
-        ackermann.drive.speed = 2.8
+        if(abs(final_angle)>=10):
+            Speed_linear = (max_speed-min_speed)/28*(28-abs(final_angle))+min_speed
+        else:
+            Speed_linear=max_speed
+        #print(Speed_linear)
+        print(Ld, gps_theta, Speed_linear)
+        ackermann.drive.speed = Speed_linear
         ackermann.drive.steering_angle = -final_angle*np.pi/180
         ackermann_pub.publish(ackermann)
 

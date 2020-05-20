@@ -5,6 +5,7 @@ from std_msgs.msg import Int32
 from ackermann_msgs.msg import AckermannDriveStamped
 from geometry_msgs.msg import Twist
 from math import *
+import numpy as np
 
 import serial
 import math
@@ -46,7 +47,7 @@ def GetSPEED(speed):
     global count
     SPEED0 = chr(0x00)
     SPEED = int(speed*36) # float to integer
-    print(SPEED)
+    #print(speed, SPEED)
     SPEED1 = chr(SPEED) # m/s to km/h*10
 
     return SPEED0, SPEED1
@@ -79,7 +80,7 @@ def GetBRAKE(brake):
 
 def Send_to_ERP42(gear, speed, steer, brake):
     global S, T, X, AorM, ESTOP, GEAR, SPEED0, SPEED1, STEER0, STEER1, BRAKE, ALIVE, ETX0, ETX1, count_alive
-
+    print(speed)
     count_alive = count_alive+1
 
     if count_alive==0xff:
@@ -124,7 +125,7 @@ def acker_callback(msg):
 
     speed = msg.drive.speed
     steer = -(msg.drive.steering_angle)
-    print(steer)
+    print(steer*180/np.pi)
 
 def vel_callback(msg):
     global linear, angular
