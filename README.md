@@ -4,16 +4,6 @@
 ## Commands
 
 
-<<<<<<< HEAD
-=======
-### Commands Pure_Pursuit Control VersionD
-
-``roslaunch stauto_senor stauto_setting.launch``
-
-``rosrun stauto_senor get_gps_data.py``
-
-``roslaunch stauto_senor versionD.launch``
->>>>>>> ad7695fdb08189812fb5500dc657ae0da29bb1cf
 
 ### Commands Pure_Pursuit Control VersionC
 
@@ -62,22 +52,15 @@
 ``
 
 ### GPS Save from rosbag to txt
-<<<<<<< HEAD
 
 ``rosrun stauto_sensor save_gps_from_rosbag.py
 ``
 
 ### GPS Path
-=======
->>>>>>> ad7695fdb08189812fb5500dc657ae0da29bb1cf
 
 ``rosrun stauto_sensor save_gps_from_rosbag.py
 ``
 
-<<<<<<< HEAD
-=======
-
->>>>>>> ad7695fdb08189812fb5500dc657ae0da29bb1cf
 ### Lidar + camera fusion
 
 `` roslaunch darknet_ros yolo_v3.launch ``
