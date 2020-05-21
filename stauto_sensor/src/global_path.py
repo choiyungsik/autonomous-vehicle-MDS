@@ -26,7 +26,7 @@ def grs80_to_wgs84(x, y):
 
 def wgs84_to_grs80(x, y):
    return transform( Proj(**WGS84), Proj(**GRS80), y, x )
-
+'''
 def pub_tf_transform(lat,lon):
     br = tf2_ros.TransformBroadcaster()
 
@@ -43,7 +43,7 @@ def pub_tf_transform(lat,lon):
     t.transform.rotation.w = 1
 
     br.sendTransform(t)
-
+'''
 def gps_callback(data):
     global lat, lon, utm_lat_lon
 
@@ -166,7 +166,7 @@ def pub_utm_cur_gps(lat,lon):
 if __name__ == '__main__':
 
     rospy.init_node('Global_path')
-    listener = tf.TransformListener()
+    #listener = tf.TransformListener()
 
     path_pub = rospy.Publisher('global_path', Path, queue_size=10)
     step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
@@ -213,7 +213,7 @@ if __name__ == '__main__':
             current_step_pub(step_gps)
 
             pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
-            pub_tf_transform(lat,lon)
+            #pub_tf_transform(lat,lon)
 
     else:
         pass
