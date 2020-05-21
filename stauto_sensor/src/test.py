@@ -44,7 +44,7 @@ b=[37.6309665,127.0765384]
 
 c=[37.630978,127.0760636]
 d=[37.6310089,127.0759147]
-
+print (convert_degree_to_meter(a[0],a[1]))
 
 gps_n = convert_degree_to_meter(a[0],a[1])
 gps_n_1 = convert_degree_to_meter(b[0],b[1])

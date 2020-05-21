@@ -168,9 +168,6 @@ if __name__ == '__main__':
     listener = tf.TransformListener()
 
     path_pub = rospy.Publisher('global_path', Path, queue_size=10)
-    step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
-    utm_cur_gps_pub = rospy.Publisher("/gps/current_robot_position",NavSatFix,queue_size=10)
-    rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
 
     rospack = rospkg.RosPack()
     rospack.list()
@@ -194,23 +191,13 @@ if __name__ == '__main__':
     init_time=rospy.Time.now()
 
     while not rospy.is_shutdown():
-        if (path_pub_sign==True):
-            if (step_gps<last_step):
-                #print(step_gps)
-
-                gps_n = gps_data[step_gps].split(',')
-                gps_n = [float(gps_n[0]), float(gps_n[1])]
-
-                path_converter(gps_n, step_gps, last_step)
-                step_gps=step_gps+1
-            else:
-                path_pub_sign=False
+        if (step_gps<last_step):
+            gps_n = gps_data[step_gps].split(',')
+            gps_n = [float(gps_n[0]), float(gps_n[1])]
+            path_converter(gps_n, step_gps, last_step)
+            step_gps=step_gps+1
         else:
-            step_gps=find_gps_step()
-
-            current_step_pub(step_gps)
-
-            pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
+            path_pub_sign=False
 
     else:
         pass

@@ -1,0 +1,6 @@
+bool parking
+bool traffic_red
+bool traffic_green
+bool traffic_left
+bool traffic_straight_left
+bool safety_zone
