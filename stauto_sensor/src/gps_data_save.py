@@ -144,6 +144,7 @@ if __name__ == '__main__':
     prev_time_rtk=0
     reRTK_count=True
     prev_time=0
+    prev_time_rtk=0
     prev_pos = [0.0,0.0]
     Line = 0.0
 
@@ -224,7 +225,7 @@ if __name__ == '__main__':
                     if reRTK_count:
                         print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         reRTK_count=False
-                        prev_time=time.time()
+                        prev_time_rtk=time.time()
 
                         que = Queue()
                         que_pos = Queue()
@@ -232,7 +233,7 @@ if __name__ == '__main__':
                         proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
                         proc.start()
 
-                if time.time()-prev_time>=5:
+                if time.time()-prev_time_rtk>=5:
                     reRTK_count=True
 
                 if keyboard.is_pressed('esc'):
