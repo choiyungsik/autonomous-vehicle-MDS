@@ -2,6 +2,10 @@
 
 <launch>
     
+    <!-- odom -->
+    <node pkg="stauto_sensor" type="odometry.py" name="odom_node">
+    </node>
+
     <!-- path_plan data-->
     <node pkg="stauto_control" type="path_plan_node" name="path_plan_node">
     </node>
@@ -13,6 +17,8 @@
     <!-- control -->
     <node pkg="stauto_control" type="control.py" name="control_node" output="screen">
     </node>
+
+    
 
     <!-- GPS data-->
     <!-- <node pkg="stauto_sensor" type="get_gps_data.py" name="gps_data" > 
