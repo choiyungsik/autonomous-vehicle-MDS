@@ -50,7 +50,7 @@ def odometry_callback(data):
 def speed_callback(data):
     global speed
 
-    speed = data.data/36
+    speed = data.data/10
 
 def local_path_callback(data):
     global local_path
@@ -94,8 +94,12 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=4
-    min_speed=2
+    max_speed=2.5
+    min_speed=1.5
+    ld=3
+    min_distance=100
+    going_x=0
+    going_y=0
     rospy.sleep(1.5)
 
     init_time=rospy.Time.now()
@@ -109,7 +113,6 @@ if __name__ == '__main__':
         #going_gps_n2[1]=(utm_next_gps[1] - 383000)/100
 
         #test
-
         going_gps_n[0]=local_path[0][0]
         going_gps_n[1]=local_path[0][1]
         going_gps_n1[0]=local_path[1][0]
@@ -118,8 +121,27 @@ if __name__ == '__main__':
         going_gps_n2[1]=local_path[2][1]
         going_gps_n3[0]=local_path[3][0]
         going_gps_n3[1]=local_path[3][1]
-        #print(going_gps)
-        going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
+
+
+        polyfit_x =np.array([local_path[0][0],local_path[1][0],local_path[2][0],local_path[3][0]])
+        polyfit_y =np.array([local_path[0][1],local_path[1][1],local_path[2][1],local_path[3][1]])
+        fp1 = np.polyfit(polyfit_x, polyfit_y, 2)
+        f1 = np.poly1d(fp1)
+        #print(local_path[1][0],local_path[3][0])
+        #print(sqrt((local_path[1][1]-going_gps[1])**(2)+(local_path[1][0]-going_gps[0])**(2)))
+        #np.arange(local_path[1][0],local_path[3][0],step=10):
+        for x in np.linspace(local_path[0][0], local_path[2][0], num=15, endpoint=False, retstep=False):
+            distance=sqrt((f1(x)-going_gps[1])**(2)+(x-going_gps[0])**(2))
+            #print(distance)
+            if (abs(abs(distance)-2)<min_distance):
+                min_distance=abs(abs(distance)-2)
+                going_x=x
+                going_y=f1(x)
+        min_distance=100
+        #print(going_x,going_y)
+        #print(local_path[1][0], local_path[3][0])
+        #print(going_x,going_y)
+        going_gps_theta = atan2(going_y-going_gps[1], going_x-going_gps[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
         if (start_yaw_sign==True):
             start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
@@ -145,7 +167,7 @@ if __name__ == '__main__':
         L=1.3
         Ld=sqrt((local_path[0][0]-cur_gps_position[0])**(2) + (local_path[0][1]-cur_gps_position[1])**(2))
 
-        speed_ld = speed*0.2
+        speed_ld = speed*0.237
         alpha_ld = abs(alpha*180/np.pi)*0.05
 
         if(alpha_ld>=2):
