@@ -94,8 +94,8 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=2
-    min_speed=1.5
+    max_speed=4
+    min_speed=2
     rospy.sleep(1.5)
 
     init_time=rospy.Time.now()
@@ -118,20 +118,18 @@ if __name__ == '__main__':
         going_gps_n2[1]=local_path[2][1]
         going_gps_n3[0]=local_path[3][0]
         going_gps_n3[1]=local_path[3][1]
-
+<<<<<<< HEAD
         #print(going_gps)
+=======
 
+>>>>>>> 2db1c8ca62d8647b7adbc04aa452e075c392b221
         going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
-        going_gps_theta_speed = atan2(going_gps_n3[1]-going_gps_n1[1], going_gps_n3[0]-going_gps_n1[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
-
         if (start_yaw_sign==True):
             start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
             print(start_theta)
             start_yaw.publish(-start_theta)
             start_yaw_sign=False
-
-
 
         #print(going_gps_theta, imu_theta)
         if((int(imu_theta)*int(going_gps_theta))>=0.):
@@ -146,41 +144,22 @@ if __name__ == '__main__':
                 alpha=imu_theta-going_gps_theta
 
         alpha=alpha*(np.pi/180)  # alpha => degree
-
-
-
-        if((int(imu_theta)*int(going_gps_theta_speed))>=0.):
-            alpha_speed=imu_theta-going_gps_theta_speed
-        else:
-            if(((-90>=imu_theta>=-180) or (180>=imu_theta>=90)) and ((-90>=going_gps_theta_speed>=-180) or (180>=going_gps_theta_speed>=90))):
-                if((imu_theta>=0) and (going_gps_theta_speed<0)):
-                    alpha_speed=-((180-imu_theta)+(180+going_gps_theta_speed))
-                elif((imu_theta<0) and (going_gps_theta_speed>=0)):
-                    alpha_speed=(180+imu_theta)+(180-going_gps_theta_speed)
-            else:
-                alpha_speed=imu_theta-going_gps_theta
-
-
-        alpha_speed=alpha_speed*(np.pi/180)  # alpha => degree
-
-        if (alpha_speed>=28):
-            alpha_speed=28
-        elif(alpha_speed<=-28):
-            alpha_speed=-28
-
         #print(alpha)
         #print(local_path[0][0],cur_gps_position[0],local_path[0][1],cur_gps_position[1])
         L=1.3
         Ld=sqrt((local_path[0][0]-cur_gps_position[0])**(2) + (local_path[0][1]-cur_gps_position[1])**(2))
 
         speed_ld = speed*0.2
-        alpha_ld = abs(alpha*180/np.pi)*0.04
+        alpha_ld = abs(alpha*180/np.pi)*0.05
 
         if(alpha_ld>=2):
             alpha_ld=2
 
-
-        ld = speed_ld+3.8-alpha_ld
+<<<<<<< HEAD
+        ld = speed_ld+3-alpha_ld
+=======
+        ld = speed_ld+2.5-alpha_ld
+>>>>>>> 2db1c8ca62d8647b7adbc04aa452e075c392b221
         #print(round(speed_ld,6),round((alpha_ld*180/np.pi),4), round(ld,4))
         gps_theta=atan(2*L*sin(alpha)/ld)*(180/np.pi)
 
@@ -192,7 +171,7 @@ if __name__ == '__main__':
             final_angle=-28
 
         if(abs(final_angle)>=10):
-            Speed_linear = (max_speed-min_speed)/28*(28-abs(alpha_speed))+min_speed
+            Speed_linear = (max_speed-min_speed)/28*(28-abs(final_angle))+min_speed
         else:
             Speed_linear=max_speed
         #print(Speed_linear)
