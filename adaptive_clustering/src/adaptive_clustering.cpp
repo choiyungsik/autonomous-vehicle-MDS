@@ -15,10 +15,13 @@
 
 // ROS
 #include <ros/ros.h>
+#include "vision_msgs/BoundingBox2D.h"
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Pose2D.h>
 #include <visualization_msgs/MarkerArray.h>
 #include "adaptive_clustering/ClusterArray.h"
+#include "adaptive_clustering/Bboxes2d.h"
 // PCL
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/voxel_grid.h>
@@ -27,10 +30,16 @@
 #include <pcl/common/common.h>
 #include <pcl/common/centroid.h>
 
+
 ros::Publisher cluster_array_pub_;
 ros::Publisher cloud_filtered_pub_;
 ros::Publisher pose_array_pub_;
 ros::Publisher marker_array_pub_;
+ros::Publisher bboxes_pub_;
+
+geometry_msgs::Pose2D center;
+vision_msgs::BoundingBox2D bbox;
+adaptive_clustering::Bboxes2d bboxes;
 
 std::string sensor_model_;
 std::string frame_id_;
@@ -39,6 +48,11 @@ float z_axis_min_;
 float z_axis_max_;
 int cluster_size_min_;
 int cluster_size_max_;
+
+float size_x;
+float size_y;
+float center_x;
+float center_y;
 
 const int region_max_ = 7; // Change this value to match how far you want to detect.
 int regions_[100];
@@ -50,7 +64,7 @@ Eigen::Vector4f min_, max_;
 int frames; clock_t start_time; bool reset = true;//fps
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   if(print_fps_)if(reset){frames=0;start_time=clock();reset=false;}//fps
-  
+
   /*** Convert ROS message to PCL ***/
   pcl::PointCloud<pcl::PointXYZI>::Ptr pcl_pc_in(new pcl::PointCloud<pcl::PointXYZI>);
   pcl::fromROSMsg(*ros_pc2_in, *pcl_pc_in);
@@ -181,16 +195,35 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
       p[21].x = min[0]; p[21].y = max[1]; p[21].z = min[2];
       p[22].x = max[0]; p[22].y = max[1]; p[22].z = min[2];
       p[23].x = max[0]; p[23].y = min[1]; p[23].z = min[2];
+
       for(int i = 0; i < 24; i++) {
-  	marker.points.push_back(p[i]);
+  	    marker.points.push_back(p[i]);
       }
-      
+      size_x = std::abs(p[0].x - p[1].x);
+      size_y = std::abs(p[0].y - p[3].y);
+      center_x = (p[0].x + p[1].x) / 2;
+      center_y = (p[0].y + p[3].y) / 2;
+
+      center.x = center_x;
+      center.y = center_y;
+      center.theta = 0;
+
+      bbox.center = center;
+      bbox.size_x = size_x;
+      bbox.size_y = size_y;
+
+      bboxes.Bboxes2d.push_back(bbox);
+
       marker.scale.x = 0.02;
       marker.color.a = 1.0;
       marker.color.r = 0.0;
       marker.color.g = 1.0;
       marker.color.b = 0.5;
       marker.lifetime = ros::Duration(0.1);
+      marker.pose.orientation.x = 0;
+      marker.pose.orientation.y = 0;
+      marker.pose.orientation.z = 0;
+      marker.pose.orientation.w = 1;
       marker_array.markers.push_back(marker);
     }
   }
@@ -213,6 +246,10 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
     marker_array_pub_.publish(marker_array);
   }
   
+  bboxes_pub_.publish(bboxes);
+  bboxes.Bboxes2d.clear();
+  
+  
   if(print_fps_)if(++frames>10){std::cerr<<"[adaptive_clustering] fps = "<<float(frames)/(float(clock()-start_time)/CLOCKS_PER_SEC)<<", timestamp = "<<clock()/CLOCKS_PER_SEC<<std::endl;reset = true;}//fps
 }
 
@@ -221,7 +258,7 @@ int main(int argc, char **argv) {
   
   /*** Subscribers ***/
   ros::NodeHandle nh;
-  ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("velodyne_points", 1, pointCloudCallback);
+  ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_points", 1, pointCloudCallback);
 
   /*** Publishers ***/
   ros::NodeHandle private_nh("~");
@@ -229,15 +266,16 @@ int main(int argc, char **argv) {
   cloud_filtered_pub_ = private_nh.advertise<sensor_msgs::PointCloud2>("cloud_filtered", 100);
   pose_array_pub_ = private_nh.advertise<geometry_msgs::PoseArray>("poses", 100);
   marker_array_pub_ = private_nh.advertise<visualization_msgs::MarkerArray>("markers", 100);
+  bboxes_pub_ = private_nh.advertise<adaptive_clustering::Bboxes2d>("bboxes_2d", 100);
   
   /*** Parameters ***/
-  private_nh.param<std::string>("sensor_model", sensor_model_, "HDL-32E"); // VLP-16, HDL-32E, HDL-64E
+  private_nh.param<std::string>("sensor_model", sensor_model_, "VLP-16"); // VLP-16, HDL-32E, HDL-64E
   private_nh.param<std::string>("frame_id", frame_id_, "velodyne");
-  private_nh.param<bool>("print_fps", print_fps_, false);
-  private_nh.param<float>("z_axis_min", z_axis_min_, -0.5);
-  private_nh.param<float>("z_axis_max", z_axis_max_, 5.0);
-  private_nh.param<int>("cluster_size_min", cluster_size_min_, 5);
-  private_nh.param<int>("cluster_size_max", cluster_size_max_, 700000);
+  private_nh.param<bool>("print_fps", print_fps_, true);
+  private_nh.param<float>("z_axis_min", z_axis_min_, -0.65);
+  private_nh.param<float>("z_axis_max", z_axis_max_,1.0);
+  private_nh.param<int>("cluster_size_min", cluster_size_min_, 20);
+  private_nh.param<int>("cluster_size_max", cluster_size_max_, 10000);
   
   // Divide the point cloud into nested circular regions centred at the sensor.
   // For more details, see our IROS-17 paper "Online learning for human classification in 3D LiDAR-based tracking"
