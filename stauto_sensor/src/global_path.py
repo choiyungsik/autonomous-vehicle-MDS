@@ -226,6 +226,9 @@ if __name__ == '__main__':
 
             #pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
             #pub_tf_transform(lat,lon)
+<<<<<<< HEAD
+>>>>>>> 022a4736f007735b494d99267f54bd8395857c07
+=======
 >>>>>>> 022a4736f007735b494d99267f54bd8395857c07
 
     else:
