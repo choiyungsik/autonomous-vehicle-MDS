@@ -3,7 +3,10 @@
 
 ## Commands
 
+### Commands Stage_ros Teb local planner
 
+``roslaunch teb_local_planner_tutorials robot_carlike_in_stage.launch``
+gps_global_planner/src/RAstar_ros.cpp 안 ifstream ``in("/home/plaif/global_path.txt");`` 수정하여 path변경
 
 ### Commands Pure_Pursuit Control VersionC
 
