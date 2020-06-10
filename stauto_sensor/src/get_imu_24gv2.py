@@ -8,7 +8,11 @@ from sensor_msgs.msg import Imu
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 
-port = str(rospy.get_param("~imu_port","/dev/ttyUSB0"))
+<<<<<<< HEAD
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB2"))
+=======
+port = str(rospy.get_param("~imu_port","/dev/ttyUSB3"))
+>>>>>>> 0335c58e01e6e92b5925c447b7d3d52857bbbd04
 rpy=[0,0,0]
 w_speed=[0,0,0]
 accel=[0,0,0]
@@ -54,7 +58,7 @@ if __name__ == '__main__':
     ser = serial.serial_for_url(port,115200, timeout=0)
 
     rospy.Subscriber("yaw_error",Float32,imu_error_callback)
-    imu_pub = rospy.Publisher("/imu/data", Imu, queue_size=10)
+    imu_pub = rospy.Publisher("/imu_data", Imu, queue_size=10)
 
     br = tf2_ros.TransformBroadcaster()
 

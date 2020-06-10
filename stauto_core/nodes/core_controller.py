@@ -13,82 +13,141 @@ import rospkg
 import math
 from enum import Enum
 from std_msgs.msg import UInt8
-from ackermann_msgs.msg import AckermannDriveStamped
+from std_msgs.msg import Bool
+from std_msgs.msg import String
+from std_msgs.msg import ByteMultiArray, Int32MultiArray, MultiArrayDimension
 from geometry_msgs.msg import Point
 
 class CoreController():
     def __init__(self):
         #subscriber
-        self.sub_state_control = rospy.Subscriber('state_transition', UInt8, self.cbEvent, queue_size=1)
-        self.sub_ackermann = rospy.Subscriber('/ackermann_cmd_state', AckermannDriveStamped, self.cbAckermann, queue_size=1)
-        
-        #publisher
-        self.pub_final_ackermann = rospy.Publisher('/ackermann_cmd',AckermannDriveStamped, queue_size= 1)
+        self.sub_traffic = rospy.Subscriber('/detect/traffic_sign', Int32MultiArray, self.cbTraffic, queue_size=1)
+        self.sub_avoidance = rospy.Subscriber('/detect/obstacle', Bool, self.cbAvoidance, queue_size=1)
+        self.sub_parking = rospy.Subscriber('/detect/parking_sign', Bool, self.cbParking, queue_size=1)
+        self.sub_safetyzone = rospy.Subscriber('/detect/safety_sign', Bool, self.cbSafetyZone, queue_size=1)
+        self.sub_stop = rospy.Subscriber('/detect/stop_sign',Bool, self.cbStop,queue_size=1)                       #dynamic obstacle mission
 
-        self.Machine_State = Enum('Machine_state', 'parking traffic traffic_red traffic_green cruise')
-        self.current_state = self.Machine_State.cruise.value
-        self.Ackermann_data = AckermannDriveStamped()
-        self.is_triggered = False                       # This value need for starting
-        self.is_green_triggered = False
+        #publisher
+        self.pub_state = rospy.Publisher('/state_graph',Int32MultiArray, queue_size=1)
+
+        self.Machine_State = Enum('Machine_State', 'cruise avoid_cruise stop traffic parking safety_zone')
+        self.TrafficSign = Enum('TrafficSign','red green left straightleft')
+        #self.StopSign = Enum('StopSign','obstacle_stop traffic_stop parking_stop')
+
+        self.StateGraph = Int32MultiArray()
+        self.StateGraph.layout.dim.append(MultiArrayDimension())
+        self.StateGraph.layout.dim[0].label = "state_graph"
+        self.StateGraph.layout.dim[0].size = 6
+        self.StateGraph.layout.dim[0].stride = 6
+        self.StateGraph.layout.data_offset = 0
+        self.StateGraph.data=[0]*6
+        for i in range(6):
+            if i == 1:
+                self.StateGraph.data[i] = 1
+            else:
+                self.StateGraph.data[i] = 0
+
+        self.cur_state = self.Machine_State.cruise.value
+        self.cur_traffic = self.TrafficSign.green.value
+        self.stop_flag = False
 
         loop_rate = rospy.Rate(10)
+
+    def cbTraffic(self,event_msg):
+        self.fnDecideMode(self.Machine_State.traffic.value,event_msg)
+        if event_msg.data[self.TrafficSign.red.value-1] == 1:
+            self.cur_traffic = self.TrafficSign.red.value -1
+        elif event_msg.data[self.TrafficSign.green.value-1] == 1:
+            self.cur_traffic = self.TrafficSign.green.value -1
+        elif event_msg.data[self.TrafficSign.left.value-1] == 1:
+            self.cur_traffic = self.TrafficSign.left.value -1
+        elif event_msg.data[self.TrafficSign.straightleft.value-1] == 1:
+            self.cur_traffic = self.TrafficSign.straightleft.value -1
+
+    def cbStop(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.stop.value,0)
+
+    def cbAvoidance(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.avoid_cruise.value,0)
+
+    def cbParking(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.parking.value,0)
+
+    def cbSafetyZone(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.safety_zone.value,0)
     
-    def cbEvent(self,event_msg):
-        rospy.loginfo("The input event is %d",event_msg.data)
-        self.is_triggered = True
+    def fnDecideMode(self,mode,sub_event):
+        for i in range(6):
+            self.StateGraph.data[i] = 0
+        print('cruise_state : ', self.Machine_State.cruise.value)
 
-        if (self.is_green_triggered == False):
-            self.current_state = event_msg.data
-        elif (self.is_green_triggered == True):
-            self.current_state = self.Machine_State.cruise.value
-
-    def cbAckermann(self,event_msg):
-        #rospy.loginfo("The ackermann_steer_angel is %f ",event_msg.drive.steering_angle)
-
-        if self.current_state == self.Machine_State.cruise.value:
-            self.Ackermann_data.drive.speed = event_msg.drive.speed
-            self.Ackermann_data.drive.steering_angle = event_msg.drive.steering_angle
-        #self.Ackermann_data = event_msg
-        elif (self.current_state == self.Machine_State.parking.value) or (self.current_state == self.Machine_State.traffic.value) or (self.current_state == self.Machine_State.traffic_red.value) :
-            self.Ackermann_data.drive.speed = 0
-            self.Ackermann_data.drive.steering_angle = 0
-        #print("Ackermann_data : ", self.Ackermann_data)
-
-
-    def fnControl(self):
-        print("Ackerman_data : " , self.Ackermann_data)
-        if self.current_state == self.Machine_State.parking.value:
-            print('In core, Parking Mode Running!!')
+        if mode == self.Machine_State.cruise.value:
+            self.cur_state = self.Machine_State.cruise.value
+            print('Cruise')
             
+        elif (mode == self.Machine_State.stop.value) and (self.cur_traffic == 0):
+            self.cur_state = self.Machine_State.stop.value
+            print('Stop')
 
-        elif self.current_state == self.Machine_State.traffic.value:
-            print('In core, Traffic Mode Running!!')
+        elif mode == self.Machine_State.traffic.value:
+            if (sub_event.data[self.TrafficSign.red.value -1] == 1) and (self.cur_traffic != 0):
+                self.cur_state = self.Machine_State.traffic.value
+                self.cur_traffic = 0
+                print('Traffic Red')
+            elif sub_event.data[self.TrafficSign.green.value -1] == 1:
+                self.cur_state = self.Machine_State.cruise.value 
+                self.cur_traffic = 1
+                print('Traffic Green')
+            elif sub_event.data[self.TrafficSign.left.value -1] == 1:
+                self.cur_state = self.Machine_State.cruise.value 
+                self.cur_traffic = 2
+                print('Traffic Left')
+            elif sub_event.data[self.TrafficSign.straightleft.value -1] == 1:
+                self.cur_state = self.Machine_State.cruise.value
+                self.cur_traffic = 3
+                print('Traffic StraightLeft')
+
+        elif mode == self.Machine_State.avoid_cruise.value:
+            self.cur_state = self.Machine_State.avoid_cruise.value
+            print('Avoidance_Cruise')
+        elif mode == self.Machine_State.parking.value:
+            self.cur_state = self.Machine_State.parking.value
+            print('parking')
+        elif mode == self.Machine_State.safety_zone.value:
+            self.cur_state = self.Machine_State.safety_zone.value
+            print('Safety_Zone')
         
-        elif self.current_state == self.Machine_State.traffic_red.value:
-            print('The core,In Traffic Mode RED light is on')
+        self.StateGraph.data[self.cur_state - 1] = 1
+        self.fnPublishMode()
 
-        elif (self.current_state == self.Machine_State.traffic_green.value) and (self.is_green_triggered == False):
-            print('GREEN light is on!! Turning back to CRUISE MODE')
-
-            self.is_green_triggered = True
-            self.current_state = self.Machine_State.cruise.value
-            #rospy.sleep(1)
-
-        elif self.current_state == self.Machine_State.cruise.value:
-            print('In Core, Cruise Mode!!')
-            self.is_green_triggered = False     # Turn back on the green_light mode
+    def fnPublishMode(self):
+        if self.StateGraph.data[self.Machine_State.cruise.value-1] == 1:
+            print('Cruise_mode')
+        elif self.StateGraph.data[self.Machine_State.avoid_cruise.value-1] == 1:
+            print('Avoidance_Cruise_mode')
+        elif self.StateGraph.data[self.Machine_State.stop.value-1] == 1:
+            print('Stop_mode')
+        elif self.StateGraph.data[self.Machine_State.traffic.value-1] == 1:
+            print('Traffic_mode')
+        elif self.StateGraph.data[self.Machine_State.parking.value-1] == 1:
+            print('Parking_mode')
+        elif self.StateGraph.data[self.Machine_State.safety_zone.value-1] == 1:
+            print('Safety_Zone_mode')
         
-        self.pub_final_ackermann.publish(self.Ackermann_data)
+        self.pub_state.publish(self.StateGraph)
         
     def main(self):
-        while not rospy.is_shutdown():
-            if self.is_triggered == True:
-                self.fnControl()
-
-        #rospy.spin()
+        rospy.spin()
+        # while not rospy.is_shutdown():
+        #     self.fnPublishMode()
 
 if __name__ == "__main__":
     
     rospy.init_node('Core_Controller')
     node = CoreController()
     node.main()
+
