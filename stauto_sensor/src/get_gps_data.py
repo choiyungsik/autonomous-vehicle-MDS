@@ -5,6 +5,10 @@ import socket as soc
 import rospy
 import time
 from std_msgs.msg import UInt32
+<<<<<<< HEAD
+=======
+from std_msgs.msg import Float32
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 from sensor_msgs.msg import NavSatFix
 from ntrip.NtripClient import *
 
@@ -15,43 +19,12 @@ import os
 import sys
 
 import math
+<<<<<<< HEAD
 port = str(rospy.get_param("~imu_port","/dev/ttyACM0"))
+=======
+port = str(rospy.get_param("~gps_port","/dev/ttyACM0"))
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 gps_data_bef = ""
-
-
-def convert_degree_to_meter(lat_data,lon_data):
-    alpha = lat_data*math.pi/180
-    beta = lon_data*math.pi/180
-
-    a = 6377397.155
-    f = 1/299.1528128
-    b = a*(1-f)
-    k = 1
-    x_plus = 500000
-    y_plus = 200000
-
-    e1 = (a**2-b**2)/a**2
-    e2 = (a**2-b**2)/b**2
-    alpha0 = 38 *math.pi/180
-    beta0 = (125+0.002890277)*math.pi/180
-
-    T = pow(math.tan(alpha),2)
-    C = e1/(1-e1)*pow(math.cos(alpha),2)
-    AA = (beta-beta0)*math.cos(alpha)  #both radian
-
-    N = a/math.sqrt( 1-e1*math.sin(alpha)**2 )
-    M = a*(alpha*(1-e1/4-3*e1**2/64-5*e1**3/256)-math.sin(2*alpha)*(3*e1/8+3*e1**2/32+45*e1**3/1024)
-        +math.sin(4*alpha)*(15*e1**2/256+45*e1**3/1024)-35*e1**3*math.sin(6*alpha)/3072)
-
-    M0 = a*(alpha0*(1-e1/4-3*e1**2/64-5*e1**3/256)-math.sin(2*alpha0)*(3*e1/8+3*e1**2/32+45*e1**3/1024)
-         +math.sin(4*alpha0)*(15*e1**2/256+45*e1**3/1024)-35*e1**3*math.sin(6*alpha0)/3072)
-
-    Y = y_plus + k*N*(AA+AA**3*(1-T+C)/6+pow(AA,5)*(5-18*T+T*T+72*C-58*e2)/120)
-    X = x_plus + k*(M-M0+N*math.tan(alpha)*(AA*AA/2 + pow(AA,4)*(5-T+9*C+4*C*C)/24 +
-        pow(AA,6)*(61-58*T+T*T+600*C-330*e2)/720))
-
-    return [X,Y]
-
 
 class SocketInfo():
     HOST=""
@@ -69,14 +42,14 @@ def cb_imu(data):
 
 
 def do_work(lat,lon):
-
     gpsmsg.header.stamp = rospy.Time.now()
-    gpsmsg.header.frame_id = "base_link"
+    gpsmsg.header.frame_id = "GPS_link"
     gpsmsg.latitude=lat
     gpsmsg.longitude=lon
     gpsmsg. position_covariance_type=0
     gps_pub.publish(gpsmsg)
     #print(gpsmsg)
+<<<<<<< HEAD
 
 def pub_accuracy(accuracy):
     global prev_accuracy
@@ -91,6 +64,22 @@ def pub_accuracy(accuracy):
     elif (accuracy==4):
         current_gps_accuracy=3
 
+=======
+
+def pub_accuracy(accuracy):
+    global prev_accuracy
+    current_gps_accuracy=0
+
+    if (accuracy==1):
+        current_gps_accuracy=0
+    elif (accuracy==2):
+        current_gps_accuracy=1
+    elif (accuracy==5):
+        current_gps_accuracy=2
+    elif (accuracy==4):
+        current_gps_accuracy=3
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     gps_accuracy_pub.publish(current_gps_accuracy)
 
 fix_type={ '0' : "Invalid",
@@ -121,24 +110,40 @@ if __name__ == '__main__':
     #ntripArgs['lat']=37.630873
     #ntripArgs['lon']=127.076533
     #SOUL
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     #ntripArgs['lat']=37.16
     #ntripArgs['lon']=127.30
     #SUWON
-    ntripArgs['lat']=37.6185
-    ntripArgs['lon']=127.0983
+    ntripArgs['lat']=37.630873
+    ntripArgs['lon']=127.076533
     #SOUL
 
-    ntripArgs['height']=73.901
+    ntripArgs['height']=0
     ntripArgs['host']=False
     ntripArgs['ssl']=False
 
     #ntripArgs['user']="gnss"+":"+"gnss"
     ntripArgs['user']="agc770@naver.com"+":"+"gnss"
+<<<<<<< HEAD
+=======
+    #ntripArgs['user']="agc77000"+":"+"ngii"
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     ntripArgs['caster']="gnssdata.or.kr"
+    #ntripArgs['caster']="vrs3.ngii.go.kr"
     ntripArgs['port']=int("2101")
+    #ntripArgs['port']=int("2201")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
+<<<<<<< HEAD
     ntripArgs['mountpoint']="SOUL-RTCM32"
+=======
+    ntripArgs['mountpoint']="SOUL-RTCM31"
+    #ntripArgs['mountpoint']="VRS-RTCM31"
+    #ntripArgs['mountpoint']="FKP-RTCM31"
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
     ntripArgs['V2']=False
 
@@ -166,9 +171,17 @@ if __name__ == '__main__':
     reRTK_count=True
     prev_accuracy=0
 
+<<<<<<< HEAD
+=======
+    gps_degree=0
+    gps_speed=0
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
     gps_accuracy_pub=rospy.Publisher('/gps/accuracy', UInt32, queue_size=10)
     gpsmsg=NavSatFix()
+
+    gps_cog_pub=rospy.Publisher('/gps/cog', Float32, queue_size=10)
 
     rospy.loginfo("initialised")
 
@@ -199,27 +212,39 @@ if __name__ == '__main__':
         t = time.time()
         #print(RoverMessage)
         try:
+            #print(RoverMessage)
+            if "RMC" in RoverMessage:
+                data=RoverMessage.split(",")
+
+                gps_speed = round(float(data[7]),8)
+                gps_degree = round(float(data[8]),8)
+                #gps_degree = -float(data[8])+90
+                #if(gps_degree<-180):
+                #    gps_degree+=360
+                print(gps_speed,gps_degree)
+                gps_cog_pub.publish(gps_degree)
+
+
             if "GGA" in RoverMessage:
                 data=RoverMessage.split(",")
 
-                lat = round(float(data[2]),5)
-                lon = round(float(data[4]),5)
-
+                lat = round(float(data[2])*0.514444,8) #knot to m/s
+                lon = round(float(data[4]),8)
+                #print(data)
+                #print(lat, lon)
                 lat_str = str(data[2]); lon_str = str(data[4])
 
-                if(len(lat_str)==12):
-                    deg_lat = int(float(lat_str))/100
-                    min_lat = float(lat_str)-deg_lat*100
-                    #print(deg_lat, min_lat)
 
-                if(len(lon_str)==13):
-                    deg_lon = int(float(lon_str))/100
-                    min_lon = float(lon_str)-deg_lon*100
-                    #print(deg_lon, min_lon)
+                deg_lat = int(float(lat_str)/100)
+                deg_lon = int(float(lon_str)/100)
 
+                minute_lat = float(lat_str)%100
+                minute_lon = float(lon_str)%100
 
-                lat_degree = round(deg_lat + (min_lat / 60.0),7)
-                lon_degree = round(deg_lon + (min_lon / 60.0),7)
+                #print(deg_lat, deg_lon, minute_lat, minute_lon)
+
+                lat_degree = round(deg_lat + minute_lat/60,8)
+                lon_degree = round(deg_lon + minute_lon/60,8)
 
                 #print("{} {}".format(lat_degree,lon_degree))
 
@@ -237,7 +262,11 @@ if __name__ == '__main__':
 
                 if (int(data[6])==1):
                     #print(proc)
+<<<<<<< HEAD
                     #print(reRTK_count)
+=======
+                    print(reRTK_count)
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
                     if reRTK_count:
                         print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         reRTK_count=False
@@ -252,6 +281,10 @@ if __name__ == '__main__':
                 if time.time()-prev_time>=5:
                     reRTK_count=True
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
         except:
             print ("Missed" ,"\r")

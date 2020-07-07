@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="adaptive_clustering" name="adaptive_clustering" type="adaptive_clustering">
+    <param name="print_fps" value="true"/>
+  </node>
+  <node pkg="teb_local_planner_tutorials" name="obstacle_pub" type="publish_test_obstacles.py">
+  </node>
+
+  
+</launch>

@@ -7,18 +7,56 @@ import rospkg
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
+<<<<<<< HEAD
+=======
+import tf2_ros
+from pyproj import Proj
+from pyproj import transform
+from geometry_msgs.msg import TransformStamped
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 #from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 from gps_common import *
 import copy
 from math import *
 
+<<<<<<< HEAD
+=======
+WGS84 = { 'proj':'latlong', 'datum':'WGS84', 'ellps':'WGS84', }
+GRS80 = { 'proj':'tmerc', 'lat_0':'38', 'lon_0':'127', 'k':1, 'x_0':0,
+    'y_0':0, 'ellps':'GRS80', 'units':'m' }
+#'lat_0':'38.000036', 'lon_0':'127.00038'
+def grs80_to_wgs84(x, y):
+   return transform( Proj(**GRS80), Proj(**WGS84), x, y )
+
+def wgs84_to_grs80(x, y):
+   return transform( Proj(**WGS84), Proj(**GRS80), y, x )
+'''
+def pub_tf_transform(lat,lon):
+    br = tf2_ros.TransformBroadcaster()
+
+    t = TransformStamped()  # pose of turntable_frame w.r.t. turntable_base
+    t.header.stamp = rospy.Time.now()
+    t.header.frame_id = 'world'
+    t.child_frame_id  = 'GPS_link'
+    t.transform.translation.x = lat
+    t.transform.translation.y = lon
+    t.transform.translation.z = 0
+    t.transform.rotation.x = 0
+    t.transform.rotation.y = 0
+    t.transform.rotation.z = 0
+    t.transform.rotation.w = 1
+
+    br.sendTransform(t)
+'''
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 def gps_callback(data):
     global lat, lon, utm_lat_lon
 
     #print(odom_x)
     lat = data.latitude
     lon = data.longitude
+<<<<<<< HEAD
 
     utm_lat_lon = convert_degree_to_meter(lat, lon)
 
@@ -61,6 +99,15 @@ def find_gps_step():
     global last_step
     min_length=100
     cur_step=0
+=======
+    #print(lat, lon)
+    utm_lat_lon = wgs84_to_grs80(lat, lon)
+
+def find_gps_step(last_step, cur_gps):
+    min_length=100
+    cur_step=0
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     for step_gps in range(last_step-4):
         gps_n = gps_data[step_gps].split(',')
         gps_n_1 = gps_data[step_gps+1].split(',')
@@ -74,10 +121,17 @@ def find_gps_step():
         gps_n_2 = [float(gps_n_2[0]), float(gps_n_2[1])]
 
 
+<<<<<<< HEAD
         utm_gps_n = convert_degree_to_meter(gps_n[0],gps_n[1])
         utm_gps_n_1 = convert_degree_to_meter(gps_n_1[0],gps_n_1[1])
         utm_gps_n_2 = convert_degree_to_meter(gps_n_2[0],gps_n_2[1])
         utm_gps_cur = convert_degree_to_meter(lat,lon)
+=======
+        utm_gps_n = wgs84_to_grs80(gps_n[0],gps_n[1])
+        utm_gps_n_1 = wgs84_to_grs80(gps_n_1[0],gps_n_1[1])
+        utm_gps_n_2 = wgs84_to_grs80(gps_n_2[0],gps_n_2[1])
+        utm_gps_cur = wgs84_to_grs80(lat,lon)
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
         length1 = sqrt((utm_gps_cur[0]-utm_gps_n[0])**(2)+(utm_gps_cur[1]-utm_gps_n[1])**(2))
         length2 = sqrt((utm_gps_cur[0]-utm_gps_n_1[0])**(2)+(utm_gps_cur[1]-utm_gps_n_1[1])**(2))
@@ -95,7 +149,15 @@ def find_gps_step():
         length=abs(fp1[0]*utm_gps_cur[0] - utm_gps_cur[1] + fp1[1])/sqrt(fp1[0]**(2)+(-1)**(2)) #find length
         '''
 
+<<<<<<< HEAD
         if(length<min_length):
+=======
+        if(length<min_length and cur_gps==0):
+            min_length=length
+            cur_step=step_gps+1
+
+        elif (length<min_length and cur_gps-2 <= step_gps <= cur_gps+2):
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
             min_length=length
             cur_step=step_gps+1
 
@@ -105,15 +167,27 @@ def path_converter(gps, step_gps, last_step):
     #print(step_gps)
     pathmsg.header.seq = step_gps
     pathmsg.header.stamp = rospy.Time.now()
+<<<<<<< HEAD
     pathmsg.header.frame_id = "base_link"
+=======
+    pathmsg.header.frame_id = "map"
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
     pose = PoseStamped()
     pose.header.seq = step_gps
     pose.header.stamp = rospy.Time.now()
+<<<<<<< HEAD
     pose.header.frame_id = "base_link"
 
     x,y=convert_degree_to_meter(gps[0],gps[1])
     pose.pose.position.x = x
+=======
+    pose.header.frame_id = "map"
+
+    x,y=wgs84_to_grs80(gps[0],gps[1])
+    pose.pose.position.x = x
+    print(x)
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     pose.pose.position.y = y
     pose.pose.position.z = 0
 
@@ -129,7 +203,11 @@ def path_converter(gps, step_gps, last_step):
 
     if(step_gps == last_step-1):
         path_pub.publish(pathmsg)
+<<<<<<< HEAD
         print("TACHO TUESDAY!!!!!!!!!!!")
+=======
+        print("global path finish!!!!!!!!!!!")
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
 def current_step_pub(step_gps):
 
@@ -151,7 +229,11 @@ def current_step_pub(step_gps):
 
     step_pub.publish(current_pose)
     print(current_pose)
+<<<<<<< HEAD
 
+=======
+'''
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 def pub_utm_cur_gps(lat,lon):
 
     utm_gpsmsg.header.stamp = rospy.Time.now()
@@ -161,6 +243,7 @@ def pub_utm_cur_gps(lat,lon):
     utm_gpsmsg. position_covariance_type=0
     utm_cur_gps_pub.publish(utm_gpsmsg)
     #print(gpsmsg)
+<<<<<<< HEAD
 
 if __name__ == '__main__':
 
@@ -168,6 +251,18 @@ if __name__ == '__main__':
     listener = tf.TransformListener()
 
     path_pub = rospy.Publisher('global_path', Path, queue_size=10)
+=======
+'''
+if __name__ == '__main__':
+
+    rospy.init_node('Global_path')
+    #listener = tf.TransformListener()
+
+    path_pub = rospy.Publisher('global_path', Path, queue_size=10)
+    step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
+    #utm_cur_gps_pub = rospy.Publisher("/gps/current_robot_position",NavSatFix,queue_size=10)
+    rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
     rospack = rospkg.RosPack()
     rospack.list()
@@ -199,5 +294,28 @@ if __name__ == '__main__':
         else:
             path_pub_sign=False
 
+<<<<<<< HEAD
+=======
+        if (path_pub_sign==True):
+            if (step_gps<last_step):
+                #print(step_gps)
+
+                gps_n = gps_data[step_gps].split(',')
+                gps_n = [float(gps_n[0]), float(gps_n[1])]
+
+                path_converter(gps_n, step_gps, last_step)
+                step_gps=step_gps+1
+            else:
+                path_pub_sign=False
+                step_gps=0
+        else:
+            step_gps=find_gps_step(last_step, step_gps)
+
+            current_step_pub(step_gps)
+
+            #pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
+            #pub_tf_transform(lat,lon)
+
+>>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     else:
         pass

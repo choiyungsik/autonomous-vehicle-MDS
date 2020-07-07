@@ -18,7 +18,6 @@ from gps_common import *
 import copy
 from math import *
 
-
 def imu_callback(data):
     global imu_theta
     orientation_list = [data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w]
