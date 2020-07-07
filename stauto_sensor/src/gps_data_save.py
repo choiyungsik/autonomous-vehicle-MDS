@@ -1,10 +1,10 @@
-#! /usr/bin/env python
-import keyboard
+#! /usr/bin/env python3
+#import keyboard
 import serial
 import socket as soc
 import rospkg
 #import rospy
-import keyboard
+#import keyboard
 import time
 from ntrip.NtripClient import *
 
@@ -91,23 +91,35 @@ if __name__ == '__main__':
     #print("main : {}".format(os.getpid()))
 
     ntripArgs = {}
+    #ntripArgs['lat']=37.236134
+    #ntripArgs['lon']=126.774126
+    #SUWON
+    #ntripArgs['lat']=37.630873
+    #ntripArgs['lon']=127.076533
+    #SOUL
     #ntripArgs['lat']=37.16
     #ntripArgs['lon']=127.30
     #SUWON
-    ntripArgs['lat']=37.6185
-    ntripArgs['lon']=127.0983
+    ntripArgs['lat']=37.630873
+    ntripArgs['lon']=127.076533
     #SOUL
 
-    ntripArgs['height']=73.901
+    ntripArgs['height']=0
     ntripArgs['host']=False
     ntripArgs['ssl']=False
 
-    ntripArgs['user']="gnss"+":"+"gnss"
+    #ntripArgs['user']="gnss"+":"+"gnss"
+    ntripArgs['user']="agc770@naver.com"+":"+"gnss"
+    #ntripArgs['user']="agc77000"+":"+"ngii"
     ntripArgs['caster']="gnssdata.or.kr"
+    #ntripArgs['caster']="vrs3.ngii.go.kr"
     ntripArgs['port']=int("2101")
+    #ntripArgs['port']=int("2201")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
     ntripArgs['mountpoint']="SOUL-RTCM31"
+    #ntripArgs['mountpoint']="VRS-RTCM31"
+    #ntripArgs['mountpoint']="FKP-RTCM31"
 
     ntripArgs['V2']=True
 
@@ -117,7 +129,7 @@ if __name__ == '__main__':
     maxReconnect=1
     maxConnectTime=1200
     ser = serial.serial_for_url('/dev/ttyACM0',115200, timeout=0)
-    #multiprocessing.set_start_method('spawn', True)
+    multiprocessing.set_start_method('spawn', True)
     nclient = NtripClient(**ntripArgs)
     que = Queue()
     que_pos = Queue()
@@ -129,13 +141,17 @@ if __name__ == '__main__':
     isReady=False
     count_ready = 0
     t=time.time()
+    prev_time_rtk=0
+    reRTK_count=True
+    prev_time=0
+    prev_time_rtk=0
     prev_pos = [0.0,0.0]
     Line = 0.0
 
     rospack = rospkg.RosPack()
     rospack.list()
     arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
-    f=open(arg_name + "gps_data_seoultech.txt",'w')
+    f=open(arg_name+"gps_data_seoultech.txt",'w')
 
     while isrunning:
         RoverMessege=ser.readline().decode('ascii')
@@ -145,10 +161,15 @@ if __name__ == '__main__':
 
             if (type(data) is bool):
                 pass
-            elif (len(data)>0):
-                ser.write(data)
             else:
-                pass
+                ser.write(data)
+
+
+        '''
+        if que.empty()==False:
+            data = que.get()[0]
+            ser.write(data)
+        '''
 
         t = time.time()
         #print(RoverMessege)
@@ -157,24 +178,22 @@ if __name__ == '__main__':
             if "GGA" in RoverMessege:
                 data=RoverMessege.split(",")
 
-                lat = round(float(data[2]),5)
-                lon = round(float(data[4]),5)
-
+                lat = round(float(data[2]),8)
+                lon = round(float(data[4]),8)
+                #print(lat, lon)
                 lat_str = str(data[2]); lon_str = str(data[4])
 
-                if(len(lat_str)==12):
-                    deg_lat = int(float(lat_str))/100
-                    min_lat = float(lat_str)-deg_lat*100
-                    #print(deg_lat, min_lat)
 
-                if(len(lon_str)==13):
-                    deg_lon = int(float(lon_str))/100
-                    min_lon = float(lon_str)-deg_lon*100
-                    #print(deg_lon, min_lon)
+                deg_lat = int(float(lat_str)/100)
+                deg_lon = int(float(lon_str)/100)
 
+                minute_lat = float(lat_str)%100
+                minute_lon = float(lon_str)%100
 
-                lat_degree = round(deg_lat + (min_lat / 60.0),7)
-                lon_degree = round(deg_lon + (min_lon / 60.0),7)
+                #print(deg_lat, deg_lon, minute_lat, minute_lon)
+
+                lat_degree = round(deg_lat + minute_lat/60,7)
+                lon_degree = round(deg_lon + minute_lon/60,7)
 
                 #print("{} {}".format(lat_degree,lon_degree))
                 print ("Fix Type : %s  North : %.7f  East : %.7f \r"% (fix_type[data[6]],lat_degree,lon_degree))
@@ -192,15 +211,33 @@ if __name__ == '__main__':
 
                 nclient.setPosition(lat,lon)
                 #if(isReady==False): print(Line)
-                if ((float(data[6])==4) | (float(data[6])==5)):
-                    if (time.time()-prev_time>=0.7):
-                        print('good')
+                if ((float(data[6])==4) or (float(data[6])==5) or (float(data[6])==2) or (float(data[6])==1)):
+                    if (time.time()-prev_time>=1):
+                        print(lat_degree,lon_degree)
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')
                         prev_time=time.time()
                         #print('good!')
 
+                if (int(data[6])==1):
+                    #print(proc)
+                    print(reRTK_count)
+                    if reRTK_count:
+                        print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                        reRTK_count=False
+                        prev_time_rtk=time.time()
+
+                        que = Queue()
+                        que_pos = Queue()
+
+                        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
+                        proc.start()
+
+                if time.time()-prev_time_rtk>=5:
+                    reRTK_count=True
+
                 if keyboard.is_pressed('esc'):
+                    print('save ok')
                     f.close()
                     break
 

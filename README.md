@@ -3,6 +3,8 @@
 
 ## Commands
 
+### Commands Deeplearning
+``roslaunch darknet_ros deeplearning.launch``
 
 ### Commands Pure_Pursuit Control VersionD
 
