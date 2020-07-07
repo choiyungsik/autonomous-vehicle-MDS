@@ -110,23 +110,16 @@ if __name__ == '__main__':
 
     #ntripArgs['user']="gnss"+":"+"gnss"
     ntripArgs['user']="agc770@naver.com"+":"+"gnss"
-<<<<<<< HEAD
-=======
     #ntripArgs['user']="agc77000"+":"+"ngii"
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     ntripArgs['caster']="gnssdata.or.kr"
     #ntripArgs['caster']="vrs3.ngii.go.kr"
     ntripArgs['port']=int("2101")
     #ntripArgs['port']=int("2201")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-<<<<<<< HEAD
-    ntripArgs['mountpoint']="SOUL-RTCM32"
-=======
     ntripArgs['mountpoint']="SOUL-RTCM31"
     #ntripArgs['mountpoint']="VRS-RTCM31"
     #ntripArgs['mountpoint']="FKP-RTCM31"
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
     ntripArgs['V2']=True
 
@@ -150,11 +143,8 @@ if __name__ == '__main__':
     t=time.time()
     prev_time_rtk=0
     reRTK_count=True
-<<<<<<< HEAD
-=======
     prev_time=0
     prev_time_rtk=0
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     prev_pos = [0.0,0.0]
     Line = 0.0
 
@@ -223,32 +213,11 @@ if __name__ == '__main__':
                 #if(isReady==False): print(Line)
                 if ((float(data[6])==4) or (float(data[6])==5) or (float(data[6])==2) or (float(data[6])==1)):
                     if (time.time()-prev_time>=1):
-<<<<<<< HEAD
-                        print('good')
-=======
                         print(lat_degree,lon_degree)
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
                         f.write(str(lat_degree))
                         f.write(','+str(lon_degree)+'\n')
                         prev_time=time.time()
                         #print('good!')
-               
-                if int(data[6])==1:
-                    #print(proc)
-                    print(reRTK_count)
-                    if reRTK_count:
-                        print(1111111111111111111111111)
-                        reRTK_count=False
-                        prev_time_rtk=time.time()
-
-                        que = Queue()
-                        que_pos = Queue()
-
-                        proc = Process(target=nclient.update_RTK, args=(que,que_pos,))
-                        proc.start()
-
-                if (time.time()-prev_time_rtk)>=5:
-                    reRTK_count=True
 
                 if (int(data[6])==1):
                     #print(proc)
@@ -271,7 +240,7 @@ if __name__ == '__main__':
                     print('save ok')
                     f.close()
                     break
-                
+
         except:
             pass
             #print ("Missed" ,"\r")

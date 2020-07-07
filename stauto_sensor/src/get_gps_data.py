@@ -5,10 +5,7 @@ import socket as soc
 import rospy
 import time
 from std_msgs.msg import UInt32
-<<<<<<< HEAD
-=======
 from std_msgs.msg import Float32
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 from sensor_msgs.msg import NavSatFix
 from ntrip.NtripClient import *
 
@@ -19,11 +16,7 @@ import os
 import sys
 
 import math
-<<<<<<< HEAD
-port = str(rospy.get_param("~imu_port","/dev/ttyACM0"))
-=======
 port = str(rospy.get_param("~gps_port","/dev/ttyACM0"))
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 gps_data_bef = ""
 
 class SocketInfo():
@@ -49,7 +42,6 @@ def do_work(lat,lon):
     gpsmsg. position_covariance_type=0
     gps_pub.publish(gpsmsg)
     #print(gpsmsg)
-<<<<<<< HEAD
 
 def pub_accuracy(accuracy):
     global prev_accuracy
@@ -64,22 +56,6 @@ def pub_accuracy(accuracy):
     elif (accuracy==4):
         current_gps_accuracy=3
 
-=======
-
-def pub_accuracy(accuracy):
-    global prev_accuracy
-    current_gps_accuracy=0
-
-    if (accuracy==1):
-        current_gps_accuracy=0
-    elif (accuracy==2):
-        current_gps_accuracy=1
-    elif (accuracy==5):
-        current_gps_accuracy=2
-    elif (accuracy==4):
-        current_gps_accuracy=3
-
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     gps_accuracy_pub.publish(current_gps_accuracy)
 
 fix_type={ '0' : "Invalid",
@@ -110,10 +86,7 @@ if __name__ == '__main__':
     #ntripArgs['lat']=37.630873
     #ntripArgs['lon']=127.076533
     #SOUL
-<<<<<<< HEAD
-=======
 
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     #ntripArgs['lat']=37.16
     #ntripArgs['lon']=127.30
     #SUWON
@@ -127,25 +100,18 @@ if __name__ == '__main__':
 
     #ntripArgs['user']="gnss"+":"+"gnss"
     ntripArgs['user']="agc770@naver.com"+":"+"gnss"
-<<<<<<< HEAD
-=======
     #ntripArgs['user']="agc77000"+":"+"ngii"
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     ntripArgs['caster']="gnssdata.or.kr"
     #ntripArgs['caster']="vrs3.ngii.go.kr"
     ntripArgs['port']=int("2101")
     #ntripArgs['port']=int("2201")
 
     #ntripArgs['mountpoint']="SUWN-RTCM31"
-<<<<<<< HEAD
-    ntripArgs['mountpoint']="SOUL-RTCM32"
-=======
     ntripArgs['mountpoint']="SOUL-RTCM31"
     #ntripArgs['mountpoint']="VRS-RTCM31"
     #ntripArgs['mountpoint']="FKP-RTCM31"
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
-    ntripArgs['V2']=False
+    ntripArgs['V2']=True
 
     ntripArgs['verbose']=False
     ntripArgs['headerOutput']=None
@@ -171,12 +137,9 @@ if __name__ == '__main__':
     reRTK_count=True
     prev_accuracy=0
 
-<<<<<<< HEAD
-=======
     gps_degree=0
     gps_speed=0
 
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
     gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
     gps_accuracy_pub=rospy.Publisher('/gps/accuracy', UInt32, queue_size=10)
     gpsmsg=NavSatFix()
@@ -262,11 +225,7 @@ if __name__ == '__main__':
 
                 if (int(data[6])==1):
                     #print(proc)
-<<<<<<< HEAD
-                    #print(reRTK_count)
-=======
                     print(reRTK_count)
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
                     if reRTK_count:
                         print("retry RTK Mode !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                         reRTK_count=False
@@ -281,10 +240,7 @@ if __name__ == '__main__':
                 if time.time()-prev_time>=5:
                     reRTK_count=True
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
         except:
             print ("Missed" ,"\r")

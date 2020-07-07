@@ -53,10 +53,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  Detect.msg
-)
+# add_message_files(
+#   FILES
+#   steer_step.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -73,10 +73,10 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#   DEPENDENCIES
+#   std_msgs
+# )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -110,7 +110,7 @@ generate_messages(
 catkin_package(
   #INCLUDE_DIRS include
   #LIBRARIES main_control
-  CATKIN_DEPENDS geometry_msgs message_runtime roscpp rospy tf
+  #CATKIN_DEPENDS message_generation roscpp rospy tf
   #DEPENDS system_lib
 )
 
@@ -139,10 +139,6 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/main_control_node.cpp)
-<<<<<<< HEAD
-add_executable(path_plan_node src/path_plan_node.cpp)
-=======
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 #add_executable(path_plan_test src/path_plan_test.cpp)
 
 ## Rename C++ executable without prefix
@@ -157,10 +153,6 @@ add_executable(path_plan_node src/path_plan_node.cpp)
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
-<<<<<<< HEAD
-target_link_libraries(path_plan_node ${catkin_LIBRARIES})
-=======
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 #target_link_libraries(path_plan_test ${catkin_LIBRARIES})
 
 #############
