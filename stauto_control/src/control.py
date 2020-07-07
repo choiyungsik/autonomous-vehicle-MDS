@@ -126,11 +126,16 @@ if __name__ == '__main__':
         #print(going_gps_theta,imu_theta)
 
         if (start_yaw_sign==True):
-            start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
-            print(start_theta)
-            start_yaw.publish(-start_theta)
-            start_yaw_sign=False
+            gps_theta1 = atan2(going_gps_n1[1]-going_gps_n[1], going_gps_n1[0]-going_gps_n[0])*180/np.pi
+            gps_theta2 = atan2(going_gps_n2[1]-going_gps_n1[1], going_gps_n2[0]-going_gps_n1[0])*180/np.pi
 
+            if(abs(gps_theta1-gps_theta2)<=4):
+                start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
+                print(start_theta)
+                start_yaw.publish(-start_theta)
+                start_yaw_sign=False
+            else:
+                start_yaw_sign=False
 
 
         #print(going_gps_theta, imu_theta)
