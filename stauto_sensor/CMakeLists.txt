@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(stauto_control)
+project(stauto_sensor)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,10 +8,15 @@ project(stauto_control)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
   roscpp
   rospy
+  std_msgs
+  geometry_msgs
+  sensor_msgs
   tf
+  message_generation
+  message_runtime
+  serial
 )
 
 ## System dependencies are found with CMake's conventions
@@ -39,12 +44,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##     * add a exec_depend tag for "message_runtime"
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
-  find_package(catkin REQUIRED COMPONENTS
-	roscpp
-	rospy
-	std_msgs
-	message_generation
-	)
+##     find_package(catkin REQUIRED COMPONENTS ...)
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 ##     catkin_package(CATKIN_DEPENDS ...)
 ##   * uncomment the add_*_files sections below as needed
@@ -53,9 +53,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
+#add_message_files(
 #   FILES
-#   steer_step.msg
+
 # )
 
 ## Generate services in the 'srv' folder
@@ -73,10 +73,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs # Or other packages containing msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,8 +109,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   #INCLUDE_DIRS include
-  #LIBRARIES main_control
-  #CATKIN_DEPENDS message_generation roscpp rospy tf
+  #LIBRARIES pangyo_control
+  #CATKIN_DEPENDS geometry_msgs message_generation roscpp rospy sensor_msgs std_msgs tf serial message_runtime
   #DEPENDS system_lib
 )
 
@@ -127,7 +127,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/STauto_control.cpp
+#   src/${PROJECT_NAME}/pangyo_control.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -138,8 +138,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/main_control_node.cpp)
-#add_executable(path_plan_test src/path_plan_test.cpp)
+add_executable(get_imu src/get_imu.cpp)
+add_executable(estimate_tf src/estimate_tf.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -152,8 +152,8 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES})
-#target_link_libraries(path_plan_test ${catkin_LIBRARIES})
+target_link_libraries(get_imu   ${catkin_LIBRARIES} )
+target_link_libraries(estimate_tf   ${catkin_LIBRARIES} )
 
 #############
 ## Install ##
@@ -202,7 +202,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_main_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_pangyo_control.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

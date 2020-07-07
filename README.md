@@ -3,23 +3,16 @@
 
 ## Commands
 
-<<<<<<< HEAD
-### Commands Stage_ros Teb local planner
-=======
-### local_planner(TEB)
-``roslaunch teb_local_planner_tutorials robot_carlike_in_stage.launch``
-실행한 후 2D Nav Goal버튼 누르고 아무대나 클릭한다.
-stage ros로 확인하고 싶을시 launch파일에서 stage_ros와 use_sim의 주석 제거해야함
-
-### Adaptive clustering & obstacle
-``roslaunch adaptive_clustering adaptive_clustering.launch``
-
 ### Commands Deeplearning
 ``roslaunch darknet_ros deeplearning.launch``
->>>>>>> 4df8255a3ba73fe0b4229ed2088380829a1a5507
 
-``roslaunch teb_local_planner_tutorials robot_carlike_in_stage.launch``
-gps_global_planner/src/RAstar_ros.cpp 안 ifstream ``in("/home/plaif/global_path.txt");`` 수정하여 path변경
+### Commands Pure_Pursuit Control VersionD
+
+``roslaunch stauto_senor stauto_setting.launch``
+
+``rosrun stauto_senor get_gps_data.py``
+
+``roslaunch stauto_senor versionD.launch``
 
 ### Commands Pure_Pursuit Control VersionC
 
@@ -72,10 +65,6 @@ gps_global_planner/src/RAstar_ros.cpp 안 ifstream ``in("/home/plaif/global_path
 ``rosrun stauto_sensor save_gps_from_rosbag.py
 ``
 
-### GPS Path
-
-``rosrun stauto_sensor save_gps_from_rosbag.py
-``
 
 ### Lidar + camera fusion
 
