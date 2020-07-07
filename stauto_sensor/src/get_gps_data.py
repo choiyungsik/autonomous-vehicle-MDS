@@ -5,6 +5,7 @@ import socket as soc
 import rospy
 import time
 from std_msgs.msg import UInt32
+from std_msgs.msg import Float32
 from sensor_msgs.msg import NavSatFix
 from ntrip.NtripClient import *
 
@@ -136,9 +137,14 @@ if __name__ == '__main__':
     reRTK_count=True
     prev_accuracy=0
 
+    gps_degree=0
+    gps_speed=0
+
     gps_pub=rospy.Publisher('/gps/fix', NavSatFix, queue_size=10)
     gps_accuracy_pub=rospy.Publisher('/gps/accuracy', UInt32, queue_size=10)
     gpsmsg=NavSatFix()
+
+    gps_cog_pub=rospy.Publisher('/gps/cog', Float32, queue_size=10)
 
     rospy.loginfo("initialised")
 
@@ -169,11 +175,25 @@ if __name__ == '__main__':
         t = time.time()
         #print(RoverMessage)
         try:
+            #print(RoverMessage)
+            if "RMC" in RoverMessage:
+                data=RoverMessage.split(",")
+
+                gps_speed = round(float(data[7]),8)
+                gps_degree = round(float(data[8]),8)
+                #gps_degree = -float(data[8])+90
+                #if(gps_degree<-180):
+                #    gps_degree+=360
+                print(gps_speed,gps_degree)
+                gps_cog_pub.publish(gps_degree)
+
+
             if "GGA" in RoverMessage:
                 data=RoverMessage.split(",")
 
-                lat = round(float(data[2]),8)
+                lat = round(float(data[2])*0.514444,8) #knot to m/s
                 lon = round(float(data[4]),8)
+                #print(data)
                 #print(lat, lon)
                 lat_str = str(data[2]); lon_str = str(data[4])
 
@@ -219,6 +239,7 @@ if __name__ == '__main__':
 
                 if time.time()-prev_time>=5:
                     reRTK_count=True
+
 
 
         except:
