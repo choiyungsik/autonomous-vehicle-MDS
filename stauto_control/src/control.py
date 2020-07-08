@@ -12,6 +12,7 @@ from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32
+from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
@@ -61,27 +62,42 @@ def local_path_callback(data):
     #print(local_path)
     #print(sqrt((local_path[0][0]-local_path[3][0])**(2) + (local_path[0][1]-local_path[3][1])**(2)))
 
+def state_callback(state):
+    global state_machine
+
+    state_machine = []
+
+    for i in range(state.layout.dim[0].size ):
+        state_machine.append(state.data[i])
+    
+    print(state_machine)
+
+
 
 if __name__ == '__main__':
 
     rospy.init_node('control')
     listener = tf.TransformListener()
 
-    rospy.Subscriber("/local_path",Path,local_path_callback)
+    #Subscriber
+    rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
     #rospy.Subscriber("/gps/current_robot_position",NavSatFix,cur_gps_position_callback)
     #rospy.Subscriber("/imu/data",Imu,imu_callback)
     rospy.Subscriber("/odom", Odometry,odometry_callback)
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
+    rospy.Subscriber("/state_machine",Int32MultiArray,state_callback)
 
+    #Publisher
     ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
 
     ackermann=AckermannDriveStamped()
 
     imu_theta=0.
-    local_path =np.zeros((4,2))
+    local_path =np.zeros((100,2))
     cur_gps_position= [0,0]
     gps_theta=0.
     speed=0
+    state_machine = []
 
     camera_theta=0.
 
@@ -185,7 +201,7 @@ if __name__ == '__main__':
         else:
             Speed_linear=max_speed
         #print(Speed_linear)
-        print(going_gps_theta, imu_theta,gps_theta)
+        #print(going_gps_theta, imu_theta,gps_theta)
         #print(Ld, gps_theta, Speed_linear)
         ackermann.drive.speed = Speed_linear
         ackermann.drive.steering_angle = -final_angle*np.pi/180

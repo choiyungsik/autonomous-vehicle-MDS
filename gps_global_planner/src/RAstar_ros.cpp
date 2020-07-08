@@ -126,8 +126,8 @@ bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const g
       geometry_msgs::PoseStamped new_goal = goal;
       tf::Quaternion goal_quat = tf::createQuaternionFromYaw(atan2(x-x_,y-y_)+M_PI-M_PI/2 -M_PI/6);
 
-      new_goal.pose.position.x = x-6763.45482065;
-      new_goal.pose.position.y = y+40939.2641813;
+      new_goal.pose.position.x = x; // -6763.45482065
+      new_goal.pose.position.y = y; // +40939.2641813
 
       new_goal.pose.orientation.x = 0;
       new_goal.pose.orientation.y = 0;

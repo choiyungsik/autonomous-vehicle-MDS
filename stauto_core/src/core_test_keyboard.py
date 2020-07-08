@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #This is a stauto core_test_keyboard.py
-#Copyright (c) 2020, choiyungsik
+#Copyright (c) 2020, choiyungsik, jeonjonghyun
 
 import sys, select, termios, tty, math
 import rospy
@@ -19,6 +19,7 @@ o : obstacle detected
 p : parking_sign detected
 t : traffic_light detected
 f : safety_zone detected
+w : crosswalk detected
 r : red_light 
 g : green_light
 a : straightleft
@@ -39,22 +40,30 @@ def GetKey():
     return key
 
 def fnPublish(key):
-    global pub_avoidance,pub_stop,pub_traffic,pub_parking,pub_safety,TrafficArray
+    global pub_avoidance,pub_stop,pub_traffic,pub_parking,pub_safety,TrafficArray,pub_cruise,pub_crosswalk
 
     parking = Bool()
     stop = Bool()
     obstacle = Bool()
     safety = Bool()
+    cruise = Bool()
+    crosswalk = Bool()
 
     if key == 'p':
         parking.data = True
         pub_parking.publish(parking)
+    elif key == 'c':
+        cruise.data = True
+        pub_cruise.publish(cruise)
     elif key == 'o':
         obstacle.data = True
         pub_avoidance.publish(obstacle)
     elif key == 'f':
         safety.data = True
         pub_safety.publish(safety)
+    elif key == 'w':
+        crosswalk.data = True
+        pub_crosswalk.publish(crosswalk)
     elif key == 'r':
         TrafficArray.data[0] = 1
         pub_traffic.publish(TrafficArray)
@@ -79,15 +88,17 @@ def fnPublish(key):
     stop.data = False
     obstacle.data = False
     safety.data = False
+    cruise.data = False
+    crosswalk.data = False
 
 
 if __name__ == "__main__":
-    global Machine_State, TrafficArray,pub_avoidance,pub_stop,pub_traffic,pub_parking,pub_safety
+    global Machine_State, TrafficArray,pub_avoidance,pub_stop,pub_traffic,pub_parking,pub_safety,pub_crosswalk
     settings = termios.tcgetattr(sys.stdin)
 
     rospy.init_node('stauto_core_test_keyboard')
 
-    Machine_State = Enum('Machine_state', 'cruise avoid_cruise stop traffic parking safety_zone')
+    Machine_State = Enum('Machine_state', 'cruise avoid_cruise stop traffic parking safety_zone crosswalk')
     state_event = Machine_State.cruise.value
     array = [0,0,0,0]
     TrafficArray = Int32MultiArray()
@@ -102,7 +113,9 @@ if __name__ == "__main__":
     pub_stop = rospy.Publisher('/detect/stop_sign',Bool,queue_size=1)
     pub_parking = rospy.Publisher('/detect/parking_sign',Bool,queue_size=1)
     pub_safety = rospy.Publisher('/detect/safety_sign',Bool,queue_size=1)
+    pub_crosswalk = rospy.Publisher('/detect/crosswalk_sign',Bool,queue_size=1)
     pub_traffic = rospy.Publisher('/detect/traffic_sign',Int32MultiArray,queue_size=1)
+    pub_cruise = rospy.Publisher('/detect/cruise',Bool,queue_size=1)
 
     loop_rate = rospy.Rate(10) # 10hz
 
@@ -117,5 +130,3 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(e)
-    
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
