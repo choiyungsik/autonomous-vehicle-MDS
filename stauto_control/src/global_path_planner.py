@@ -14,7 +14,7 @@ def global_path_callback(data):
 def current_step_callback(data):
     global step
 
-    step=data.pose.position.z
+    step=int(data.pose.position.z)
 
 def pub_path(path, step):
     pathmsg=Path()
@@ -29,7 +29,7 @@ def pub_path(path, step):
         pose.header.seq = step
         pose.header.stamp = rospy.Time.now()
         pose.header.frame_id = "map"
-
+        print(step)
         pose.pose.position.x = path.poses[step+i].pose.position.x
         pose.pose.position.y = path.poses[step+i].pose.position.y
         pose.pose.position.z = 0
