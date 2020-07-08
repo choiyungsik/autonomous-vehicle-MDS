@@ -233,7 +233,7 @@ if __name__ == '__main__':
                     #prev_yaw_error_time=time.time()
 
             #else:
-            #    if((time.time()-prev_yaw_error_time>=10) and speed>=2 and imu_data변화율<3):
+            #    if((time.time()-prev_yaw_error_time>=10) and speed>=2 and imu_data<3):
             #        theta_array.append()
 
 
