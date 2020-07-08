@@ -115,10 +115,11 @@ if __name__ == '__main__':
         going_gps_n2[1]=local_path[2][1]
         going_gps_n3[0]=local_path[3][0]
         going_gps_n3[1]=local_path[3][1]
-
+        #print(local_path)
         #print(going_gps)
 
         going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
+        print(going_gps_theta)
         going_gps_theta_speed = atan2(going_gps_n3[1]-going_gps_n1[1], going_gps_n3[0]-going_gps_n1[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
 

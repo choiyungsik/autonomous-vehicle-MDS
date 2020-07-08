@@ -8,9 +8,9 @@ from geometry_msgs.msg import PoseStamped
 
 def global_path_callback(data):
     global path, global_path_callback_sign
-    global_path_callback_sign=True
     path=data
 
+    global_path_callback_sign=True
 def current_step_callback(data):
     global step
 
@@ -62,5 +62,6 @@ if __name__ == '__main__':
         if (global_path_callback_sign==True):
             rospy.sleep(0.1)
             pub_path(path, step)
+            print(1)
         else:
             pass
