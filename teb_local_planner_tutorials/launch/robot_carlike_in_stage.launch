@@ -10,12 +10,12 @@
 <launch>
 
         <!--  ************** Global Parameters ***************  -->
-        <!-- <param name="/use_sim_time" value="true"/> -->
+    <param name="/use_sim_time" value="true"/>
 
         <!--  ************** Stage Simulator ***************  -->
-	<!-- <node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
+	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
 		<remap from="odom" to="odoms"/>
-  	</node> -->
+  	</node>
 
   	<arg name="model" default="$(find robot_description)/urdf/platform_base_allink.urdf"/>
 	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
@@ -63,6 +63,6 @@
 	</node> -->
 
 	  <!--  **************** Visualisation ****************  -->
-	  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
 
 </launch>
