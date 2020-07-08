@@ -73,7 +73,6 @@ if __name__ == '__main__':
     rospy.Subscriber("/odom", Odometry,odometry_callback)
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
 
-    start_yaw = rospy.Publisher('yaw_error', Float32, queue_size=10)
     ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
 
     ackermann=AckermannDriveStamped()
@@ -84,8 +83,6 @@ if __name__ == '__main__':
     gps_theta=0.
     speed=0
 
-    error_yaw=0
-    start_yaw_sign=True
     camera_theta=0.
 
     going_gps_n=[0,0]
@@ -124,19 +121,6 @@ if __name__ == '__main__':
         going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
         going_gps_theta_speed = atan2(going_gps_n3[1]-going_gps_n1[1], going_gps_n3[0]-going_gps_n1[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
-
-        if (start_yaw_sign==True):
-            gps_theta1 = atan2(going_gps_n1[1]-going_gps_n[1], going_gps_n1[0]-going_gps_n[0])*180/np.pi
-            gps_theta2 = atan2(going_gps_n2[1]-going_gps_n1[1], going_gps_n2[0]-going_gps_n1[0])*180/np.pi
-
-            if(abs(gps_theta1-gps_theta2)<=4):
-                start_theta = atan2(going_gps_n2[1]-going_gps_n[1], going_gps_n2[0]-going_gps_n[0])*180/np.pi
-                print(start_theta)
-                start_yaw.publish(-start_theta)
-                start_yaw_sign=False
-            else:
-                start_yaw_sign=False
-
 
         #print(going_gps_theta, imu_theta)
         if((int(imu_theta)*int(going_gps_theta))>=0.):

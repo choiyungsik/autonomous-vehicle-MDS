@@ -1,16 +1,17 @@
 #! /usr/bin/env python
 
 import rospy
-import tf
+#import tf
 import numpy as np
 import rospkg
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
-import tf2_ros
+from std_msgs.msg import Float32
+#import tf2_ros
 from pyproj import Proj
 from pyproj import transform
-from geometry_msgs.msg import TransformStamped
+#from geometry_msgs.msg import TransformStamped
 #from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 from gps_common import *
@@ -114,7 +115,7 @@ def path_converter(gps, step_gps, last_step):
 
     x,y=wgs84_to_grs80(gps[0],gps[1])
     pose.pose.position.x = x
-    print(x)
+    #print(x)
     pose.pose.position.y = y
     pose.pose.position.z = 0
 
@@ -151,7 +152,7 @@ def current_step_pub(step_gps):
 
 
     step_pub.publish(current_pose)
-    print(current_pose)
+    #print(current_pose)
 '''
 def pub_utm_cur_gps(lat,lon):
 
@@ -172,6 +173,7 @@ if __name__ == '__main__':
     step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
     #utm_cur_gps_pub = rospy.Publisher("/gps/current_robot_position",NavSatFix,queue_size=10)
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)
+    start_yaw = rospy.Publisher('yaw_error', Float32, queue_size=10)
 
     rospack = rospkg.RosPack()
     rospack.list()
@@ -186,7 +188,9 @@ if __name__ == '__main__':
     utm_lat_lon=[0,0]
     step_gps = 0
     path_pub_sign=True
-
+    start_yaw_sign=True
+    prev_yaw_error_time=0
+    theta_array=np.zeros(10)
     pathmsg=Path()
     utm_gpsmsg=NavSatFix()
 
@@ -195,13 +199,6 @@ if __name__ == '__main__':
     init_time=rospy.Time.now()
 
     while not rospy.is_shutdown():
-        if (step_gps<last_step):
-            gps_n = gps_data[step_gps].split(',')
-            gps_n = [float(gps_n[0]), float(gps_n[1])]
-            path_converter(gps_n, step_gps, last_step)
-            step_gps=step_gps+1
-        else:
-            path_pub_sign=False
 
         if (path_pub_sign==True):
             if (step_gps<last_step):
@@ -219,6 +216,28 @@ if __name__ == '__main__':
             step_gps=find_gps_step(last_step, step_gps)
 
             current_step_pub(step_gps)
+
+            #########imu error pub##########
+            if (start_yaw_sign==True):
+                gps_theta1 = atan2(pathmsg.poses[step_gps+1].pose.position.y-pathmsg.poses[step_gps].pose.position.y, pathmsg.poses[step_gps+1].pose.position.x-pathmsg.poses[step_gps].pose.position.x)*180/np.pi
+                gps_theta2 = atan2(pathmsg.poses[step_gps+2].pose.position.y-pathmsg.poses[step_gps+1].pose.position.y, pathmsg.poses[step_gps+2].pose.position.x-pathmsg.poses[step_gps+1].pose.position.x)*180/np.pi
+
+                if(abs(gps_theta1-gps_theta2)<=5 or step_gps <=5):
+                    start_theta = atan2(pathmsg.poses[step_gps+2].pose.position.y-pathmsg.poses[step_gps].pose.position.y, pathmsg.poses[step_gps+2].pose.position.x-pathmsg.poses[step_gps].pose.position.x)*180/np.pi
+                    print(start_theta)
+                    start_yaw.publish(-start_theta)
+                    start_yaw_sign=False
+                    #prev_yaw_error_time=time.time()
+                else:
+                    start_yaw_sign=False
+                    #prev_yaw_error_time=time.time()
+
+            #else:
+            #    if((time.time()-prev_yaw_error_time>=10) and speed>=2 and imu_data변화율<3):
+            #        theta_array.append()
+
+
+            #print(pathmsg.poses[step_gps].pose.position.x)
 
             #pub_utm_cur_gps(utm_lat_lon[0], utm_lat_lon[1])
             #pub_tf_transform(lat,lon)
