@@ -85,6 +85,24 @@ vector<string> split(const string &s, const char delim)
     return elems;
 }
 
+// std::vector<std::vector<float_t>> LocalPathPlan (const nav_msgs::Path global_path_)
+// {
+//     std::vector<std::vector<float_t>> global_mat;
+//     geometry_msgs::PoseStamped pose = geometry_msgs::PoseStamped();
+//     int index = 0;
+
+//     for(int idx = 0 ; idx < path.poses.size(); idx++)
+//     {
+//       for(int idy =0; idy < 2; idy ++)
+//       {
+//         global_mat[idx][idy].push_back(global_path_.poses[idx].pose.position.x,global_path_.poses[idx].pose.position.y);
+//       }
+//     }
+
+//     //ROS_INFO("The local_path size %d ", local_path.poses.size());
+//     return global_mat;
+// }
+
 namespace RAstar_planner
 {
 
@@ -106,7 +124,6 @@ RAstarPlannerROS::RAstarPlannerROS(std::string name, costmap_2d::Costmap2DROS* c
 
 void RAstarPlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
-
 }
 
 bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
@@ -160,7 +177,9 @@ bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const g
  
 }
 
-void RAstarPlannerROS::CB_GPS_path(const nav_msgs::Path::ConstPtr& global_path_) {
+void RAstarPlannerROS::CB_GPS_path(const nav_msgs::Path::ConstPtr& global_path_) 
+{
+  
   global_path_position = global_path_->poses;
   cout << "ok" << endl;
 }
