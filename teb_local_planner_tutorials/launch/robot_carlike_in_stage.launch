@@ -10,12 +10,12 @@
 <launch>
 
         <!--  ************** Global Parameters ***************  -->
-        <param name="/use_sim_time" value="true"/>
+        <!-- <param name="/use_sim_time" value="true"/> -->
 
         <!--  ************** Stage Simulator ***************  -->
-	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
+	<!-- <node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
 		<remap from="odom" to="odoms"/>
-  	</node>
+  	</node> -->
 
   	<arg name="model" default="$(find robot_description)/urdf/platform_base_allink.urdf"/>
 	<param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
@@ -42,13 +42,13 @@
 		<param name="controller_frequency" value="5.0" />
 		<param name="controller_patience" value="15.0" />
 
-                <param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
+		<param name="clearing_rotation_allowed" value="false" /> <!-- Our carlike robot is not able to rotate in place -->
 	</node>
 
 
 	<!--  ****** Maps *****  -->
 	<node name="map_server" pkg="map_server" type="map_server" args="$(find teb_local_planner_tutorials)/maps/empty_box.yaml" output="screen">
-                <param name="frame_id" value="map"/>
+		<param name="frame_id" value="map"/>
 	</node>
 
 	<!-- <node pkg="tf" type="static_transform_publisher" name="tf_pub_second" args="6763.87203875 -40937.8132065 0 0 0 0 /odom /map 100"  /> -->
@@ -64,6 +64,6 @@
 	</node> -->
 
 	  <!--  **************** Visualisation ****************  -->
-	  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
+	  <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/> -->
 
 </launch>

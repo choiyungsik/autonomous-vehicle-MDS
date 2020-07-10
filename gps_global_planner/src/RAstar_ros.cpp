@@ -115,10 +115,11 @@ void RAstarPlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* co
 bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,std::vector<geometry_msgs::PoseStamped>& plan)
 {
     for(int i=0; i < global_path_position.size(); i++) {
-      global_path_position[i].pose.position.x -= 6763.45482065;
-      global_path_position[i].pose.position.y += 40939.2641813;
+      // global_path_position[i].pose.position.x -= 6763.45482065;
+      // global_path_position[i].pose.position.y += 40939.2641813;
       plan.push_back(global_path_position[i]);
     }
+    cout << plan.size() << endl;
     // string in_line;
     // ifstream in("/home/plaif/global_path.txt");
     // double x_ = 0;
@@ -169,8 +170,8 @@ bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const g
 
 void RAstarPlannerROS::CB_GPS_path(const nav_msgs::Path::ConstPtr& global_path_) {
   global_path_position = global_path_->poses;
-  cout << "ok" << endl;
-  ROS_INFO("ok");
+  // cout << global_path_position.size() << endl;
+  // ROS_INFO("ok");
 }
  
 }

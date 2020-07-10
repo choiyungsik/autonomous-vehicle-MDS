@@ -24,7 +24,7 @@ def pub_path(path, step):
     pathmsg.header.stamp = rospy.Time.now()
     pathmsg.header.frame_id = "map"
 
-    for i in range(4):
+    for i in range(len(path.poses)-step-1):
         pose = PoseStamped()
         #print("len",len(path.poses))
         #print("step",step)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     rospy.Subscriber("/gps_path",Path,global_path_callback)
     rospy.Subscriber("current_step",PoseStamped,current_step_callback)
 
-    global_path = rospy.Publisher("global_path",Path, queue_size=10)
+    global_path = rospy.Publisher("/global_path",Path, queue_size=10)
 
     rate = rospy.Rate(10)
 

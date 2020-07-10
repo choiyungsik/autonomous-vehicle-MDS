@@ -140,7 +140,7 @@ if __name__ == '__main__':
     rospy.init_node('serial_node')
 
     rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback)
-    rospy.Subscriber("/cmd_vel", Twist, vel_callback)
+
 
     rate = rospy.Rate(20)
 
