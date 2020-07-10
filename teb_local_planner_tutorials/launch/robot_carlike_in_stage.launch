@@ -10,7 +10,7 @@
 <launch>
 
         <!--  ************** Global Parameters ***************  -->
-    <param name="/use_sim_time" value="true"/>
+        <param name="/use_sim_time" value="true"/>
 
         <!--  ************** Stage Simulator ***************  -->
 	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
@@ -34,7 +34,7 @@
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/global_costmap_params.yaml" command="load" />
   		<rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
 
-		<param name="base_global_planner" value="RAstar_planner/RAstarPlannerROS" />
+		<param name="base_global_planner" value="RAstar_planner/RAstarPlannerROS" /> 
 		<param name="planner_frequency" value="1.0" />
 		<param name="planner_patience" value="5.0" />
 
@@ -51,6 +51,7 @@
                 <param name="frame_id" value="map"/>
 	</node>
 
+	<!-- <node pkg="tf" type="static_transform_publisher" name="tf_pub_second" args="6763.87203875 -40937.8132065 0 0 0 0 /odom /map 100"  /> -->
 	<node pkg="tf" type="static_transform_publisher" name="tf_pub_second" args="0 0 0 0 0 0 /odom /map 100"  />
 
 
@@ -63,6 +64,6 @@
 	</node> -->
 
 	  <!--  **************** Visualisation ****************  -->
-	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
+	  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find teb_local_planner_tutorials)/cfg/rviz_navigation.rviz"/>
 
 </launch>

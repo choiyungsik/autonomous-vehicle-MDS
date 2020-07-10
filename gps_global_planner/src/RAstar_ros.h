@@ -164,6 +164,7 @@ public:
   int width;
   int height;
   vector<geometry_msgs::PoseStamped> global_path_position;
+
 };
 
 };

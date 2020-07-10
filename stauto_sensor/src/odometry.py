@@ -102,7 +102,5 @@ if __name__ == '__main__':
 
         pub_odometry(cur_gps_position, imu_quaternion, vx, vy, vth)
 
-
-
     else:
         pass

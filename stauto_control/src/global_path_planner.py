@@ -50,7 +50,7 @@ if __name__ == '__main__':
     rospy.Subscriber("global_path",Path,global_path_callback)
     rospy.Subscriber("current_step",PoseStamped,current_step_callback)
 
-    global_path = rospy.Publisher("/local_path",Path, queue_size=10)
+    global_path = rospy.Publisher("/global_path",Path, queue_size=10)
 
     rate = rospy.Rate(10)
 

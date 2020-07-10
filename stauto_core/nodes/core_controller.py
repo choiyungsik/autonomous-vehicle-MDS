@@ -25,23 +25,25 @@ class CoreController():
         self.sub_avoidance = rospy.Subscriber('/detect/obstacle', Bool, self.cbAvoidance, queue_size=1)
         self.sub_parking = rospy.Subscriber('/detect/parking_sign', Bool, self.cbParking, queue_size=1)
         self.sub_safetyzone = rospy.Subscriber('/detect/safety_sign', Bool, self.cbSafetyZone, queue_size=1)
+        self.sub_crosswalk = rospy.Subscriber('/detect/crosswalk_sign', Bool, self.cdCrosswalk, queue_size=1)
         self.sub_stop = rospy.Subscriber('/detect/stop_sign',Bool, self.cbStop,queue_size=1)                       #dynamic obstacle mission
+        self.sub_cruise = rospy.Subscriber('/detect/cruise',Bool, self.cbcruise, queue_size=1)
 
         #publisher
-        self.pub_state = rospy.Publisher('/state_graph',Int32MultiArray, queue_size=1)
+        self.pub_state = rospy.Publisher('/state_machine',Int32MultiArray, queue_size=1)
 
-        self.Machine_State = Enum('Machine_State', 'cruise avoid_cruise stop traffic parking safety_zone')
+        self.Machine_State = Enum('Machine_State', 'cruise avoid_cruise stop traffic parking safety_zone crosswalk')
         self.TrafficSign = Enum('TrafficSign','red green left straightleft')
-        #self.StopSign = Enum('StopSign','obstacle_stop traffic_stop parking_stop')
+        #self.StopSign = Enum('StopSign','obstacle_stop traffic_stop parking_stop crosswalk_stop')
 
         self.StateGraph = Int32MultiArray()
         self.StateGraph.layout.dim.append(MultiArrayDimension())
         self.StateGraph.layout.dim[0].label = "state_graph"
-        self.StateGraph.layout.dim[0].size = 6
-        self.StateGraph.layout.dim[0].stride = 6
+        self.StateGraph.layout.dim[0].size = 7
+        self.StateGraph.layout.dim[0].stride = 7
         self.StateGraph.layout.data_offset = 0
-        self.StateGraph.data=[0]*6
-        for i in range(6):
+        self.StateGraph.data=[0]*7
+        for i in range(7):
             if i == 1:
                 self.StateGraph.data[i] = 1
             else:
@@ -76,12 +78,20 @@ class CoreController():
         if event_msg.data == True:
             self.fnDecideMode(self.Machine_State.parking.value,0)
 
+    def cbcruise(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.cruise.value,0)
+
     def cbSafetyZone(self,event_msg):
         if event_msg.data == True:
             self.fnDecideMode(self.Machine_State.safety_zone.value,0)
+
+    def cdCrosswalk(self,event_msg):
+        if event_msg.data == True:
+            self.fnDecideMode(self.Machine_State.crosswalk.value,0)
     
     def fnDecideMode(self,mode,sub_event):
-        for i in range(6):
+        for i in range(7):
             self.StateGraph.data[i] = 0
         print('cruise_state : ', self.Machine_State.cruise.value)
 
@@ -90,6 +100,22 @@ class CoreController():
             print('Cruise')
             
         elif (mode == self.Machine_State.stop.value) and (self.cur_traffic == 0):
+            self.cur_state = self.Machine_State.stop.value
+            print('Stop')
+
+        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.avoid_cruise.value):
+            self.cur_state = self.Machine_State.stop.value
+            print('Stop')
+
+        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.parking.value):
+            self.cur_state = self.Machine_State.stop.value
+            print('Stop')
+
+        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.safety_zone.value):
+            self.cur_state = self.Machine_State.stop.value
+            print('Stop')
+
+        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.crosswalk.value):
             self.cur_state = self.Machine_State.stop.value
             print('Stop')
 
@@ -116,10 +142,13 @@ class CoreController():
             print('Avoidance_Cruise')
         elif mode == self.Machine_State.parking.value:
             self.cur_state = self.Machine_State.parking.value
-            print('parking')
+            print('Parking')
         elif mode == self.Machine_State.safety_zone.value:
             self.cur_state = self.Machine_State.safety_zone.value
             print('Safety_Zone')
+        elif mode == self.Machine_State.crosswalk.value:
+            self.cur_state = self.Machine_State.crosswalk.value
+            print('Crosswalk')
         
         self.StateGraph.data[self.cur_state - 1] = 1
         self.fnPublishMode()
@@ -137,6 +166,8 @@ class CoreController():
             print('Parking_mode')
         elif self.StateGraph.data[self.Machine_State.safety_zone.value-1] == 1:
             print('Safety_Zone_mode')
+        elif self.StateGraph.data[self.Machine_State.crosswalk.value-1] == 1:
+            print('Crosswalk_mode')
         
         self.pub_state.publish(self.StateGraph)
         
@@ -150,4 +181,3 @@ if __name__ == "__main__":
     rospy.init_node('Core_Controller')
     node = CoreController()
     node.main()
-
