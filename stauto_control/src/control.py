@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import rospy
-import tf
+#import tf
 import numpy as np
 import rospkg
 import math
@@ -14,7 +14,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32
 from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import NavSatFix
-from tf.transformations import euler_from_quaternion, quaternion_from_euler
+#from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 from gps_common import *
 import copy
@@ -36,6 +36,17 @@ def cur_gps_position_callback(data):
     cur_gps_position[1] = data.longitude
     #print(cur_gps_position)
 '''
+
+state_type={ -1 : "None",
+             0 : "Cruise",
+             1 : "avoid_cruise",
+             2 : "stop",
+             3 : "traffic",
+             4 : "parking",
+             5 : "saftyzone",
+             6 : "crosswalk",
+             7 : "Manual input mode",
+             8 : "speedbump"}
 
 def odometry_callback(data):
     global imu_theta, cur_gps_position
@@ -65,19 +76,12 @@ def local_path_callback(data):
 def state_callback(state):
     global state_machine
 
-    state_machine = []
-
-    for i in range(state.layout.dim[0].size ):
-        state_machine.append(state.data[i])
-    
-    print(state_machine)
-
-
+    state_machine = state.data
 
 if __name__ == '__main__':
 
     rospy.init_node('control')
-    listener = tf.TransformListener()
+    #listener = tf.TransformListener()
 
     #Subscriber
     rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
@@ -135,7 +139,7 @@ if __name__ == '__main__':
         #print(going_gps)
 
         going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
-        print(going_gps_theta)
+        #print(going_gps_theta)
         going_gps_theta_speed = atan2(going_gps_n3[1]-going_gps_n1[1], going_gps_n3[0]-going_gps_n1[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
 
@@ -202,12 +206,34 @@ if __name__ == '__main__':
         else:
             Speed_linear=max_speed
         #print(Speed_linear)
-        #print(going_gps_theta, imu_theta,gps_theta)
+        print(going_gps_theta, imu_theta,gps_theta)
         #print(Ld, gps_theta, Speed_linear)
-        ackermann.drive.speed = Speed_linear
-        ackermann.drive.steering_angle = -final_angle*np.pi/180
-        ackermann_pub.publish(ackermann)
 
+        #[cruse avoid_cruse stop traffic parking saftyzone crosswalk speedbump]
+
+        print(state_type[state_machine.index(1)])
+        if(state_machine[0]==1 or state_machine[1]==1):
+            ackermann.drive.speed = Speed_linear
+            ackermann.drive.steering_angle = -final_angle*np.pi/180
+
+        elif(state_machine[2]==1):
+            ackermann.drive.speed = 0
+            ackermann.drive.steering_angle = 0
+            ackermann.jerk = 0
+
+        elif(state_machine[3]==1 or state_machine[5]==1 or state_machine[7]==1):
+            ackermann.drive.speed = Speed_linear*2/3
+            ackermann.drive.steering_angle = -final_angle*np.pi/180
+
+        elif(state_machine[4]==1):
+            ackermann.drive.speed = Speed_linear*1/2
+            ackermann.drive.steering_angle = -final_angle*np.pi/180
+
+        elif(state_machine[6]==1):
+            ackermann.drive.speed = Speed_linear*1/2
+            ackermann.drive.steering_angle = -final_angle*np.pi/180
+
+        ackermann_pub.publish(ackermann)
 
     else:
         pass
