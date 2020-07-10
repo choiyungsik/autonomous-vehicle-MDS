@@ -85,24 +85,6 @@ vector<string> split(const string &s, const char delim)
     return elems;
 }
 
-// std::vector<std::vector<float_t>> LocalPathPlan (const nav_msgs::Path global_path_)
-// {
-//     std::vector<std::vector<float_t>> global_mat;
-//     geometry_msgs::PoseStamped pose = geometry_msgs::PoseStamped();
-//     int index = 0;
-
-//     for(int idx = 0 ; idx < path.poses.size(); idx++)
-//     {
-//       for(int idy =0; idy < 2; idy ++)
-//       {
-//         global_mat[idx][idy].push_back(global_path_.poses[idx].pose.position.x,global_path_.poses[idx].pose.position.y);
-//       }
-//     }
-
-//     //ROS_INFO("The local_path size %d ", local_path.poses.size());
-//     return global_mat;
-// }
-
 namespace RAstar_planner
 {
 
@@ -118,44 +100,52 @@ RAstarPlannerROS::RAstarPlannerROS(ros::NodeHandle &nh)
 
 RAstarPlannerROS::RAstarPlannerROS(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
+  ROS_INFO("xxx");
   GPS_Path_sub = ROSNodeHandle.subscribe<nav_msgs::Path>("/global_path", 1, boost::bind(&RAstarPlannerROS::CB_GPS_path, this, _1));
   initialize(name, costmap_ros);
 }
 
 void RAstarPlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
+  ROS_INFO("zzzzz");
+  ros::NodeHandle private_nh("~/" + name);
+  static ros::Subscriber costmapUpdateSubscriber = private_nh.subscribe<nav_msgs::Path>("/global_path", 1, boost::bind(&RAstarPlannerROS::CB_GPS_path, this, _1));
 }
 
-bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
-                             std::vector<geometry_msgs::PoseStamped>& plan)
+bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,std::vector<geometry_msgs::PoseStamped>& plan)
 {
-    string in_line;
-    ifstream in("/home/choiys/global_path.txt");
-    double x_ = 0;
-    double y_ = 0;
-    while(getline(in,in_line)){
-      vector<string> xy = split(in_line, ',');
-      double x = stod(xy[0]);
-      double y = stod(xy[1]);
-      // cout<< x << y << x_ << y_ << endl;
+    for(int i=0; i < global_path_position.size(); i++) {
+      global_path_position[i].pose.position.x -= 6763.45482065;
+      global_path_position[i].pose.position.y += 40939.2641813;
+      plan.push_back(global_path_position[i]);
+    }
+    // string in_line;
+    // ifstream in("/home/plaif/global_path.txt");
+    // double x_ = 0;
+    // double y_ = 0;
+    // while(getline(in,in_line)){
+    //   vector<string> xy = split(in_line, ',');
+    //   double x = stod(xy[0]);
+    //   double y = stod(xy[1]);
+    //   // cout<< x << y << x_ << y_ << endl;
       
 
-      geometry_msgs::PoseStamped new_goal = goal;
-      tf::Quaternion goal_quat = tf::createQuaternionFromYaw(atan2(x-x_,y-y_)+M_PI-M_PI/2 -M_PI/6);
+    //   geometry_msgs::PoseStamped new_goal = goal;
+    //   tf::Quaternion goal_quat = tf::createQuaternionFromYaw(atan2(x-x_,y-y_)+M_PI-M_PI/2 -M_PI/6);
 
-      new_goal.pose.position.x = x; // -6763.45482065
-      new_goal.pose.position.y = y; // +40939.2641813
+    //   new_goal.pose.position.x = x;
+    //   new_goal.pose.position.y = y;
 
-      new_goal.pose.orientation.x = 0;
-      new_goal.pose.orientation.y = 0;
-      new_goal.pose.orientation.z = 0;
-      new_goal.pose.orientation.w = 0;
+    //   new_goal.pose.orientation.x = 0;
+    //   new_goal.pose.orientation.y = 0;
+    //   new_goal.pose.orientation.z = 0;
+    //   new_goal.pose.orientation.w = 0;
 
-      plan.push_back(new_goal);
-      x_ = x;
-      y_ = y;
-    }
-    in.close();
+    //   plan.push_back(new_goal);
+    //   x_ = x;
+    //   y_ = y;
+    // }
+    // in.close();
   //   plan.push_back(start);
   //  for (int i=0; i<20; i++){
      
@@ -177,11 +167,10 @@ bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const g
  
 }
 
-void RAstarPlannerROS::CB_GPS_path(const nav_msgs::Path::ConstPtr& global_path_) 
-{
-  
+void RAstarPlannerROS::CB_GPS_path(const nav_msgs::Path::ConstPtr& global_path_) {
   global_path_position = global_path_->poses;
   cout << "ok" << endl;
+  ROS_INFO("ok");
 }
  
 }
