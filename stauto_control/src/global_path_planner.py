@@ -62,6 +62,6 @@ if __name__ == '__main__':
         if (global_path_callback_sign==True):
             rospy.sleep(0.1)
             pub_path(path, step)
-            print(1)
+            #printprint(1)
         else:
             pass

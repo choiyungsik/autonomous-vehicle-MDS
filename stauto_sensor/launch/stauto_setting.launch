@@ -11,6 +11,10 @@
         <param name="imu_port" type="str" value="$(arg imu_port)"/> 
     </node>
 
+    <!-- odometry -->
+    <node pkg="stauto_sensor" type="odometry.py" name="odometry" >
+    </node>
+
     <!-- ERP42 data-->
     <node pkg="stauto_control" type="ERP42_to_PC.py" name="erp42_data" >
         <param name="robot_port" type="str" value="$(arg robot_port)"/>

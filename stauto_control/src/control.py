@@ -19,7 +19,7 @@ from gps_common import *
 import copy
 from math import *
 
-'''
+
 def imu_callback(data):
     global imu_theta
     orientation_list = [data.orientation.x, data.orientation.y, data.orientation.z, data.orientation.w]
@@ -34,7 +34,7 @@ def cur_gps_position_callback(data):
     cur_gps_position[0] = data.latitude
     cur_gps_position[1] = data.longitude
     #print(cur_gps_position)
-'''
+
 
 def odometry_callback(data):
     global imu_theta, cur_gps_position
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
     rospy.Subscriber("/local_path",Path,local_path_callback)
     #rospy.Subscriber("/gps/current_robot_position",NavSatFix,cur_gps_position_callback)
-    #rospy.Subscriber("/imu/data",Imu,imu_callback)
+    rospy.Subscriber("/imu/data",Imu,imu_callback)
     rospy.Subscriber("/odom", Odometry,odometry_callback)
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=2
+    max_speed=2.0
     min_speed=1.5
     rospy.sleep(1.5)
 
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
         going_gps[0]=cur_gps_position[0]
         going_gps[1]=cur_gps_position[1]
-
+        #print(going_gps)
         #going_gps_n2[0]=(utm_next_gps[0] - 460000)/100
         #going_gps_n2[1]=(utm_next_gps[1] - 383000)/100
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         #print(going_gps)
 
         going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
-        print(going_gps_theta)
+        #print(going_gps_theta)
         going_gps_theta_speed = atan2(going_gps_n3[1]-going_gps_n1[1], going_gps_n3[0]-going_gps_n1[0])*180/np.pi
         #print(going_gps_theta,imu_theta)
 
@@ -170,7 +170,7 @@ if __name__ == '__main__':
             alpha_ld=2
 
 
-        ld = speed_ld+3.8-alpha_ld
+        ld = speed_ld+4.3-alpha_ld
         #print(round(speed_ld,6),round((alpha_ld*180/np.pi),4), round(ld,4))
         gps_theta=atan(2*L*sin(alpha)/ld)*(180/np.pi)
 
