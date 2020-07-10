@@ -66,7 +66,7 @@ def speed_callback(data):
 
 def local_path_callback(data):
     global local_path
-    #print(len(data.poses))
+
     for i in range(len(data.poses)):
         local_path[i][0] = data.poses[i].pose.position.x
         local_path[i][1] = data.poses[i].pose.position.y
@@ -130,12 +130,12 @@ if __name__ == '__main__':
 
         going_gps_n[0]=local_path[0][0]
         going_gps_n[1]=local_path[0][1]
-        going_gps_n1[0]=local_path[10][0]
-        going_gps_n1[1]=local_path[10][1]
-        going_gps_n2[0]=local_path[20][0]
-        going_gps_n2[1]=local_path[20][1]
-        going_gps_n3[0]=local_path[30][0]
-        going_gps_n3[1]=local_path[30][1]
+        going_gps_n1[0]=local_path[1][0]
+        going_gps_n1[1]=local_path[1][1]
+        going_gps_n2[0]=local_path[2][0]
+        going_gps_n2[1]=local_path[2][1]
+        going_gps_n3[0]=local_path[3][0]
+        going_gps_n3[1]=local_path[3][1]
         #print(local_path)
         #print(going_gps)
 
