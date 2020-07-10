@@ -9,6 +9,7 @@ from geometry_msgs.msg import PoseStamped
 def global_path_callback(data):
     global path, global_path_callback_sign
     path=data
+    #print(11111111111111111111111)
 
     global_path_callback_sign=True
 def current_step_callback(data):
@@ -25,7 +26,8 @@ def pub_path(path, step):
 
     for i in range(4):
         pose = PoseStamped()
-
+        #print("len",len(path.poses))
+        #print("step",step)
         pose.header.seq = step
         pose.header.stamp = rospy.Time.now()
         pose.header.frame_id = "map"
@@ -38,7 +40,7 @@ def pub_path(path, step):
         pose.pose.orientation.y = 0
         pose.pose.orientation.z = 0
         pose.pose.orientation.w = 0
-
+        #print(path.poses[step+i].pose.position.x)
         #rospy.sleep(0.5)
         pathmsg.poses.append(pose)
 
@@ -47,10 +49,10 @@ def pub_path(path, step):
 if __name__ == '__main__':
     rospy.init_node('path_planner')
 
-    rospy.Subscriber("global_path",Path,global_path_callback)
+    rospy.Subscriber("/gps_path",Path,global_path_callback)
     rospy.Subscriber("current_step",PoseStamped,current_step_callback)
 
-    global_path = rospy.Publisher("/global_path",Path, queue_size=10)
+    global_path = rospy.Publisher("global_path",Path, queue_size=10)
 
     rate = rospy.Rate(10)
 

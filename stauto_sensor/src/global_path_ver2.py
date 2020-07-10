@@ -185,7 +185,7 @@ if __name__ == '__main__':
     rospy.init_node('Global_path')
     #listener = tf.TransformListener()
 
-    path_pub = rospy.Publisher('global_path', Path, queue_size=10)
+    path_pub = rospy.Publisher('/gps_path', Path, queue_size=10)
     step_pub = rospy.Publisher('current_step', PoseStamped, queue_size=10)
     #utm_cur_gps_pub = rospy.Publisher("/gps/current_robot_position",NavSatFix,queue_size=10)
     rospy.Subscriber("/gps/fix",NavSatFix,gps_callback)

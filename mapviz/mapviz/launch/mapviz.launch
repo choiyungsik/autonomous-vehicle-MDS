@@ -7,12 +7,8 @@
     <param name="local_xy_origin" value="swri"/>
     <rosparam param="local_xy_origins">
       [{ name: swri,
-<<<<<<< HEAD
-         latitude: 37.631154,
-=======
-         latitude: 37.631157,
->>>>>>> edf404cf33e87078ad8b8481a26cb8d4b9ec7c44
-         longitude: 127.076630,
+         latitude: 37.999964,
+         longitude: 126.99962,
          altitude: 0.0,
          heading: 0.0}]
     </rosparam>
@@ -20,10 +16,6 @@
 
   <node pkg="tf" type="static_transform_publisher" name="swri_transform" args="0 0 0 0 0 0 /map /odom 100"  />
 
-<<<<<<< HEAD
 
 
 </launch>
-=======
-</launch>
->>>>>>> edf404cf33e87078ad8b8481a26cb8d4b9ec7c44

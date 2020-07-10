@@ -121,10 +121,11 @@ brake = 0
 #    print(steer)
 
 def acker_callback(msg):
-    global speed, steer
+    global speed, steer, brake
 
     speed = msg.drive.speed
     steer = -(msg.drive.steering_angle)
+    brake = int(msg.drive.jerk)
     print(steer*180/np.pi)
 
 def vel_callback(msg):

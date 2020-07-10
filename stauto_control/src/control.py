@@ -14,7 +14,7 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import Float32
 from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import NavSatFix
-#from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 from gps_common import *
 import copy
@@ -70,7 +70,7 @@ def local_path_callback(data):
     for i in range(len(data.poses)):
         local_path[i][0] = data.poses[i].pose.position.x
         local_path[i][1] = data.poses[i].pose.position.y
-    #print(local_path)
+    #print(local_path[0][0])
     #print(sqrt((local_path[0][0]-local_path[3][0])**(2) + (local_path[0][1]-local_path[3][1])**(2)))
 
 def state_callback(state):
@@ -84,7 +84,8 @@ if __name__ == '__main__':
     #listener = tf.TransformListener()
 
     #Subscriber
-    rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
+    #rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
+    rospy.Subscriber("global_path",Path,local_path_callback)
     #rospy.Subscriber("/gps/current_robot_position",NavSatFix,cur_gps_position_callback)
     rospy.Subscriber("/imu/data",Imu,imu_callback)
     rospy.Subscriber("/odom", Odometry,odometry_callback)
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     cur_gps_position= [0,0]
     gps_theta=0.
     speed=0
-    state_machine = []
+    state_machine = np.zeros(8)
 
     camera_theta=0.
 
@@ -211,28 +212,29 @@ if __name__ == '__main__':
 
         #[cruse avoid_cruse stop traffic parking saftyzone crosswalk speedbump]
 
-        print(state_type[state_machine.index(1)])
+        #print(state_type[state_machine.index(1)])
         if(state_machine[0]==1 or state_machine[1]==1):
             ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
-
+            ackermann.drive.jerk = 0
         elif(state_machine[2]==1):
             ackermann.drive.speed = 0
             ackermann.drive.steering_angle = 0
-            ackermann.jerk = 0
+            ackermann.drive.jerk = 100
 
         elif(state_machine[3]==1 or state_machine[5]==1 or state_machine[7]==1):
             ackermann.drive.speed = Speed_linear*2/3
             ackermann.drive.steering_angle = -final_angle*np.pi/180
-
+            ackermann.drive.jerk = 0
         elif(state_machine[4]==1):
             ackermann.drive.speed = Speed_linear*1/2
             ackermann.drive.steering_angle = -final_angle*np.pi/180
-
+            ackermann.drive.jerk = 0
         elif(state_machine[6]==1):
             ackermann.drive.speed = Speed_linear*1/2
             ackermann.drive.steering_angle = -final_angle*np.pi/180
-
+            ackermann.drive.jerk = 0
+            
         ackermann_pub.publish(ackermann)
 
     else:
