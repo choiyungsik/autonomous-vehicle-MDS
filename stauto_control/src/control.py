@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import rospy
-#import tf
+import tf
 import numpy as np
 import rospkg
 import math
@@ -81,7 +81,7 @@ def state_callback(state):
 if __name__ == '__main__':
 
     rospy.init_node('control')
-    #listener = tf.TransformListener()
+    listener = tf.TransformListener()
 
     #Subscriber
     rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
@@ -99,6 +99,7 @@ if __name__ == '__main__':
 
     imu_theta=0.
     local_path =np.zeros((100,2))
+    local_path_length=0
     cur_gps_position= [0,0]
     gps_theta=0.
     speed=0
@@ -127,15 +128,15 @@ if __name__ == '__main__':
         #going_gps_n2[1]=(utm_next_gps[1] - 383000)/100
 
         #test
-
+        local_path_length=((local_path>0).sum()) / 2
         going_gps_n[0]=local_path[0][0]
         going_gps_n[1]=local_path[0][1]
-        going_gps_n1[0]=local_path[1][0]
-        going_gps_n1[1]=local_path[1][1]
-        going_gps_n2[0]=local_path[2][0]
-        going_gps_n2[1]=local_path[2][1]
-        going_gps_n3[0]=local_path[3][0]
-        going_gps_n3[1]=local_path[3][1]
+        going_gps_n1[0]=local_path[int(local_path_length*1/3)][0]
+        going_gps_n1[1]=local_path[int(local_path_length*1/3)][1]
+        going_gps_n2[0]=local_path[int(local_path_length*2/3)][0]
+        going_gps_n2[1]=local_path[int(local_path_length*2/3)][1]
+        going_gps_n3[0]=local_path[int(local_path_length-1)][0]
+        going_gps_n3[1]=local_path[int(local_path_length-1)][1]
         #print(local_path)
         #print(going_gps)
 
@@ -234,7 +235,7 @@ if __name__ == '__main__':
             ackermann.drive.speed = Speed_linear*1/2
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
-            
+
         ackermann_pub.publish(ackermann)
 
     else:

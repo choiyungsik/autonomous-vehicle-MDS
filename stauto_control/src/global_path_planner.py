@@ -24,7 +24,8 @@ def pub_path(path, step):
     pathmsg.header.stamp = rospy.Time.now()
     pathmsg.header.frame_id = "map"
 
-    for i in range(len(path.poses)-step-1):
+    #for i in range(len(path.poses)-step-1):
+    for i in range(20):
         pose = PoseStamped()
         #print("len",len(path.poses))
         #print("step",step)
@@ -32,17 +33,20 @@ def pub_path(path, step):
         pose.header.stamp = rospy.Time.now()
         pose.header.frame_id = "map"
         print(step)
-        pose.pose.position.x = path.poses[step+i].pose.position.x
-        pose.pose.position.y = path.poses[step+i].pose.position.y
-        pose.pose.position.z = 0
+        if(len(path.poses)-(step+i+1)>0):
+            pose.pose.position.x = path.poses[step+i].pose.position.x
+            pose.pose.position.y = path.poses[step+i].pose.position.y
+            pose.pose.position.z = 0
 
-        pose.pose.orientation.x = 0
-        pose.pose.orientation.y = 0
-        pose.pose.orientation.z = 0
-        pose.pose.orientation.w = 0
-        #print(path.poses[step+i].pose.position.x)
-        #rospy.sleep(0.5)
-        pathmsg.poses.append(pose)
+            pose.pose.orientation.x = 0
+            pose.pose.orientation.y = 0
+            pose.pose.orientation.z = 0
+            pose.pose.orientation.w = 0
+            #print(path.poses[step+i].pose.position.x)
+            #rospy.sleep(0.5)
+            pathmsg.poses.append(pose)
+        else:
+            pass
 
     global_path.publish(pathmsg)
 
