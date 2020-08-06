@@ -21,4 +21,8 @@ target_link_libraries(adaptive_clustering ${catkin_LIBRARIES})
 
 add_dependencies(adaptive_clustering ${catkin_EXPORTED_TARGETS} )
 
+add_executable(pointcloud_ROI_ src/pointcloud_ROI.cpp)
+target_link_libraries(pointcloud_ROI_ ${catkin_LIBRARIES})
+add_dependencies(pointcloud_ROI_ ${catkin_EXPORTED_TARGETS} )
+
 

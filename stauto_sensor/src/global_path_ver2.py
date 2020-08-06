@@ -33,7 +33,6 @@ def wgs84_to_grs80(x, y):
 '''
 def pub_tf_transform(lat,lon):
     br = tf2_ros.TransformBroadcaster()
-
     t = TransformStamped()  # pose of turntable_frame w.r.t. turntable_base
     t.header.stamp = rospy.Time.now()
     t.header.frame_id = 'world'
@@ -45,7 +44,6 @@ def pub_tf_transform(lat,lon):
     t.transform.rotation.y = 0
     t.transform.rotation.z = 0
     t.transform.rotation.w = 1
-
     br.sendTransform(t)
 '''
 def gps_callback(data):
@@ -99,12 +97,8 @@ def find_gps_step(last_step, cur_gps):
         '''
         line_data_x=[utm_gps_n[0],utm_gps_n_1[0],utm_gps_n_2[0]]
         line_data_y=[utm_gps_n[1],utm_gps_n_1[1],utm_gps_n_2[1]]
-
         fp1 = np.polyfit(line_data_x,line_data_y,1)
-
-
         y= fp1[0]*step_gps+fp1[1]
-
         length=abs(fp1[0]*utm_gps_cur[0] - utm_gps_cur[1] + fp1[1])/sqrt(fp1[0]**(2)+(-1)**(2)) #find length
         '''
 
@@ -171,7 +165,6 @@ def current_step_pub(step_gps):
     #print(current_pose)
 '''
 def pub_utm_cur_gps(lat,lon):
-
     utm_gpsmsg.header.stamp = rospy.Time.now()
     utm_gpsmsg.header.frame_id = "gps_link"
     utm_gpsmsg.latitude=lat
@@ -182,7 +175,7 @@ def pub_utm_cur_gps(lat,lon):
 '''
 if __name__ == '__main__':
 
-    rospy.init_node('Global_path')
+    rospy.init_node('Global_path_planner')
     #listener = tf.TransformListener()
 
     path_pub = rospy.Publisher('/gps_path', Path, queue_size=10)
@@ -198,6 +191,7 @@ if __name__ == '__main__':
     arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
 
     f = open(arg_name + "gps_data_seoultech.txt","r")
+    #f = open(arg_name + "aaa.txt","r")
 
     gps_data = f.readlines()
     last_step=len(gps_data)
@@ -227,6 +221,7 @@ if __name__ == '__main__':
                 #print(step_gps)
 
                 gps_n = gps_data[step_gps].split(',')
+                print(float(gps_n[0]), float(gps_n[1]))
                 gps_n = [float(gps_n[0]), float(gps_n[1])]
 
                 path_converter(gps_n, step_gps, last_step)
@@ -237,7 +232,6 @@ if __name__ == '__main__':
 
         else:
             step_gps=find_gps_step(last_step, step_gps)
-
             current_step_pub(step_gps)
 
             #########imu error pub##########
@@ -258,10 +252,10 @@ if __name__ == '__main__':
 
             else:
                 d_theta=(imu_yaw-gps_theta2)-theta_error
-                if((time.time()-prev_adjust_yaw_time>=10) and speed>=1.8 and abs(d_theta)<=1):
+                if((time.time()-prev_adjust_yaw_time>=10) and speed>=1.8 and abs(d_theta)<=1.5):
                     theta_error_count+=1
 
-                    if(theta_error_count>=30):
+                    if(theta_error_count>=20):
                         adjust_yaw_sign=True
                         theta_error_count=0
                 else:

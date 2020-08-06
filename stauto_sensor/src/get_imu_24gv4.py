@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     br = tf2_ros.TransformBroadcaster()
 
-    r=rospy.Rate(1)
+    #r=rospy.Rate(20)
 
     imu=Imu()
 
@@ -110,6 +110,7 @@ if __name__ == '__main__':
             imu_pub.publish(imu)
             pub_tf_transform(roll,pitch,yaw,w_speed,accel)
             print("yaw:",rpy[2], "battery:",battery )
+            #r.sleep()
 
         else:
             pass

@@ -144,6 +144,8 @@ if __name__ == '__main__':
                         stopbits=serial.STOPBITS_ONE
                         )
 
+    r=rospy.Rate(20)
+
     while (ser.isOpen() and (not rospy.is_shutdown())):
         
         Parsing()
@@ -154,3 +156,5 @@ if __name__ == '__main__':
         pub_speed_erp42.publish(speed)
         pub_gear_erp42.publish(gear)
         pub_brake_erp42.publish(brake)
+
+        r.sleep()

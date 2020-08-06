@@ -93,6 +93,7 @@ if __name__ == '__main__':
     odom_pub = rospy.Publisher("odom", Odometry, queue_size=50)
     odom = Odometry()
     odom_broadcaster = tf.TransformBroadcaster()
+    rate = rospy.Rate(20)
     while not rospy.is_shutdown():
 
         #B = atan(lr*tan(steer*(np.pi/180))/(lr+lf))
@@ -101,6 +102,7 @@ if __name__ == '__main__':
         #vy = speed*sin(vth+B)
 
         pub_odometry(cur_gps_position, imu_quaternion, vx, vy, vth)
+        rate.sleep()
 
     else:
         pass

@@ -19,9 +19,12 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/Pose2D.h>
+#include <geometry_msgs/Point32.h>
 #include <visualization_msgs/MarkerArray.h>
 #include "adaptive_clustering/ClusterArray.h"
 #include "adaptive_clustering/Bboxes2d.h"
+#include "costmap_converter/ObstacleMsg.h"
+#include "costmap_converter/ObstacleArrayMsg.h"
 // PCL
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/voxel_grid.h>
@@ -36,10 +39,13 @@ ros::Publisher cloud_filtered_pub_;
 ros::Publisher pose_array_pub_;
 ros::Publisher marker_array_pub_;
 ros::Publisher bboxes_pub_;
+ros::Publisher obstacle_pub_;
 
 geometry_msgs::Pose2D center;
 vision_msgs::BoundingBox2D bbox;
 adaptive_clustering::Bboxes2d bboxes;
+
+costmap_converter::ObstacleArrayMsg obstacle_msg;
 
 std::string sensor_model_;
 std::string frame_id_;
@@ -139,7 +145,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   adaptive_clustering::ClusterArray cluster_array;
   geometry_msgs::PoseArray pose_array;
   visualization_msgs::MarkerArray marker_array;
-  
+
   for(int i = 0; i < clusters.size(); i++) {
     if(cluster_array_pub_.getNumSubscribers() > 0) {
       sensor_msgs::PointCloud2 ros_pc2_out;
@@ -212,9 +218,39 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
       bbox.size_x = size_x;
       bbox.size_y = size_y;
 
+      costmap_converter::ObstacleMsg obstacle_msg_;
+      std::vector<geometry_msgs::Point32> obstacle_array;
+      obstacle_msg.obstacles.push_back(obstacle_msg_);
+      std::cout << "i :" << i << std::endl;
+      obstacle_msg.obstacles[i].id = i;
+
+      geometry_msgs::Point32 v1;
+      v1.x = bbox.center.x - bbox.size_x/2;
+      v1.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v1);
+
+      geometry_msgs::Point32 v2;
+      v2.x = bbox.center.x - bbox.size_x/2;
+      v2.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v2);
+
+      geometry_msgs::Point32 v3;
+      v3.x = bbox.center.x - bbox.size_x/2;
+      v3.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v3);
+
+      geometry_msgs::Point32 v4;
+      v4.x = bbox.center.x - bbox.size_x/2;
+      v4.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v4);
+
+      obstacle_msg.obstacles[i].polygon.points = obstacle_array;
+
       bboxes.Bboxes2d.push_back(bbox);
 
-      marker.scale.x = 0.02;
+      marker.scale.x = 1;
+      marker.scale.y = 1;
+      marker.scale.z = 1;
       marker.color.a = 1.0;
       marker.color.r = 0.0;
       marker.color.g = 1.0;
@@ -245,6 +281,13 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   if(marker_array.markers.size()) {
     marker_array_pub_.publish(marker_array);
   }
+
+  if(obstacle_msg.obstacles.size()) {
+    obstacle_pub_.publish(obstacle_msg);
+    obstacle_msg = costmap_converter::ObstacleArrayMsg();
+    obstacle_msg.header.stamp = ros::Time::now();
+    obstacle_msg.header.frame_id = "velodyne";
+  }
   
   bboxes_pub_.publish(bboxes);
   bboxes.Bboxes2d.clear();
@@ -258,7 +301,7 @@ int main(int argc, char **argv) {
   
   /*** Subscribers ***/
   ros::NodeHandle nh;
-  ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_points", 1, pointCloudCallback);
+  ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/cloud_filtered", 1, pointCloudCallback);
 
   /*** Publishers ***/
   ros::NodeHandle private_nh("~");
@@ -267,18 +310,22 @@ int main(int argc, char **argv) {
   pose_array_pub_ = private_nh.advertise<geometry_msgs::PoseArray>("poses", 100);
   marker_array_pub_ = private_nh.advertise<visualization_msgs::MarkerArray>("markers", 100);
   bboxes_pub_ = private_nh.advertise<adaptive_clustering::Bboxes2d>("bboxes_2d", 100);
-  
+  obstacle_pub_ = private_nh.advertise<costmap_converter::ObstacleArrayMsg>("/move_base/TebLocalPlannerROS/obstacles", 1);
+
   /*** Parameters ***/
   private_nh.param<std::string>("sensor_model", sensor_model_, "VLP-16"); // VLP-16, HDL-32E, HDL-64E
   private_nh.param<std::string>("frame_id", frame_id_, "velodyne");
   private_nh.param<bool>("print_fps", print_fps_, true);
   private_nh.param<float>("z_axis_min", z_axis_min_, -0.65);
   private_nh.param<float>("z_axis_max", z_axis_max_,1.0);
-  private_nh.param<int>("cluster_size_min", cluster_size_min_, 20);
-  private_nh.param<int>("cluster_size_max", cluster_size_max_, 10000);
+  private_nh.param<int>("cluster_size_min", cluster_size_min_, 10);
+  private_nh.param<int>("cluster_size_max", cluster_size_max_, 5000);
   
   // Divide the point cloud into nested circular regions centred at the sensor.
   // For more details, see our IROS-17 paper "Online learning for human classification in 3D LiDAR-based tracking"
+  obstacle_msg.header.stamp = ros::Time::now();
+  obstacle_msg.header.frame_id = "map";
+
   if(sensor_model_ == "VLP-16") {
     regions_[0] = 2; regions_[1] = 3; regions_[2] = 3; regions_[3] = 3; regions_[4] = 3;
     regions_[5] = 3; regions_[6] = 3; regions_[7] = 2; regions_[8] = 3; regions_[9] = 3;

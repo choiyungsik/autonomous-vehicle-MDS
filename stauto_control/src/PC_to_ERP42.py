@@ -47,13 +47,20 @@ def GetSPEED(speed):
     global count
     SPEED0 = chr(0x00)
     SPEED = int(speed*36) # float to integer
-    #print(speed, SPEED)
-    SPEED1 = chr(SPEED) # m/s to km/h*10
+    #print(111111111,SPEED)
+
+    SPEED1 = chr(abs(SPEED)) # m/s to km/h*10
 
     return SPEED0, SPEED1
 
 def GetSTEER(steer):
+    
     steer=steer*71*(180/pi) # rad/s to degree/s*71
+
+    if(steer>=2000):
+        steer=2000
+    elif(steer<=-2000):
+        steer=-2000
     steer_max=0b0000011111010000 # +2000
     steer_0 = 0b0000000000000000
     steer_min=0b1111100000110000 # -2000
@@ -80,7 +87,7 @@ def GetBRAKE(brake):
 
 def Send_to_ERP42(gear, speed, steer, brake):
     global S, T, X, AorM, ESTOP, GEAR, SPEED0, SPEED1, STEER0, STEER1, BRAKE, ALIVE, ETX0, ETX1, count_alive
-    print(speed)
+    #print(speed)
     count_alive = count_alive+1
 
     if count_alive==0xff:
@@ -125,6 +132,7 @@ def acker_callback(msg):
 
     speed = msg.drive.speed
     steer = -(msg.drive.steering_angle)
+
     brake = int(msg.drive.jerk)
     print(steer*180/np.pi)
 
@@ -135,11 +143,10 @@ def vel_callback(msg):
     angular = msg.Twist.angular.z
 
 
-
 if __name__ == '__main__':
     rospy.init_node('serial_node')
 
-    rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback)
+    rospy.Subscriber("/ackermann_cmd", AckermannDriveStamped, acker_callback) #Lane_ack_vel , /ackermann_cmd
 
 
     rate = rospy.Rate(20)
@@ -152,4 +159,5 @@ if __name__ == '__main__':
     while (ser.isOpen() and (not rospy.is_shutdown())):
 	#Send to Controller
         Send_to_ERP42(gear, speed, steer, brake)
+        rate.sleep()
 	
