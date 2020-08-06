@@ -11,7 +11,7 @@ from geometry_msgs.msg import Point
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Float32
+from std_msgs.msg import Float32, UInt32
 from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
@@ -82,6 +82,19 @@ def teb_callback(data):
     global teb
     teb=data
 
+def lanenet_callback(data):
+    global lanenet
+    lanenet=data
+
+
+def gps_accuracy_callback(data):
+    global gps_accuracy
+    gps_accuracy=data.data
+
+def lane_accuracy_callback(data):
+    global lane_accuracy
+    lane_accuracy=data.data
+
 if __name__ == '__main__':
 
     rospy.init_node('control')
@@ -96,6 +109,10 @@ if __name__ == '__main__':
     rospy.Subscriber("/ERP42_speed",Float32,speed_callback)
     rospy.Subscriber("/state_machine",Int32MultiArray,state_callback)
     rospy.Subscriber("/ackermann_cmd_TEB",AckermannDriveStamped, teb_callback)
+    rospy.Subscriber("/ackermann_cmd_LANENET",AckermannDriveStamped, lanenet_callback)
+
+    rospy.Subscriber("/gps/accuracy", UInt32, gps_accuracy_callback)
+    rospy.Subscriber("lane_accuracy", UInt32, lane_accuracy_callback)
 
     #Publisher
     ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
@@ -109,6 +126,9 @@ if __name__ == '__main__':
     gps_theta=0.
     speed=0
     state_machine = np.zeros(8)
+
+    gps_accuracy=0
+    lane_accuracy=0
 
     camera_theta=0.
 
@@ -124,6 +144,8 @@ if __name__ == '__main__':
 
     init_time=rospy.Time.now()
     teb=AckermannDriveStamped()
+    lanenet=AckermannDriveStamped()
+
     while not rospy.is_shutdown():
 
         going_gps[0]=cur_gps_position[0]
@@ -234,17 +256,26 @@ if __name__ == '__main__':
         #[cruse avoid_cruse stop traffic parking saftyzone crosswalk speedbump]
 
         #print(state_type[state_machine.index(1)])
-        if(state_machine[0]==1):
+        
+        if(state_machine[0]==1 and gps_accuracy>=2):
             ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             print("Global")
-        elif(state_machine[1]==1):
-            '''
-            ackermann.drive.speed = 2.0
+        
+        elif(state_machine[0]==1 and lane_accuracy>=5):
+            ackermann.drive.speed = Speed_linear #lanenet.drive.speed
+            ackermann.drive.steering_angle = lanenet.drive.steering_angle
+            ackermann.drive.jerk = 0
+            print("Vision")
+
+        elif(state_machine[0]==1 and gps_accuracy<2 and lane_accuracy<5):
+            ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
-            '''
+            print("Global")
+
+        elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
             ackermann.drive.speed = teb.drive.speed
             ackermann.drive.steering_angle = teb.drive.steering_angle
