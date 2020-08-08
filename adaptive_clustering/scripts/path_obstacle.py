@@ -76,34 +76,19 @@ def publish_obstacle_msg():
         continue
 
     marker_array = MarkerArray()
+    obs_num = 0
     for i,box in enumerate(bboxes):
-      obstacle_msg.obstacles.append(ObstacleMsg())
-      obstacle_msg.obstacles[i].id = i
-      v1 = Point32()
-      v1.x = box.center.x - box.size_x/2
-      v1.y = box.center.y - box.size_y/2
-      v2 = Point32()
-      v2.x = box.center.x - box.size_x/2
-      v2.y = box.center.y + box.size_y/2
-      v3 = Point32()
-      v3.x = box.center.x + box.size_x/2
-      v3.y = box.center.y + box.size_y/2
-      v4 = Point32()
-      v4.x = box.center.x + box.size_x/2
-      v4.y = box.center.y - box.size_y/2
-      obstacle_msg.obstacles[i].polygon.points = [v1, v2, v3, v4]
-
       marker = Marker()
     
-
-      for j in range(0 , 3):
+      obstacle_append_bool = True
+      for j in range(0 , 5):
 
         marker.id = j
         marker.header.frame_id = "/map"
         marker.type = marker.LINE_STRIP
-        marker.scale.x = 1
-        marker.scale.y = 1
-        marker.scale.z = 1
+        marker.scale.x = 0.1
+        marker.scale.y = 0.1
+        marker.scale.z = 0.1
         marker.color.a = 1.0
         marker.pose.orientation.w = 1.0
         marker.lifetime = rospy.Duration(0.01)
@@ -126,6 +111,24 @@ def publish_obstacle_msg():
         if(r1.intersection(r2).area != 0):
           print(r1.intersection(r2).area)
           is_bool.data = True
+          if(obstacle_append_bool):
+            obstacle_msg.obstacles.append(ObstacleMsg())
+            obstacle_msg.obstacles[obs_num].id = obs_num
+            v1 = Point32()
+            v1.x = box.center.x - box.size_x/2
+            v1.y = box.center.y - box.size_y/2
+            v2 = Point32()
+            v2.x = box.center.x - box.size_x/2
+            v2.y = box.center.y + box.size_y/2
+            v3 = Point32()
+            v3.x = box.center.x + box.size_x/2
+            v3.y = box.center.y + box.size_y/2
+            v4 = Point32()
+            v4.x = box.center.x + box.size_x/2
+            v4.y = box.center.y - box.size_y/2
+            obstacle_msg.obstacles[obs_num].polygon.points = [v1, v2, v3, v4]
+            obs_num += 1
+          obstacle_append_bool = False
 
         for k in range(len(r1.get_contour().exterior.coords)):
           p = Point32()

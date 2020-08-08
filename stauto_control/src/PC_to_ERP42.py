@@ -58,9 +58,9 @@ def GetSTEER(steer):
     steer=steer*71*(180/pi) # rad/s to degree/s*71
 
     if(steer>=2000):
-        steer=2000
+        steer=1999
     elif(steer<=-2000):
-        steer=-2000
+        steer=-1999
     steer_max=0b0000011111010000 # +2000
     steer_0 = 0b0000000000000000
     steer_min=0b1111100000110000 # -2000

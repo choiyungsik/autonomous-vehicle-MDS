@@ -218,33 +218,64 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
       bbox.size_x = size_x;
       bbox.size_y = size_y;
 
-      costmap_converter::ObstacleMsg obstacle_msg_;
-      std::vector<geometry_msgs::Point32> obstacle_array;
-      obstacle_msg.obstacles.push_back(obstacle_msg_);
-      std::cout << "i :" << i << std::endl;
-      obstacle_msg.obstacles[i].id = i;
+      if(bbox.center.x < 1.1 && bbox.center.x > -1.1 && bbox.center.y < 1.1 && bbox.center.y > -1.1) {
+        std::cout << "inside" << std::endl;
+        costmap_converter::ObstacleMsg obstacle_msg_;
+        std::vector<geometry_msgs::Point32> obstacle_array;
+        obstacle_msg.obstacles.push_back(obstacle_msg_);
+        obstacle_msg.obstacles[i].id = i;
 
-      geometry_msgs::Point32 v1;
-      v1.x = bbox.center.x - bbox.size_x/2;
-      v1.y = bbox.center.y - bbox.size_y/2;
-      obstacle_array.push_back(v1);
+        geometry_msgs::Point32 v1;
+        v1.x = 100;
+        v1.y = 100;
+        obstacle_array.push_back(v1);
 
-      geometry_msgs::Point32 v2;
-      v2.x = bbox.center.x - bbox.size_x/2;
-      v2.y = bbox.center.y - bbox.size_y/2;
-      obstacle_array.push_back(v2);
+        geometry_msgs::Point32 v2;
+        v2.x = 100;
+        v2.y = 100;
+        obstacle_array.push_back(v2);
 
-      geometry_msgs::Point32 v3;
-      v3.x = bbox.center.x - bbox.size_x/2;
-      v3.y = bbox.center.y - bbox.size_y/2;
-      obstacle_array.push_back(v3);
+        geometry_msgs::Point32 v3;
+        v3.x = 100;
+        v3.y = 100;
+        obstacle_array.push_back(v3);
 
-      geometry_msgs::Point32 v4;
-      v4.x = bbox.center.x - bbox.size_x/2;
-      v4.y = bbox.center.y - bbox.size_y/2;
-      obstacle_array.push_back(v4);
+        geometry_msgs::Point32 v4;
+        v4.x = 100;
+        v4.y = 100;
+        obstacle_array.push_back(v4);
 
-      obstacle_msg.obstacles[i].polygon.points = obstacle_array;
+        obstacle_msg.obstacles[i].polygon.points = obstacle_array;
+      }
+
+      else {
+        costmap_converter::ObstacleMsg obstacle_msg_;
+        std::vector<geometry_msgs::Point32> obstacle_array;
+        obstacle_msg.obstacles.push_back(obstacle_msg_);
+        obstacle_msg.obstacles[i].id = i;
+
+        geometry_msgs::Point32 v1;
+        v1.x = bbox.center.x - bbox.size_x/2;
+        v1.y = bbox.center.y - bbox.size_y/2;
+        obstacle_array.push_back(v1);
+
+        geometry_msgs::Point32 v2;
+        v2.x = bbox.center.x - bbox.size_x/2;
+        v2.y = bbox.center.y - bbox.size_y/2;
+        obstacle_array.push_back(v2);
+
+        geometry_msgs::Point32 v3;
+        v3.x = bbox.center.x - bbox.size_x/2;
+        v3.y = bbox.center.y - bbox.size_y/2;
+        obstacle_array.push_back(v3);
+
+        geometry_msgs::Point32 v4;
+        v4.x = bbox.center.x - bbox.size_x/2;
+        v4.y = bbox.center.y - bbox.size_y/2;
+        obstacle_array.push_back(v4);
+
+        obstacle_msg.obstacles[i].polygon.points = obstacle_array;
+      }
 
       bboxes.Bboxes2d.push_back(bbox);
 
@@ -316,7 +347,7 @@ int main(int argc, char **argv) {
   private_nh.param<std::string>("sensor_model", sensor_model_, "VLP-16"); // VLP-16, HDL-32E, HDL-64E
   private_nh.param<std::string>("frame_id", frame_id_, "velodyne");
   private_nh.param<bool>("print_fps", print_fps_, true);
-  private_nh.param<float>("z_axis_min", z_axis_min_, -0.65);
+  private_nh.param<float>("z_axis_min", z_axis_min_, -0.68);
   private_nh.param<float>("z_axis_max", z_axis_max_,1.0);
   private_nh.param<int>("cluster_size_min", cluster_size_min_, 10);
   private_nh.param<int>("cluster_size_max", cluster_size_max_, 5000);

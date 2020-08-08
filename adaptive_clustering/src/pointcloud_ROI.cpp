@@ -35,17 +35,23 @@ void cloud_callback (const sensor_msgs::PointCloud2& cloud_msg)
   // pass.filter(*cloud);
 
 //   Passthough in y
-  // pass.setInputCloud(cloud);
-  // pass.setFilterFieldName("y");
-  // pass.setFilterLimits(-1,1);
-  // pass.filter(*cloud);
+  pass.setInputCloud(cloud);
+  pass.setFilterFieldName("y");
+  pass.setFilterLimits(-5,5);
+  pass.filter(*cloud);
 
   //passthrough filter the points in x
   pass.setInputCloud(cloud);
   pass.setFilterFieldName("x");
-  pass.setFilterLimits(0,1000);
+  pass.setFilterLimits(-1,1);
+  pass.setFilterLimitsNegative(true);
   pass.filter(*cloud);
-
+  
+  pass.setInputCloud(cloud);
+  pass.setFilterFieldName("x");
+  pass.setFilterLimits(-5,100);
+  pass.setFilterLimitsNegative(false);
+  pass.filter(*cloud);
   //Voxel Grid Filter the points
 //   pcl::VoxelGrid<pcl::PCLPointCloud2> vox;
 //   vox.setInputCloud(cloud);

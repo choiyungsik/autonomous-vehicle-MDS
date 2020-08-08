@@ -138,8 +138,8 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=3.5 #3.5
-    min_speed=2.5 #2.5
+    max_speed=3 #3.5
+    min_speed=2 #2.5
     rospy.sleep(1.5)
 
     init_time=rospy.Time.now()
@@ -277,9 +277,19 @@ if __name__ == '__main__':
 
         elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
-            ackermann.drive.speed = teb.drive.speed
+            '''
+            ackermann.drive.speed = 2.5
+            ackermann.drive.steering_angle = -final_angle*np.pi/180
+            ackermann.drive.jerk = 0
+            '''
+            if(teb.drive.speed < 1):
+                ackermann.drive.speed = teb.drive.speed + 1
+            else:
+                ackermann.drive.speed = teb.drive.speed
+            
             ackermann.drive.steering_angle = teb.drive.steering_angle
             ackermann.drive.jerk = teb.drive.jerk
+            
             print("TEB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         elif(state_machine[2]==1):
             ackermann.drive.speed = Speed_linear  #0
