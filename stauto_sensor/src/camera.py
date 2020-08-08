@@ -86,5 +86,5 @@ if __name__ == '__main__':
         
     capture1.release()
     capture2.release()
-    #capture3.release()
+    capture3.release()
     cv2.destroyAllWindows() 
