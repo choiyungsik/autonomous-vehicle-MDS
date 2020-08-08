@@ -7,13 +7,21 @@
 ### Commands for versionE
 
 ``roslaunch stauto_sensor stauto_setting.launch``
+
 ``roslaunch stauto_sensor versionE.launch``
+
 ``rosrun stauto_sensor get_gps_data.py``
+
 ``roslaunch stauto_core stauto_core.launch``
+
 ``roslaunch mapviz mapviz.launch``
+
 ``roslaunch velodyne_pointcloud VLP16_points.launch``
+
 ``roslaunch adaptive_clustering adaptive_clustering.launch``
+
 ``rosrun teb_local_planner_tutorials cmd_vel_to_ackermann_drive.py``
+
 
 ### Commands Pure_Pursuit Control VersionC
 
