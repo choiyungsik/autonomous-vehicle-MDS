@@ -74,7 +74,13 @@ class CoreController():
 
     def cbStop(self,event_msg):
         #print('stop_line : ', event_msg.data)
-        self.stop_line = event_msg.data
+        if event_msg.data == 1:
+            if self.stop_flag == True:
+                print('stop flag True')
+            elif self.stop_flag == False:
+                self.stop_flag = True
+                self.stop_line = event_msg.data
+
 
     def cbAvoidance(self,event_msg):
         if event_msg.data == True:
@@ -114,8 +120,8 @@ class CoreController():
         step_num = event_msg.pose.position.z
         print('step num : ' ,step_num)
 
-        if(0 <= step_num and step_num < 80 ):
-            self.backup_state = self.Machine_State.parking.value
+        if(15 <= step_num and step_num < 27 ):
+            self.backup_state = self.Machine_State.traffic.value
             #print('Parking section')
         elif(80 <= step_num and step_num < 120):
             self.backup_state = self.Machine_State.avoid_cruise.value
@@ -136,48 +142,59 @@ class CoreController():
     def fnDecideMode(self,mode,sub_event):
         for i in range(7):
             self.StateGraph.data[i] = 0
-        print('cruise_state : ', self.Machine_State.cruise.value)
+        #print('cruise_state : ', self.cur_state)
+        
+        mode = self.backup_state
 
         if mode == self.Machine_State.cruise.value:
             self.cur_state = self.Machine_State.cruise.value
-            print('Cruise')
-            
-        elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.traffic.value):
+            #print('Cruise')
+
+        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.traffic.value):
             self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Stop')
 
         elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.avoid_cruise.value):
             self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Stop')
 
         elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.parking.value):
             self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Stop')
 
         elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.safety_zone.value):
             self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Stop')
 
         elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.crosswalk.value):
             self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Stop')
 
         elif mode == self.Machine_State.traffic.value:
             if (sub_event.data[self.TrafficSign.red.value -1] == 1) and (self.cur_traffic != 0):
                 self.cur_state = self.Machine_State.traffic.value
-                self.cur_traffic = 0
+                #self.cur_traffic = 0
                 print('Traffic Red')
+                if (self.stop_line == 1):
+                    self.cur_state = self.Machine_State.stop.value
+                    self.cur_traffic = 0
             elif sub_event.data[self.TrafficSign.green.value -1] == 1:
                 self.cur_state = self.Machine_State.cruise.value 
                 self.cur_traffic = 1
+                self.stop_line = 0
+                self.stop_flag = False
                 print('Traffic Green')
             elif sub_event.data[self.TrafficSign.left.value -1] == 1:
                 self.cur_state = self.Machine_State.cruise.value 
                 self.cur_traffic = 2
+                self.stop_line = 0
+                self.stop_flag = False
                 print('Traffic Left')
             elif sub_event.data[self.TrafficSign.straightleft.value -1] == 1:
                 self.cur_state = self.Machine_State.cruise.value
                 self.cur_traffic = 3
+                self.stop_line = 0
+                self.stop_flag = False
                 print('Traffic StraightLeft')
 
         elif mode == self.Machine_State.avoid_cruise.value:
@@ -198,8 +215,9 @@ class CoreController():
                 self.cur_state =self.Machine_State.stop.value
             print('Crosswalk')
         
-        # if (self.cur_state != self.backup_state):
-        #     self.cur_state = self.backup_state
+        # if (self.backup_state == self.Machine_State.traffic.value):
+        #     if (self.cur_state == self.Machine_State.stop.value):
+        #         self.cur_state = self.Machine_State.stop.value
             
         self.StateGraph.data[self.cur_state - 1] = 1
         self.fnPublishMode()

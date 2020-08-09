@@ -22,9 +22,9 @@ def GetKey():
 if __name__ == '__main__':
     rospy.init_node('camera_node')
 
-    capture1 = cv2.VideoCapture(1)
-    capture2 = cv2.VideoCapture(2)
-    capture3 = cv2.VideoCapture(3)
+    capture1 = cv2.VideoCapture(0)
+    capture2 = cv2.VideoCapture(1)
+    capture3 = cv2.VideoCapture(2)
     capture1.set(cv2.CAP_PROP_FRAME_WIDTH, 400)
     capture1.set(cv2.CAP_PROP_FRAME_HEIGHT, 300)
     capture2.set(cv2.CAP_PROP_FRAME_WIDTH, 400)
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
             #aa=bridge.imgmsg_to_cv2(a)
             #cv2.imshow("aa",aa)
-            print("FPS: ",1/(time.time()-prev_time))
+            #print("FPS: ",1/(time.time()-prev_time))
             prev_time=time.time()
 
             #key=GetKey()
