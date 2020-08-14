@@ -283,7 +283,7 @@ if __name__ == '__main__':
             ackermann.drive.jerk = 0
             '''
             if(teb.drive.speed < 1):
-                ackermann.drive.speed = teb.drive.speed + 1
+                ackermann.drive.speed = teb.drive.speed
             else:
                 ackermann.drive.speed = teb.drive.speed
             
