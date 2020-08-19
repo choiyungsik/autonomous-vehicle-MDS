@@ -3,6 +3,26 @@
 
 
 ## Commands
+### reviced Commands for versionE - 1
+
+``roslaunch stauto_sensor stauto_setting.launch``
+
+``roslaunch stauto_sensor versionE.launch``
+
+``rosrun stauto_sensor get_gps_data.py``
+
+``roslaunch stauto_core stauto_core.launch``
+
+``roslaunch mapviz mapviz.launch``
+
+``roslaunch velodyne_pointcloud VLP16_points.launch``
+
+``roslaunch adaptive_clustering adaptive_clustering.launch``
+
+``rosrun stauto_sensor camera.py``
+
+``roslaunch darknet_ros deeplearning.launch``
+
 
 ### Commands for versionE
 
