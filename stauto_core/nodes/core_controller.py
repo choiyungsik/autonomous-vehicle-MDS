@@ -33,7 +33,9 @@ class CoreController():
         #publisher
         self.pub_state = rospy.Publisher('/state_machine',Int32MultiArray, queue_size=1)
 
-        self.Machine_State = Enum('Machine_State', 'cruise avoid_cruise stop traffic parking safety_zone crosswalk')
+        #self.timer = rospy.Timer(rospy.Duration(1), self.timer_callback)
+
+        self.Machine_State = Enum('Machine_State', 'cruise avoid_cruise stop traffic parking safety_zone crosswalk backup')
         self.TrafficSign = Enum('TrafficSign','red green left straightleft')
         #self.StopSign = Enum('StopSign','obstacle_stop traffic_stop parking_stop crosswalk_stop')
 
@@ -84,7 +86,7 @@ class CoreController():
         if event_msg.data == False:
             if self.avoid_flag == 1:
                 self.avoid_count += 1
-                print("ooooooooooooooo",self.avoid_count)
+                #print("ooooooooooooooo",self.avoid_count)
                 if self.avoid_count >= 3:
                     self.avoid_count = 0
                     self.avoid_flag = 0
@@ -113,94 +115,99 @@ class CoreController():
     def cbBackup(self,event_msg):
         step_num = event_msg.pose.position.z
         print('step num : ' ,step_num)
+        #event_msg.data[self.TrafficSign.red.value-1] == 1
+        if(15 <= step_num and step_num < 40 ):
+            self.backup_state = self.Machine_State.traffic.value
+            #print('Traffic section')
+        
+        #elif(50 <= step_num and step_num < 70):
+        #    self.backup_state = self.Machine_State.avoid_cruise.value
+        #    print('Avoidance section')
+        #elif(71 <= step_num and step_num < 79):
+        #    self.backup_state = self.Machine_State.safety_zone.value
+        #    print('Safety Zone section')
+        #elif(80 <= step_num and step_num < 120):
+        #    self.backup_state = self.Machine_State.safety_zone.value
+        #    print('Safety Zone section')
+        #elif(80 <= step_num and step_num < 120):
+        #    self.backup_state = self.Machine_State.crosswalk.value
+        #    print('Cross Walk section')
+        #elif(80 <= step_num and step_num < 120):
+        #    self.backup_state = self.Machine_State.traffic.value
+        #    print('Traffic section')
+        
+        else:
+            self.backup_state = self.Machine_State.cruise.value
 
-        if(0 <= step_num and step_num < 80 ):
-            self.backup_state = self.Machine_State.parking.value
-            #print('Parking section')
-        elif(80 <= step_num and step_num < 120):
-            self.backup_state = self.Machine_State.avoid_cruise.value
-            #print('Avoidance section')
-        elif(80 <= step_num and step_num < 120):
-            self.backup_state = self.Machine_State.traffic.value
-            #print('Traffic section')
-        elif(80 <= step_num and step_num < 120):
-            self.backup_state = self.Machine_State.safety_zone.value
-            #print('Safety Zone section')
-        elif(80 <= step_num and step_num < 120):
-            self.backup_state = self.Machine_State.crosswalk.value
-            #print('Cross Walk section')
-        elif(80 <= step_num and step_num < 120):
-            self.backup_state = self.Machine_State.traffic.value
-            #print('Traffic section')
+        # self.fnDecideMode(self.Machine_State.backup.value,self.backup_state)
     
+    # def timer_callback(self):
+    #     self.cur_state = self.backup_state
+
+
     def fnDecideMode(self,mode,sub_event):
         for i in range(7):
             self.StateGraph.data[i] = 0
-        print('cruise_state : ', self.Machine_State.cruise.value)
+        #print('cruise_state : ', self.Machine_State.cruise.value)
 
         if mode == self.Machine_State.cruise.value:
             self.cur_state = self.Machine_State.cruise.value
-            print('Cruise')
-            
-        elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.traffic.value):
-            self.cur_state = self.Machine_State.stop.value
-            print('Stop')
-
-        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.avoid_cruise.value):
-            self.cur_state = self.Machine_State.stop.value
-            print('Stop')
-
-        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.parking.value):
-            self.cur_state = self.Machine_State.stop.value
-            print('Stop')
-
-        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.safety_zone.value):
-            self.cur_state = self.Machine_State.stop.value
-            print('Stop')
-
-        elif (mode == self.Machine_State.stop.value) and (self.cur_state == self.Machine_State.crosswalk.value):
-            self.cur_state = self.Machine_State.stop.value
-            print('Stop')
+            #print('Cruise')
 
         elif mode == self.Machine_State.traffic.value:
-            if (sub_event.data[self.TrafficSign.red.value -1] == 1) and (self.cur_traffic != 0):
-                self.cur_state = self.Machine_State.traffic.value
-                self.cur_traffic = 0
-                print('Traffic Red')
-            elif sub_event.data[self.TrafficSign.green.value -1] == 1:
-                self.cur_state = self.Machine_State.cruise.value 
-                self.cur_traffic = 1
-                print('Traffic Green')
-            elif sub_event.data[self.TrafficSign.left.value -1] == 1:
-                self.cur_state = self.Machine_State.cruise.value 
-                self.cur_traffic = 2
-                print('Traffic Left')
-            elif sub_event.data[self.TrafficSign.straightleft.value -1] == 1:
-                self.cur_state = self.Machine_State.cruise.value
-                self.cur_traffic = 3
-                print('Traffic StraightLeft')
+            self.cur_state = self.Machine_State.traffic.value
 
         elif mode == self.Machine_State.avoid_cruise.value:
             self.cur_state = self.Machine_State.avoid_cruise.value
             self.avoid_count = self.avoid_count + 1 
-            print('Avoidance_Cruise')
+            #print('Avoidance_Cruise')
+
         elif mode == self.Machine_State.parking.value:
             self.cur_state = self.Machine_State.parking.value
-            print('Parking')
+            #print('Parking')
+
         elif mode == self.Machine_State.safety_zone.value:
             self.cur_state = self.Machine_State.safety_zone.value
-            if self.stop_line == 1:
-                self.cur_state =self.Machine_State.stop.value
-            print('Safety_Zone')
+            #print('Safety_Zone')
+
         elif mode == self.Machine_State.crosswalk.value:
             self.cur_state = self.Machine_State.crosswalk.value
-            if self.stop_line == 1:
-                self.cur_state =self.Machine_State.stop.value
-            print('Crosswalk')
-        
-        # if (self.cur_state != self.backup_state):
+            #print('Crosswalk')
+
+ 
+        # if(self.cur_state != self.backup_state):
         #     self.cur_state = self.backup_state
+        
+        #if (self.stop_line == 1) and (self.cur_state == self.Machine_State.avoid_cruise.value):
+        #    self.cur_state = self.Machine_State.stop.value
+        #    print('Stop')
+
+        if (self.stop_line == 1) and (self.cur_state == self.Machine_State.parking.value):
+            self.cur_state = self.Machine_State.stop.value
+            #print('Stop')
+
+        #elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.safety_zone.value):
+        #    self.cur_state = self.Machine_State.stop.value
+        #    print('Stop')
+
+        elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.crosswalk.value):
+            self.cur_state = self.Machine_State.stop.value
+            #print('Stop')
+        #print(sub_event, sub_event.data, "ddddddd")
+        #print(sub_event.msg)
+        if self.cur_state == self.Machine_State.traffic.value:
+            if (self.cur_traffic == 0) and (self.stop_line == 1):
+                self.stop_flag=True
             
+            if self.stop_flag==True:
+                if self.cur_traffic == 0:
+                    self.cur_state = self.Machine_State.stop.value
+                    print('stop')
+                else:
+                    self.cur_state = self.Machine_State.traffic.value
+                    self.stop_flag=False
+            
+ 
         self.StateGraph.data[self.cur_state - 1] = 1
         self.fnPublishMode()
 

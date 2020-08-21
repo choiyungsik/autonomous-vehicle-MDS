@@ -7,6 +7,7 @@
 import sys, select, termios, tty, math
 import rospy
 from std_msgs.msg import Bool
+from std_msgs.msg import Int32
 from std_msgs.msg import ByteMultiArray, Int32MultiArray
 from std_msgs.msg import MultiArrayDimension
 from enum import Enum
@@ -43,7 +44,6 @@ def fnPublish(key):
     global pub_avoidance,pub_stop,pub_traffic,pub_parking,pub_safety,TrafficArray,pub_cruise,pub_crosswalk
 
     parking = Bool()
-    stop = Bool()
     obstacle = Bool()
     safety = Bool()
     cruise = Bool()
@@ -77,15 +77,17 @@ def fnPublish(key):
         TrafficArray.data[3] = 1
         pub_traffic.publish(TrafficArray)
     elif key == 's':
-        stop.data = True
-        pub_stop.publish(stop)
+        pub_stop.publish(1)
+    elif key == 'd':
+        pub_stop.publish(0) 
+        #print("stop!!")
 
     #pub_traffic.publish(TrafficArray)
     for j in range(4):
         TrafficArray.data[j]= 0
     
     parking.data = False
-    stop.data = False
+    stop = 0
     obstacle.data = False
     safety.data = False
     cruise.data = False
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     TrafficArray.data=[0]*4
 
     pub_avoidance = rospy.Publisher('/detect/obstacle',Bool,queue_size=1)
-    pub_stop = rospy.Publisher('/detect/stop_sign',Bool,queue_size=1)
+    pub_stop = rospy.Publisher('stop_line',Int32,queue_size=1)
     pub_parking = rospy.Publisher('/detect/parking_sign',Bool,queue_size=1)
     pub_safety = rospy.Publisher('/detect/safety_sign',Bool,queue_size=1)
     pub_crosswalk = rospy.Publisher('/detect/crosswalk_sign',Bool,queue_size=1)
@@ -120,7 +122,7 @@ if __name__ == "__main__":
     loop_rate = rospy.Rate(10) # 10hz
 
     try:
-        print(header_msgs)
+        #print(header_msgs)
         while(1):
             key = GetKey()
             fnPublish(key)

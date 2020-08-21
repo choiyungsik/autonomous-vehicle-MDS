@@ -225,11 +225,12 @@ if __name__ == '__main__':
         Ld=sqrt((local_path[0][0]-cur_gps_position[0])**(2) + (local_path[0][1]-cur_gps_position[1])**(2))
 
         speed_ld = speed*0.2
-        alpha_ld = abs(alpha*180/np.pi)*0.04
+        alpha_ld = abs(alpha*180/np.pi)*0.05
 
-        if(alpha_ld>=2):
-            alpha_ld=2
-
+        if(alpha_ld>=3):
+            alpha_ld=3
+        elif(alpha_ld<=0.2):
+            alpha_ld=0
         if (state_machine[1]==1): #avoid cruise
             ld = speed_ld+4.3-alpha_ld
         else:
@@ -277,23 +278,23 @@ if __name__ == '__main__':
 
         elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
-            '''
+            
             ackermann.drive.speed = 2.5
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
-            '''
-            if(teb.drive.speed < 1):
-                ackermann.drive.speed = teb.drive.speed + 1
-            else:
-                ackermann.drive.speed = teb.drive.speed
             
-            ackermann.drive.steering_angle = teb.drive.steering_angle
-            ackermann.drive.jerk = teb.drive.jerk
+            # if(teb.drive.speed < 1):
+            #     ackermann.drive.speed = teb.drive.speed + 1
+            # else:
+            #     ackermann.drive.speed = teb.drive.speed
+            
+            # ackermann.drive.steering_angle = teb.drive.steering_angle
+            # ackermann.drive.jerk = teb.drive.jerk
             
             print("TEB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         elif(state_machine[2]==1):
-            ackermann.drive.speed = Speed_linear  #0
-            ackermann.drive.steering_angle = -final_angle*np.pi/180  #0
+            ackermann.drive.speed = 0.0
+            ackermann.drive.steering_angle = 0.0
             ackermann.drive.jerk = 100
 
         elif(state_machine[3]==1 or state_machine[5]==1 or state_machine[6]==1):

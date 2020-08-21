@@ -2,9 +2,11 @@
 
 import cv2
 import rospy
+from cv_bridge import CvBridge
 import numpy as np
 import time
 from std_msgs.msg import Int32
+from sensor_msgs.msg import Image
 
 cap = cv2.VideoCapture(0)
 
@@ -31,9 +33,9 @@ def convert_gray_scale(image):
 
 def slice_image(image):
     # src = cv2.imread(image,cv2.IMREAD_COLOR)
-    cv2.imshow("image", image)
+    #cv2.imshow("image", image)
     # dst = src.copy()
-    slicedimage = image[680:700, 400:1000]
+    slicedimage = image[720:740, 400:1000]
     cv2.imshow("slicedimage",slicedimage)
 
     pts1_l = np.float32([[0, 0], [600, 0], [0, 20], [600, 20]])
@@ -60,7 +62,7 @@ def select_white(image):
     mask_rgb = cv2.inRange(rgb, lower_white, upper_white)
 
     mask = cv2.bitwise_or(mask_hsv, mask_rgb)
-
+    cv2.imshow("mask",mask)
     return cv2.bitwise_and(image, image, mask=mask)
 
 
@@ -80,7 +82,7 @@ def get_pixel_value(thresholding):
     length = len(dotindex_x)
 
 
-    if length>220000:
+    if length>100000:
         print (length, '1')
         return 1
     else:
@@ -96,7 +98,7 @@ def get_pixel_value(thresholding):
 
 def Camera(frame):
     slicedimage = slice_image(frame)
-
+    
     white_image = select_white(slicedimage)
     # cv2.imshow("white_image", white_image)
     # masked_image = select_region(white_yellow_image)
@@ -106,29 +108,40 @@ def Camera(frame):
     thresholding = adaptive_thresholding(gray_scale)
 
     sign = get_pixel_value(thresholding)
-
+    
     return sign
-
-
+    
+def image_callback(data):
+    global image
+    #print(image)
+    image=data
 
 if __name__ == '__main__':
     rospy.init_node('Stop_node', anonymous=True)
 
     pub_control = rospy.Publisher('stop_line', Int32, queue_size=5)
+    rospy.Subscriber("/video/lane",Image,image_callback)
 
-    rate = rospy.Rate(20)
-
+    image=Image()
+    bridge = CvBridge()
+    rate = rospy.Rate(30)
+    time.sleep(1)
     while not rospy.is_shutdown():
         try:
 
-            ret, frame = cap.read()
-
-            Flag = Camera(frame)
+            #ret, frame = cap.read()
+            frame=bridge.imgmsg_to_cv2(image)
+            #cv2.imshow("before",frame)
+            resize_image=cv2.resize(frame,(1280,720))
+            #cv2.imshow("after",resize_image)
+            Flag = Camera(resize_image)
 
             pub_control.publish(Flag)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
+            # rate.sleep()
 
 
         except rospy.ROSInterruptException:

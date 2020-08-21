@@ -64,15 +64,15 @@ if __name__ == '__main__':
     r = rospy.Rate(10)
     while not rospy.is_shutdown():
         r.sleep()
-        '''
+        
         if (state_machine[1]==1):
             final_path.publish(move_base_local_path)
             print("TEB Path")
         else:
             final_path.publish(global_path)
             print("Global Path")
-        '''
-        final_path.publish(global_path)
+        
+        # final_path.publish(global_path)
 
     else:
         pass

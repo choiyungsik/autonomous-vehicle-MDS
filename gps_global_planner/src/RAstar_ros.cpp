@@ -114,21 +114,10 @@ void RAstarPlannerROS::initialize(std::string name, costmap_2d::Costmap2DROS* co
 
 bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,std::vector<geometry_msgs::PoseStamped>& plan)
 {
-    for(int i=0; i < global_path_position.size() - 1; i++) {
+    for(int i=0; i < global_path_position.size(); i++) {
       // global_path_position[i].pose.position.x -= 6763.45482065;
       // global_path_position[i].pose.position.y += 40939.2641813;
-      for(int j=0; j < 5; j++) {
-        geometry_msgs::PoseStamped new_goal = goal;
-        new_goal.pose.position.x = global_path_position[i].pose.position.x + (global_path_position[i+1].pose.position.x - global_path_position[i].pose.position.x)*j/5;
-        new_goal.pose.position.y = global_path_position[i].pose.position.y + (global_path_position[i+1].pose.position.y - global_path_position[i].pose.position.y)*j/5;
-        new_goal.pose.orientation.x = 0;
-        new_goal.pose.orientation.y = 0;
-        new_goal.pose.orientation.z = 0;
-        new_goal.pose.orientation.w = 1;
-        // std::cout << "pose" << new_goal << std::endl;
-        plan.push_back(new_goal);
-      }
-      // plan.push_back(global_path_position[i]);
+      plan.push_back(global_path_position[i]);
     }
     cout << plan.size() << endl;
     // string in_line;
