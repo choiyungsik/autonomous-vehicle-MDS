@@ -2,8 +2,13 @@
 
 <launch>
     <!-- port configuration -->
+<<<<<<< HEAD
     <arg name="imu_port" default="/dev/ttyUSB0"/>
     <arg name="robot_port" default="/dev/ttyUSB3"/>
+=======
+    <arg name="imu_port" default="/dev/ttyUSB3"/>
+    <arg name="robot_port" default="/dev/ttyUSB1"/>
+>>>>>>> b0e3d12c09cf225dc2e81614baa8384bfd656ade
     <!--<arg name="gps_port" default="/dev/ttyACM1"/>-->
     
     <!-- IMU data-->

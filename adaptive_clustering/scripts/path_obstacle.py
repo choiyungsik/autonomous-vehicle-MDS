@@ -75,16 +75,16 @@ def publish_obstacle_msg():
     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
         continue
 
-    marker_array = MarkerArray()
+    
     obs_num = 0
     for i,box in enumerate(bboxes):
       marker = Marker()
-    
+      marker_array = MarkerArray()
       obstacle_append_bool = True
       for j in range(0 , 5):
 
         marker.id = j
-        marker.header.frame_id = "/map"
+        marker.header.frame_id = "/velodyne"
         marker.type = marker.LINE_STRIP
         marker.scale.x = 0.1
         marker.scale.y = 0.1
@@ -105,7 +105,7 @@ def publish_obstacle_msg():
         cy = (global_path.poses[j+1].pose.position.y + global_path.poses[j].pose.position.y)/2
 
         height = math.sqrt(dx**2+dy**2)
-        r1 = RotatedRect(cx, cy, height, 2, theta)
+        r1 = RotatedRect(cx, cy, height,2, theta)
         r2 = RotatedRect(math.cos(euler[2])*box.center.x-math.sin(euler[2])*box.center.y+trans[0], math.sin(euler[2])*box.center.x+math.cos(euler[2])*box.center.y+trans[1], box.size_y, box.size_x,euler[2]-math.pi/2)
 
         if(r1.intersection(r2).area != 0):
@@ -129,11 +129,12 @@ def publish_obstacle_msg():
             obstacle_msg.obstacles[obs_num].polygon.points = [v1, v2, v3, v4]
             obs_num += 1
           obstacle_append_bool = False
-
+    
         for k in range(len(r1.get_contour().exterior.coords)):
           p = Point32()
-          p.x = r1.get_contour().exterior.coords[k][0]
-          p.y = r1.get_contour().exterior.coords[k][1]
+          p.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[k][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[k][1]- trans[1])
+          p.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[k][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[k][1]- trans[1])
+          print(k,p)
           marker.points.append(p)
         
         marker_array.markers.append(marker) 

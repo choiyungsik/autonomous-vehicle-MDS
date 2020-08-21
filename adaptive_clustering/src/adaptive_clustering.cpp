@@ -319,42 +319,42 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   }
 
   if(obstacle_msg.obstacles.size()) {
-    // for(int num = 0; num < path_markers.markers.size(); num++) {
-    //     costmap_converter::ObstacleMsg obstacle_msg_;
+    for(int num = 0; num < path_markers.markers.size(); num++) {
+        costmap_converter::ObstacleMsg obstacle_msg_;
         
-    //     std::vector<geometry_msgs::Point32> obstacle_array;
-    //     obstacle_msg.obstacles.push_back(obstacle_msg_);
-    //     obstacle_msg.obstacles[clusters.size() + num*2].id = clusters.size() + num*2;
+        std::vector<geometry_msgs::Point32> obstacle_array;
+        obstacle_msg.obstacles.push_back(obstacle_msg_);
+        obstacle_msg.obstacles[clusters.size() + num*2].id = clusters.size() + num*2;
 
-    //     geometry_msgs::Point32 v1;
-    //     v1.x = path_markers.markers[num].points[1].x;
-    //     v1.y = path_markers.markers[num].points[1].y;
-    //     obstacle_array.push_back(v1);
+        geometry_msgs::Point32 v1;
+        v1.x = path_markers.markers[num].points[1].x;
+        v1.y = path_markers.markers[num].points[1].y;
+        obstacle_array.push_back(v1);
 
-    //     geometry_msgs::Point32 v2;
-    //     v2.x = path_markers.markers[num].points[2].x;
-    //     v2.y = path_markers.markers[num].points[2].y;
-    //     obstacle_array.push_back(v2);
+        geometry_msgs::Point32 v2;
+        v2.x = path_markers.markers[num].points[2].x;
+        v2.y = path_markers.markers[num].points[2].y;
+        obstacle_array.push_back(v2);
 
-    //     obstacle_msg.obstacles[clusters.size() + num*2].polygon.points = obstacle_array;
+        obstacle_msg.obstacles[clusters.size() + num*2].polygon.points = obstacle_array;
 
-    //     obstacle_array.clear();
-    //     obstacle_msg.obstacles.push_back(obstacle_msg_);
-    //     obstacle_msg.obstacles[clusters.size() + num*2 + 1].id = clusters.size() + num*2 + 1;
+        obstacle_array.clear();
+        obstacle_msg.obstacles.push_back(obstacle_msg_);
+        obstacle_msg.obstacles[clusters.size() + num*2 + 1].id = clusters.size() + num*2 + 1;
 
-    //     v1.x = path_markers.markers[num].points[0].x;
-    //     v1.y = path_markers.markers[num].points[0].y;
-    //     obstacle_array.push_back(v1);
+        v1.x = path_markers.markers[num].points[0].x;
+        v1.y = path_markers.markers[num].points[0].y;
+        obstacle_array.push_back(v1);
 
-    //     v2.x = path_markers.markers[num].points[3].x;
-    //     v2.y = path_markers.markers[num].points[3].y;
-    //     obstacle_array.push_back(v2);
+        v2.x = path_markers.markers[num].points[3].x;
+        v2.y = path_markers.markers[num].points[3].y;
+        obstacle_array.push_back(v2);
 
-    //     obstacle_msg.obstacles[clusters.size() + num*2 + 1].polygon.points = obstacle_array;
+        obstacle_msg.obstacles[clusters.size() + num*2 + 1].polygon.points = obstacle_array;
 
-    //     // std::cout << num << "1: " << v1  << std::endl;
-    //     // std::cout << num << "2: " << v2  << std::endl;
-    // }
+        // std::cout << num << "1: " << v1  << std::endl;
+        // std::cout << num << "2: " << v2  << std::endl;
+    }
     obstacle_pub_.publish(obstacle_msg);
     obstacle_msg = costmap_converter::ObstacleArrayMsg();
     obstacle_msg.header.stamp = ros::Time::now();

@@ -282,6 +282,14 @@ if __name__ == '__main__':
             ackermann.drive.speed = 2.5
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
+<<<<<<< HEAD
+=======
+            '''
+            if(teb.drive.speed < 1):
+                ackermann.drive.speed = teb.drive.speed
+            else:
+                ackermann.drive.speed = teb.drive.speed
+>>>>>>> b0e3d12c09cf225dc2e81614baa8384bfd656ade
             
             # if(teb.drive.speed < 1):
             #     ackermann.drive.speed = teb.drive.speed + 1

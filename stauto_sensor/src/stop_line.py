@@ -124,7 +124,11 @@ if __name__ == '__main__':
 
     image=Image()
     bridge = CvBridge()
+<<<<<<< HEAD
     rate = rospy.Rate(30)
+=======
+    rate = rospy.Rate(20)
+>>>>>>> b0e3d12c09cf225dc2e81614baa8384bfd656ade
     time.sleep(1)
     while not rospy.is_shutdown():
         try:
