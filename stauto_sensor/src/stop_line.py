@@ -35,7 +35,7 @@ def slice_image(image):
     # src = cv2.imread(image,cv2.IMREAD_COLOR)
     #cv2.imshow("image", image)
     # dst = src.copy()
-    slicedimage = image[720:740, 400:1000]
+    slicedimage = image[680:700, 400:1000]
     cv2.imshow("slicedimage",slicedimage)
 
     pts1_l = np.float32([[0, 0], [600, 0], [0, 20], [600, 20]])
@@ -124,11 +124,7 @@ if __name__ == '__main__':
 
     image=Image()
     bridge = CvBridge()
-<<<<<<< HEAD
     rate = rospy.Rate(30)
-=======
-    rate = rospy.Rate(20)
->>>>>>> b0e3d12c09cf225dc2e81614baa8384bfd656ade
     time.sleep(1)
     while not rospy.is_shutdown():
         try:

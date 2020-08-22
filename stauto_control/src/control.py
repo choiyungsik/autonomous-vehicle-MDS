@@ -5,13 +5,14 @@ import tf
 import numpy as np
 import rospkg
 import math
+import time
 from ackermann_msgs.msg import AckermannDriveStamped
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Path
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Float32, UInt32
+from std_msgs.msg import Float32, UInt32, Bool
 from std_msgs.msg import Int32MultiArray
 from sensor_msgs.msg import NavSatFix
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
@@ -95,6 +96,11 @@ def lane_accuracy_callback(data):
     global lane_accuracy
     lane_accuracy=data.data
 
+def parking_finish_callback(data):
+    global parking_finish_sign
+
+    parking_finish_sign=data.data
+
 if __name__ == '__main__':
 
     rospy.init_node('control')
@@ -113,9 +119,11 @@ if __name__ == '__main__':
 
     rospy.Subscriber("/gps/accuracy", UInt32, gps_accuracy_callback)
     rospy.Subscriber("lane_accuracy", UInt32, lane_accuracy_callback)
+    rospy.Subscriber("/parking_finish", Bool, parking_finish_callback)
 
     #Publisher
     ackermann_pub = rospy.Publisher('/ackermann_cmd', AckermannDriveStamped, queue_size=10)
+    parking_end_pub = rospy.Publisher('/parking_end', Bool, queue_size=10)
 
     ackermann=AckermannDriveStamped()
 
@@ -131,17 +139,18 @@ if __name__ == '__main__':
     lane_accuracy=0
 
     camera_theta=0.
-
+    parking_finish_sign=False
     going_gps_n=[0,0]
     going_gps_n1=[0,0]
     going_gps_n2=[0,0]
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=3 #3.5
-    min_speed=2 #2.5
+    max_speed=3.5 #3.5
+    min_speed=2.5 #2.5
     rospy.sleep(1.5)
 
+    parking_finish_time=time.time()
     init_time=rospy.Time.now()
     teb=AckermannDriveStamped()
     lanenet=AckermannDriveStamped()
@@ -262,18 +271,21 @@ if __name__ == '__main__':
             ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
+            ackermann.drive.acceleration = 0
             print("Global")
         
         elif(state_machine[0]==1 and lane_accuracy>=5):
             ackermann.drive.speed = Speed_linear #lanenet.drive.speed
             ackermann.drive.steering_angle = lanenet.drive.steering_angle
             ackermann.drive.jerk = 0
+            ackermann.drive.acceleration = 0
             print("Vision")
 
         elif(state_machine[0]==1 and gps_accuracy<2 and lane_accuracy<5):
             ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
+            ackermann.drive.acceleration = 0
             print("Global")
 
         elif(state_machine[1]==1):
@@ -282,14 +294,7 @@ if __name__ == '__main__':
             ackermann.drive.speed = 2.5
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
-<<<<<<< HEAD
-=======
-            '''
-            if(teb.drive.speed < 1):
-                ackermann.drive.speed = teb.drive.speed
-            else:
-                ackermann.drive.speed = teb.drive.speed
->>>>>>> b0e3d12c09cf225dc2e81614baa8384bfd656ade
+            ackermann.drive.acceleration = 0
             
             # if(teb.drive.speed < 1):
             #     ackermann.drive.speed = teb.drive.speed + 1
@@ -304,20 +309,54 @@ if __name__ == '__main__':
             ackermann.drive.speed = 0.0
             ackermann.drive.steering_angle = 0.0
             ackermann.drive.jerk = 100
+            ackermann.drive.acceleration = 0
 
         elif(state_machine[3]==1 or state_machine[5]==1 or state_machine[6]==1):
             ackermann.drive.speed = Speed_linear*2/3
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
+            ackermann.drive.acceleration = 0
+
         elif(state_machine[4]==1):
-            ackermann.drive.speed = Speed_linear*1/2
-            ackermann.drive.steering_angle = -final_angle*np.pi/180
-            ackermann.drive.jerk = 0
+            if parking_finish_sign==False:
+                ackermann.drive.speed = Speed_linear*1/2
+                ackermann.drive.steering_angle = -final_angle*np.pi/180
+                ackermann.drive.jerk = 0
+                ackermann.drive.acceleration = 0
+                parking_finish_time=time.time()
+            else:
+                if (time.time()-parking_finish_time<11):
+                    ackermann.drive.speed = 0.0
+                    ackermann.drive.steering_angle = 0.0
+                    ackermann.drive.jerk = 100
+                    ackermann.drive.acceleration = 0
+                    print(1)
+                elif (time.time()-parking_finish_time<13.5):
+                    ackermann.drive.speed = 2.0
+                    ackermann.drive.steering_angle = 0.0
+                    ackermann.drive.jerk = 0
+                    ackermann.drive.acceleration = 1
+                    print(2)
+                elif (time.time()-parking_finish_time<14.0):
+                    ackermann.drive.speed = 2.0
+                    ackermann.drive.steering_angle = -28.0*np.pi/180
+                    ackermann.drive.jerk = 0
+                    ackermann.drive.acceleration = 1
+                    print(3)
+                elif (time.time()-parking_finish_time<14.5):
+                    ackermann.drive.speed = 0.0
+                    ackermann.drive.steering_angle = 0.0
+                    ackermann.drive.jerk = 100
+                    ackermann.drive.acceleration = 0
+                    print(4)
+                else:
+                    parking_end_pub.publish(True)
         elif(state_machine[6]==1):
             ackermann.drive.speed = Speed_linear*1/2
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
-
+            ackermann.drive.acceleration = 0
+        #print(ackermann.drive)
         ackermann_pub.publish(ackermann)
 
     else:

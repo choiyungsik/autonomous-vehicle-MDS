@@ -1,5 +1,6 @@
-classes= 5
-train  = /home/mds-car/darknet/selfdriving/train.txt
-valid  = /home/mds-car/darknet/selfdriving/val.txt
-names = /home/mds-car/darknet/selfdriving/mission.names
+classes= 14
+train  = /home/mds-car/darknet/mission/train.txt
+valid  = /home/mds-car/darknet/mission/val.txt
+names = /home/mds-car/darknet/mission/mission.names
 backup = /home/mds-car/darknet/backup/
+

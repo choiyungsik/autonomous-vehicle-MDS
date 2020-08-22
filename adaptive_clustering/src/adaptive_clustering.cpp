@@ -44,7 +44,6 @@ ros::Publisher obstacle_pub_;
 geometry_msgs::Pose2D center;
 vision_msgs::BoundingBox2D bbox;
 adaptive_clustering::Bboxes2d bboxes;
-visualization_msgs::MarkerArray path_markers;
 
 costmap_converter::ObstacleArrayMsg obstacle_msg;
 
@@ -67,10 +66,6 @@ uint32_t cluster_array_seq_ = 0;
 uint32_t pose_array_seq_ = 0;
 
 Eigen::Vector4f min_, max_;
-
-void pathmarkerCallback(const visualization_msgs::MarkerArray::ConstPtr& markers) {
-  path_markers = *markers;
-}
 
 int frames; clock_t start_time; bool reset = true;//fps
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
@@ -223,64 +218,33 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
       bbox.size_x = size_x;
       bbox.size_y = size_y;
 
-      if(bbox.center.x < 1.1 && bbox.center.x > -1.1 && bbox.center.y < 1.1 && bbox.center.y > -1.1) {
-        std::cout << "inside" << std::endl;
-        costmap_converter::ObstacleMsg obstacle_msg_;
-        std::vector<geometry_msgs::Point32> obstacle_array;
-        obstacle_msg.obstacles.push_back(obstacle_msg_);
-        obstacle_msg.obstacles[i].id = i;
+      costmap_converter::ObstacleMsg obstacle_msg_;
+      std::vector<geometry_msgs::Point32> obstacle_array;
+      obstacle_msg.obstacles.push_back(obstacle_msg_);
+      // std::cout << "i :" << i << std::endl;
+      obstacle_msg.obstacles[i].id = i;
 
-        geometry_msgs::Point32 v1;
-        v1.x = 100;
-        v1.y = 100;
-        obstacle_array.push_back(v1);
+      geometry_msgs::Point32 v1;
+      v1.x = bbox.center.x - bbox.size_x/2;
+      v1.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v1);
 
-        geometry_msgs::Point32 v2;
-        v2.x = 100;
-        v2.y = 100;
-        obstacle_array.push_back(v2);
+      geometry_msgs::Point32 v2;
+      v2.x = bbox.center.x - bbox.size_x/2;
+      v2.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v2);
 
-        geometry_msgs::Point32 v3;
-        v3.x = 100;
-        v3.y = 100;
-        obstacle_array.push_back(v3);
+      geometry_msgs::Point32 v3;
+      v3.x = bbox.center.x - bbox.size_x/2;
+      v3.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v3);
 
-        geometry_msgs::Point32 v4;
-        v4.x = 100;
-        v4.y = 100;
-        obstacle_array.push_back(v4);
+      geometry_msgs::Point32 v4;
+      v4.x = bbox.center.x - bbox.size_x/2;
+      v4.y = bbox.center.y - bbox.size_y/2;
+      obstacle_array.push_back(v4);
 
-        obstacle_msg.obstacles[i].polygon.points = obstacle_array;
-      }
-
-      else {
-        costmap_converter::ObstacleMsg obstacle_msg_;
-        std::vector<geometry_msgs::Point32> obstacle_array;
-        obstacle_msg.obstacles.push_back(obstacle_msg_);
-        obstacle_msg.obstacles[i].id = i;
-
-        geometry_msgs::Point32 v1;
-        v1.x = bbox.center.x - bbox.size_x/2;
-        v1.y = bbox.center.y - bbox.size_y/2;
-        obstacle_array.push_back(v1);
-
-        geometry_msgs::Point32 v2;
-        v2.x = bbox.center.x - bbox.size_x/2;
-        v2.y = bbox.center.y - bbox.size_y/2;
-        obstacle_array.push_back(v2);
-
-        geometry_msgs::Point32 v3;
-        v3.x = bbox.center.x - bbox.size_x/2;
-        v3.y = bbox.center.y - bbox.size_y/2;
-        obstacle_array.push_back(v3);
-
-        geometry_msgs::Point32 v4;
-        v4.x = bbox.center.x - bbox.size_x/2;
-        v4.y = bbox.center.y - bbox.size_y/2;
-        obstacle_array.push_back(v4);
-
-        obstacle_msg.obstacles[i].polygon.points = obstacle_array;
-      }
+      obstacle_msg.obstacles[i].polygon.points = obstacle_array;
 
       bboxes.Bboxes2d.push_back(bbox);
 
@@ -288,8 +252,8 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
       marker.scale.y = 1;
       marker.scale.z = 1;
       marker.color.a = 1.0;
-      marker.color.r = 1.0;
-      marker.color.g = 0.0;
+      marker.color.r = 0.0;
+      marker.color.g = 1.0;
       marker.color.b = 0.5;
       marker.lifetime = ros::Duration(0.1);
       marker.pose.orientation.x = 0;
@@ -319,42 +283,6 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   }
 
   if(obstacle_msg.obstacles.size()) {
-    for(int num = 0; num < path_markers.markers.size(); num++) {
-        costmap_converter::ObstacleMsg obstacle_msg_;
-        
-        std::vector<geometry_msgs::Point32> obstacle_array;
-        obstacle_msg.obstacles.push_back(obstacle_msg_);
-        obstacle_msg.obstacles[clusters.size() + num*2].id = clusters.size() + num*2;
-
-        geometry_msgs::Point32 v1;
-        v1.x = path_markers.markers[num].points[1].x;
-        v1.y = path_markers.markers[num].points[1].y;
-        obstacle_array.push_back(v1);
-
-        geometry_msgs::Point32 v2;
-        v2.x = path_markers.markers[num].points[2].x;
-        v2.y = path_markers.markers[num].points[2].y;
-        obstacle_array.push_back(v2);
-
-        obstacle_msg.obstacles[clusters.size() + num*2].polygon.points = obstacle_array;
-
-        obstacle_array.clear();
-        obstacle_msg.obstacles.push_back(obstacle_msg_);
-        obstacle_msg.obstacles[clusters.size() + num*2 + 1].id = clusters.size() + num*2 + 1;
-
-        v1.x = path_markers.markers[num].points[0].x;
-        v1.y = path_markers.markers[num].points[0].y;
-        obstacle_array.push_back(v1);
-
-        v2.x = path_markers.markers[num].points[3].x;
-        v2.y = path_markers.markers[num].points[3].y;
-        obstacle_array.push_back(v2);
-
-        obstacle_msg.obstacles[clusters.size() + num*2 + 1].polygon.points = obstacle_array;
-
-        // std::cout << num << "1: " << v1  << std::endl;
-        // std::cout << num << "2: " << v2  << std::endl;
-    }
     obstacle_pub_.publish(obstacle_msg);
     obstacle_msg = costmap_converter::ObstacleArrayMsg();
     obstacle_msg.header.stamp = ros::Time::now();
@@ -374,7 +302,6 @@ int main(int argc, char **argv) {
   /*** Subscribers ***/
   ros::NodeHandle nh;
   ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/cloud_filtered", 1, pointCloudCallback);
-  ros::Subscriber path_marker_sub = nh.subscribe<visualization_msgs::MarkerArray>("/visualization_marker", 1, pathmarkerCallback);
 
   /*** Publishers ***/
   ros::NodeHandle private_nh("~");

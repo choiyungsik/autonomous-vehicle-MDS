@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # This code is written at BigVision LLC. It is based on the OpenCV project. It is subject to the license terms in the LICENSE file found in this distribution and at http://opencv.org/license.html
 
 # Usage example:  python3 object_detection_yolo.py --video=run.mp4
@@ -7,7 +7,7 @@
 import cv_bridge
 import sys
 sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
-import cv2
+import cv2, time
 sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import numpy as np
 import os.path

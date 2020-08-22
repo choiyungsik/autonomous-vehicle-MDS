@@ -136,8 +136,8 @@ class CoreController():
         #    self.backup_state = self.Machine_State.traffic.value
         #    print('Traffic section')
         
-        else:
-            self.backup_state = self.Machine_State.cruise.value
+        # else:
+        #     self.backup_state = self.Machine_State.cruise.value
 
         # self.fnDecideMode(self.Machine_State.backup.value,self.backup_state)
 
@@ -162,7 +162,7 @@ class CoreController():
         else:
             self.backup_state = self.Machine_State.cruise.value
 
-        self.fnDecideMode(self.Machine_State.backup.value,self.backup_state)
+        # self.fnDecideMode(self.Machine_State.backup.value,self.backup_state)
     
     # def timer_callback(self):
     #     self.cur_state = self.backup_state
@@ -272,8 +272,8 @@ class CoreController():
                 self.cur_state =self.Machine_State.stop.value
             print('Crosswalk')
             
-        elif mode == self.Machine_State.backup.value:
-            self.cur_state = sub_event
+        # elif mode == self.Machine_State.backup.value:
+        #     self.cur_state = sub_event
             
  
         self.StateGraph.data[self.cur_state - 1] = 1

@@ -49,7 +49,7 @@ void cloud_callback (const sensor_msgs::PointCloud2& cloud_msg)
   
   pass.setInputCloud(cloud);
   pass.setFilterFieldName("x");
-  pass.setFilterLimits(-5,100);
+  pass.setFilterLimits(-5,20);
   pass.setFilterLimitsNegative(false);
   pass.filter(*cloud);
   //Voxel Grid Filter the points
