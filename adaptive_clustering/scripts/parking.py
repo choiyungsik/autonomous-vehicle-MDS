@@ -54,12 +54,13 @@ def publish_obstacle_msg():
   
   r = rospy.Rate(30) # 10hz
 
-  parking_spot = [[-5,1],[0,0],[5,-1]]
+  parking_spot = [[-20117.891695643946, -84402.67312725156],[-20116.63387610017, -84399.8793674804],[-20115.305470344178, -84397.2522510303],[-20113.74644186709, -84394.65898141835],[-20112.40076967296, -84392.23167524881],[-20110.80614395834, -84389.59409709956]]
+
   empty_spot_array = Int16MultiArray()
-  empty_spot_array.data = [0,0,0]
+  empty_spot_array.data = [1,1,1,1,1,1]
 
   while not rospy.is_shutdown():
-    empty_spot_array.data = [0,0,0]
+    empty_spot_array.data = [1,1,1,1,1,1]
     try:
         (trans,rot) = listener.lookupTransform('/map', '/velodyne', rospy.Time(0))
         euler = tf.transformations.euler_from_quaternion(rot)
@@ -73,37 +74,41 @@ def publish_obstacle_msg():
         abs_box_y = math.sin(euler[2])*box.center.x+math.cos(euler[2])*box.center.y+trans[1]
 
         for j in range(len(parking_spot)):
-          marker = Marker()
-          marker.id = j
-          marker.header.frame_id = "/map"
-          marker.type = marker.LINE_STRIP
-          marker.scale.x = 1
-          marker.scale.y = 1
-          marker.scale.z = 1
-          marker.color.a = 1.0
-          marker.pose.orientation.w = 1.0
-          marker.lifetime = rospy.Duration(0.01)
-          marker.pose.orientation.x = 0
-          marker.pose.orientation.y = 0
-          marker.pose.orientation.z = 0
-          marker.pose.orientation.w = 0
-
-          r2 = RotatedRect(parking_spot[j][0]+trans[0], parking_spot[j][1]+trans[1], 2, 2,+0.338)
+          r2 = RotatedRect(parking_spot[j][0], parking_spot[j][1], 2, 2,+0.338)
           point = shapely.geometry.Point(abs_box_x,abs_box_y)
 
           if(r2.get_contour().contains(point)):
-            empty_spot_array.data[j] = 1
+            empty_spot_array.data[j] = 0
             rospy.logwarn("%d not empty",j)
           else:
             rospy.logwarn("%d is empty",j)
 
-          for k in range(len(r2.get_contour().exterior.coords)):
-            p = Point32()
-            p.x = r2.get_contour().exterior.coords[k][0]
-            p.y = r2.get_contour().exterior.coords[k][1]
-            marker.points.append(p)
-          
-          marker_array.markers.append(marker) 
+
+      for j in range(len(parking_spot)):
+        marker = Marker()
+        marker.id = j
+        marker.header.frame_id = "/map"
+        marker.type = marker.LINE_STRIP
+        marker.scale.x = 1
+        marker.scale.y = 1
+        marker.scale.z = 1
+        marker.color.a = 1.0
+        marker.pose.orientation.w = 1.0
+        marker.lifetime = rospy.Duration(0.01)
+        marker.pose.orientation.x = 0
+        marker.pose.orientation.y = 0
+        marker.pose.orientation.z = 0
+        marker.pose.orientation.w = 0
+
+        r2 = RotatedRect(parking_spot[j][0], parking_spot[j][1], 2, 5,+0.338)
+
+        for k in range(len(r2.get_contour().exterior.coords)):
+          p = Point32()
+          p.x = r2.get_contour().exterior.coords[k][0]
+          p.y = r2.get_contour().exterior.coords[k][1]
+          marker.points.append(p)
+        
+        marker_array.markers.append(marker) 
         
         marker_pub.publish(marker_array)
       empty_pub.publish(empty_spot_array)
