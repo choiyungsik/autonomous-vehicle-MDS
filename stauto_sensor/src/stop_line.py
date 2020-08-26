@@ -18,7 +18,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 # Brightness : 0 to 255, Focus : 0 to 100, TH_value : 0 to 255
 Brightness = 0
 Focus = 0
-TH_value = 180
+TH_value = 100
 
 cap.set(cv2.CAP_PROP_AUTOFOCUS, False)
 #cap.set(cv2.CAP_PROP_AUTO_EXPOSURE, False)
@@ -35,7 +35,7 @@ def slice_image(image):
     # src = cv2.imread(image,cv2.IMREAD_COLOR)
     #cv2.imshow("image", image)
     # dst = src.copy()
-    slicedimage = image[680:700, 400:1000]
+    slicedimage = image[560:580, 10:1270]
     cv2.imshow("slicedimage",slicedimage)
 
     pts1_l = np.float32([[0, 0], [600, 0], [0, 20], [600, 20]])
@@ -50,7 +50,7 @@ def select_white(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    sensitivity_white = 50
+    sensitivity_white = 100
     lower_white = np.array([0, 0, 255 - sensitivity_white])
     upper_white = np.array([180, sensitivity_white, 255])
 
@@ -82,7 +82,7 @@ def get_pixel_value(thresholding):
     length = len(dotindex_x)
 
 
-    if length>100000:
+    if length>250000:
         print (length, '1')
         return 1
     else:
@@ -104,7 +104,7 @@ def Camera(frame):
     # masked_image = select_region(white_yellow_image)
 
     gray_scale = convert_gray_scale(white_image)
-
+    cv2.imshow("gray", white_image)
     thresholding = adaptive_thresholding(gray_scale)
 
     sign = get_pixel_value(thresholding)
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     image=Image()
     bridge = CvBridge()
-    rate = rospy.Rate(30)
+    rate = rospy.Rate(5)
     time.sleep(1)
     while not rospy.is_shutdown():
         try:
@@ -141,7 +141,7 @@ if __name__ == '__main__':
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-            # rate.sleep()
+            rate.sleep()
 
 
         except rospy.ROSInterruptException:

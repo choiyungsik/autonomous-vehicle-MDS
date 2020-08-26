@@ -5,7 +5,7 @@ yolo_model:
   weight_file:
     name: mission_17100.weights
   threshold:
-    value: 0.65
+    value: 0.55
   detection_classes:
     names:
       - Red
