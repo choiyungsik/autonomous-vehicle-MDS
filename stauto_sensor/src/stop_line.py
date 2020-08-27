@@ -82,7 +82,7 @@ def get_pixel_value(thresholding):
     length = len(dotindex_x)
 
 
-    if length>250000:
+    if length>200000: # 250000
         print (length, '1')
         return 1
     else:

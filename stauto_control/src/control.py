@@ -65,6 +65,13 @@ def speed_callback(data):
 
     speed = data.data/36
 
+def parking_path_callback(data):
+    global parking_path
+
+    for i in range(len(data.poses)):
+        parking_path[i][0] = data.poses[i].pose.position.x
+        parking_path[i][1] = data.poses[i].pose.position.y
+
 def local_path_callback(data):
     global local_path
 
@@ -108,6 +115,7 @@ if __name__ == '__main__':
 
     #Subscriber
     rospy.Subscriber("/final_path",Path,local_path_callback)
+    rospy.Subscriber("/parking_path",Path,parking_path_callback)
     #rospy.Subscriber("global_path",Path,local_path_callback)
     #rospy.Subscriber("/gps/current_robot_position",NavSatFix,cur_gps_position_callback)
     rospy.Subscriber("/imu/data",Imu,imu_callback)
@@ -129,6 +137,7 @@ if __name__ == '__main__':
 
     imu_theta=0.
     local_path =np.zeros((100,2))
+    parking_path =np.zeros((100,2))
     local_path_length=0
     cur_gps_position= [0,0]
     gps_theta=0.
@@ -175,16 +184,26 @@ if __name__ == '__main__':
         going_gps_n3[0]=local_path[int(local_path_length-1)][0]
         going_gps_n3[1]=local_path[int(local_path_length-1)][1]
         '''
-        going_gps_n[0]=local_path[0][0]
-        going_gps_n[1]=local_path[0][1]
-        going_gps_n1[0]=local_path[1][0]
-        going_gps_n1[1]=local_path[1][1]
-        going_gps_n2[0]=local_path[2][0]
-        going_gps_n2[1]=local_path[2][1]
-        going_gps_n3[0]=local_path[3][0]
-        going_gps_n3[1]=local_path[3][1]
-        #print(local_path)
-        #print(going_gps)
+        if(state_machine[4]==1):
+            going_gps_n[0]=parking_path[0][0]
+            going_gps_n[1]=parking_path[0][1]
+            going_gps_n1[0]=parking_path[1][0]
+            going_gps_n1[1]=parking_path[1][1]
+            going_gps_n2[0]=parking_path[2][0]
+            going_gps_n2[1]=parking_path[2][1]
+            going_gps_n3[0]=parking_path[3][0]
+            going_gps_n3[1]=parking_path[3][1]
+        else:
+            going_gps_n[0]=local_path[0][0]
+            going_gps_n[1]=local_path[0][1]
+            going_gps_n1[0]=local_path[1][0]
+            going_gps_n1[1]=local_path[1][1]
+            going_gps_n2[0]=local_path[2][0]
+            going_gps_n2[1]=local_path[2][1]
+            going_gps_n3[0]=local_path[3][0]
+            going_gps_n3[1]=local_path[3][1]
+            #print(local_path)
+            #print(going_gps)
         if (state_machine[1]==1):
             going_gps_theta = atan2(going_gps_n1[1]-going_gps[1], going_gps_n1[0]-going_gps[0])*180/np.pi
         else:
@@ -318,6 +337,7 @@ if __name__ == '__main__':
             ackermann.drive.acceleration = 0
 
         elif(state_machine[4]==1):
+            #print(1)
             if parking_finish_sign==False:
                 ackermann.drive.speed = Speed_linear*1/2
                 ackermann.drive.steering_angle = -final_angle*np.pi/180
@@ -331,19 +351,19 @@ if __name__ == '__main__':
                     ackermann.drive.jerk = 100
                     ackermann.drive.acceleration = 0
                     print(1)
-                elif (time.time()-parking_finish_time<13.5):
-                    ackermann.drive.speed = 2.0
+                elif (time.time()-parking_finish_time<15.5):
+                    ackermann.drive.speed = 3.0
                     ackermann.drive.steering_angle = 0.0
                     ackermann.drive.jerk = 0
-                    ackermann.drive.acceleration = 1
+                    ackermann.drive.acceleration = 2
                     print(2)
-                elif (time.time()-parking_finish_time<14.0):
-                    ackermann.drive.speed = 2.0
+                elif (time.time()-parking_finish_time<17.2):
+                    ackermann.drive.speed = 3.0
                     ackermann.drive.steering_angle = -28.0*np.pi/180
                     ackermann.drive.jerk = 0
-                    ackermann.drive.acceleration = 1
+                    ackermann.drive.acceleration = 2
                     print(3)
-                elif (time.time()-parking_finish_time<14.5):
+                elif (time.time()-parking_finish_time<17.5):
                     ackermann.drive.speed = 0.0
                     ackermann.drive.steering_angle = 0.0
                     ackermann.drive.jerk = 100

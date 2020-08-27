@@ -183,22 +183,25 @@ if __name__ == '__main__':
     '''
     while not rospy.is_shutdown():
         try:
+            #print(parking_end)
             if parking_end==False:
-                #print(parking_zone_number)
+                print(parking_zone_number)
                 if parking_sign==False: #find emptied parking space & read parking path
+                    #print(parking_sign)
                     for i in range(6):
                         #print(empty_spot_array)
                         #empty_spot_array[3]=1
-                        if(time.time()-prev_time>=20):
-                            empty_spot_array[2]=1
-                        else:
-                            empty_spot_array[5]=1
+                        #if(time.time()-prev_time>=20):
+                        #    empty_spot_array[2]=1
+                        #else:
+                        #    empty_spot_array[5]=1
                         if empty_spot_array[i]==1:
+                            #print(i)
                             if parking_zone_number != i:
                                 parking_zone_number=i
                                 parking_sign=True
                                 create_path_msg=False
-                                f = open(arg_name + "parking"+str(i)+".txt","r")
+                                f = open(arg_name + "parking"+str(i+1)+".txt","r")
                                 parking_data = f.readlines()
                                 last_step=len(parking_data)
                                 pathmsg=Path()
@@ -227,15 +230,15 @@ if __name__ == '__main__':
                     #print(2)
                 if (parking_sign==True) and (create_path_msg==True): #find current gps step based parking path & publish going parking path to control.py
                     step_gps=find_gps_step(last_step, step_gps)
-                    print(step_gps)
-                    if step_gps<last_step:
+                    print(step_gps, last_step)
+                    if step_gps<last_step-6:
                         pub_path(pathmsg, step_gps)
                         parking_finish.publish(False)
                     else:
                         parking_finish.publish(True)
                         parking_end=True
                     parking_sign=False
-                    #print(3)
+                        #print(3)
             else:
                 pass
         except rospy.ROSInterruptException:

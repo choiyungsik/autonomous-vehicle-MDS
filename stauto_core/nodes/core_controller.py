@@ -83,18 +83,8 @@ class CoreController():
             self.cur_traffic = self.TrafficSign.straightleft.value
 
     def cbStop(self,event_msg):
-        if(self.stop_line != event_msg.data):
-            if(self.stop_line==1 and (self.stop_line != event_msg.data)):
-                self.stop_line_count=self.stop_line_count+1
-            if(self.stop_line_count<5):
-                self.stop_line=1
-            else:
-                self.stop_line=0
-                self.stop_line_count=0
-                
-            self.stop_line = event_msg.data
-
-            print('stop_line : ', self.stop_line)
+        self.stop_line = event_msg.data
+        
 
     def cbAvoidance(self,event_msg):
         if event_msg.data == True:
@@ -140,13 +130,13 @@ class CoreController():
         #if(1 <= self.step_num and self.step_num <= 300):
         #    self.backup_state = self.Machine_State.cruise.value
 
-        #if (5 <= self.step_num and self.step_num <=34):
-        #    if(self.parking_end == False):
-        #        self.backup_state = self.Machine_State.parking.value
-        #    elif(self.parking_end == True):
-        #        self.backup_state = self.Machine_State.cruise.value
+        if (5 <= self.step_num and self.step_num <=34):
+            if(self.parking_end == False):
+                self.backup_state = self.Machine_State.parking.value
+            elif(self.parking_end == True):
+                self.backup_state = self.Machine_State.cruise.value
         
-        if(83 <= self.step_num and self.step_num <=88):
+        elif(83 <= self.step_num and self.step_num <=88):
             self.backup_state = self.Machine_State.safety_zone.value
         elif(89 <= self.step_num and self.step_num<=92):
             self.backup_state = self.Machine_State.crosswalk.value
@@ -158,7 +148,7 @@ class CoreController():
         
         elif (self.step_num==125):
             self.cur_traffic=0
-            self.stop_flag=Flase
+            self.stop_flag=False
             self.crosswalk_timer = False
         elif(126 <= self.step_num and self.step_num <= 138):
             self.backup_state = self.Machine_State.traffic.value
@@ -167,11 +157,12 @@ class CoreController():
         elif(180 <= self.step_num and self.step_num <= 185):
             self.backup_state = self.Machine_State.traffic.value
             
-        elif(200 <= self.step_num and self.step_num <=203):
+        elif(199 <= self.step_num and self.step_num <=202):
             self.backup_state = self.Machine_State.safety_zone.value
             self.crosswalk_count=0
             self.stop_flag=False
-        elif(self.step_num == 204 or self.step_num == 205):
+            self.crosswalk_end=False
+        elif(203 <= self.step_num and self.step_num <= 205):
             self.backup_state = self.Machine_State.crosswalk.value
             
             
@@ -201,9 +192,10 @@ class CoreController():
         if(self.crosswalk_timer == True):
             self.crosswalk_count = self.crosswalk_count + 1
             if(self.crosswalk_count > 5):
-                print("crosswalk mode releas!!!")
+                print("crosswalk mode release!!!")
                 #self.fnDecideMode(self.Machine_State.cruise.value,0)
                 #self.crosswalk_count = 0
+                self.crosswalk_end = True
                 self.crosswalk_timer = False
 
 
@@ -238,14 +230,13 @@ class CoreController():
         elif mode == self.Machine_State.backup.value and sub_event==self.Machine_State.crosswalk.value:
             self.cur_state = self.Machine_State.crosswalk.value
             
-            if self.stop_line == 1:
+            if (self.stop_line == 1) and (self.crosswalk_count == False) and (self.crosswalk_end == False):
                 self.crosswalk_timer = True
                 
-
-            if self.crosswalk_count<5 and self.crosswalk_timer==True:
+            if self.crosswalk_timer==True:
                 self.cur_state = self.Machine_State.stop.value
                 print(1111111111,self.crosswalk_count)
-            else:
+            elif (self.crosswalk_timer == False) and (self.crosswalk_end == True):
                 self.cur_state = self.Machine_State.crosswalk.value
                 print(222222222)
         #elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.safety_zone.value):
