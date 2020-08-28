@@ -23,6 +23,10 @@
 
 ``roslaunch darknet_ros deeplearning.launch``
 
+``rosrun stauto_sensor parking_move.py``
+
+``rosrun adaptive_clustering parkin.py``
+
 
 ### Commands for versionE
 
