@@ -66,6 +66,9 @@ def publish_obstacle_msg():
   is_bool = Bool()
   is_bool.data = False
   box_bool = False
+
+  global_path_box_0 = 0
+  global_path_box_5 = 0
   
   r = rospy.Rate(30) # 10hz
 
@@ -90,7 +93,7 @@ def publish_obstacle_msg():
         cy = (global_path.poses[j+1].pose.position.y + global_path.poses[j].pose.position.y)/2
 
         height = math.sqrt(dx**2+dy**2)
-        r1 = RotatedRect(cx, cy, height, 2.5, theta)
+        r1 = RotatedRect(cx, cy, height, 2, theta)
         r2 = RotatedRect(math.cos(euler[2])*box.center.x-math.sin(euler[2])*box.center.y+trans[0], math.sin(euler[2])*box.center.x+math.cos(euler[2])*box.center.y+trans[1], box.size_y, box.size_x,euler[2]-math.pi/2)
 
         if(r1.intersection(r2).area != 0):
@@ -101,17 +104,17 @@ def publish_obstacle_msg():
         obstacle_msg.obstacles.append(ObstacleMsg())
         obstacle_msg.obstacles[box_num].id = box_num
         v1 = Point32()
-        v1.x = box.center.x - box.size_x/2
-        v1.y = box.center.y - box.size_y/2
+        v1.x = box.center.x - box.size_x
+        v1.y = box.center.y - box.size_y
         v2 = Point32()
-        v2.x = box.center.x - box.size_x/2
-        v2.y = box.center.y + box.size_y/2
+        v2.x = box.center.x - box.size_x
+        v2.y = box.center.y + box.size_y
         v3 = Point32()
-        v3.x = box.center.x + box.size_x/2
-        v3.y = box.center.y + box.size_y/2
+        v3.x = box.center.x + box.size_x
+        v3.y = box.center.y + box.size_y
         v4 = Point32()
-        v4.x = box.center.x + box.size_x/2
-        v4.y = box.center.y - box.size_y/2
+        v4.x = box.center.x + box.size_x
+        v4.y = box.center.y - box.size_y
         obstacle_msg.obstacles[box_num].polygon.points = [v1, v2, v3, v4]
 
         box_num += 1
@@ -141,14 +144,16 @@ def publish_obstacle_msg():
       cy = (global_path.poses[j+1].pose.position.y + global_path.poses[j].pose.position.y)/2
 
       height = math.sqrt(dx**2+dy**2)
-      r1 = RotatedRect(cx, cy, height, 2.5, theta)
+      r1 = RotatedRect(cx, cy, height, 2, theta)
 
       for k in range(len(r1.get_contour().exterior.coords)):
         p = Point32()
         p.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[k][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[k][1]- trans[1])
         p.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[k][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[k][1]- trans[1])
-        # print(k,p)
+        print(k,p)
         marker.points.append(p)
+
+      marker_array.markers.append(marker)   
 
       # obstacle_msg.obstacles.append(ObstacleMsg())
       # obstacle_msg.obstacles[box_num].id = box_num
@@ -161,18 +166,44 @@ def publish_obstacle_msg():
       # obstacle_msg.obstacles[box_num].polygon.points = [v1, v2]
       # box_num += 1
 
-      obstacle_msg.obstacles.append(ObstacleMsg())
-      obstacle_msg.obstacles[box_num].id = box_num
-      v3 = Point32()
-      v3.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[0][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[0][1]- trans[1])
-      v3.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[0][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[0][1]- trans[1])
-      v4 = Point32()
-      v4.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[3][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[3][1]- trans[1])
-      v4.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[3][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[3][1]- trans[1])
-      obstacle_msg.obstacles[box_num].polygon.points = [v3, v4]
-      box_num += 1
-      
-      marker_array.markers.append(marker)   
+      # obstacle_msg.obstacles.append(ObstacleMsg())
+      # obstacle_msg.obstacles[box_num].id = box_num
+      # v3 = Point32()
+      # v3.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[0][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[0][1]- trans[1])
+      # v3.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[0][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[0][1]- trans[1])
+      # v4 = Point32()
+      # v4.x = math.cos(-euler[2])*(r1.get_contour().exterior.coords[3][0]- trans[0])-math.sin(-euler[2])*(r1.get_contour().exterior.coords[3][1]- trans[1])
+      # v4.y = math.sin(-euler[2])*(r1.get_contour().exterior.coords[3][0]- trans[0])+math.cos(-euler[2])*(r1.get_contour().exterior.coords[3][1]- trans[1])
+      # obstacle_msg.obstacles[box_num].polygon.points = [v3, v4]
+      # box_num += 1
+
+      if(j == 0):
+        global_path_box_0 = r1
+      if(j == 4):
+        global_path_box_5 = r1
+
+    # obstacle_msg.obstacles.append(ObstacleMsg())
+    # obstacle_msg.obstacles[box_num].id = box_num
+    # v1 = Point32()
+    # v1.x = math.cos(-euler[2])*(global_path_box_0.get_contour().exterior.coords[2][0]- trans[0])-math.sin(-euler[2])*(global_path_box_0.get_contour().exterior.coords[2][1]- trans[1])
+    # v1.y = math.sin(-euler[2])*(global_path_box_0.get_contour().exterior.coords[2][0]- trans[0])+math.cos(-euler[2])*(global_path_box_0.get_contour().exterior.coords[2][1]- trans[1])
+    # v2 = Point32()
+    # v2.x = math.cos(-euler[2])*(global_path_box_5.get_contour().exterior.coords[1][0]- trans[0])-math.sin(-euler[2])*(global_path_box_5.get_contour().exterior.coords[1][1]- trans[1])
+    # v2.y = math.sin(-euler[2])*(global_path_box_5.get_contour().exterior.coords[1][0]- trans[0])+math.cos(-euler[2])*(global_path_box_5.get_contour().exterior.coords[1][1]- trans[1])
+    # obstacle_msg.obstacles[box_num].polygon.points = [v1, v2]
+    # box_num += 1
+
+    obstacle_msg.obstacles.append(ObstacleMsg())
+    obstacle_msg.obstacles[box_num].id = box_num
+    v3 = Point32()
+    v3.x = math.cos(-euler[2])*(global_path_box_0.get_contour().exterior.coords[3][0]- trans[0])-math.sin(-euler[2])*(global_path_box_0.get_contour().exterior.coords[3][1]- trans[1])
+    v3.y = math.sin(-euler[2])*(global_path_box_0.get_contour().exterior.coords[3][0]- trans[0])+math.cos(-euler[2])*(global_path_box_0.get_contour().exterior.coords[3][1]- trans[1])
+    v4 = Point32()
+    v4.x = math.cos(-euler[2])*(global_path_box_5.get_contour().exterior.coords[0][0]- trans[0])-math.sin(-euler[2])*(global_path_box_5.get_contour().exterior.coords[0][1]- trans[1])
+    v4.y = math.sin(-euler[2])*(global_path_box_5.get_contour().exterior.coords[0][0]- trans[0])+math.cos(-euler[2])*(global_path_box_5.get_contour().exterior.coords[0][1]- trans[1])
+    obstacle_msg.obstacles[box_num].polygon.points = [v3, v4]
+    box_num += 1
+
 
     marker_pub.publish(marker_array)
     bool_pub.publish(is_bool)
