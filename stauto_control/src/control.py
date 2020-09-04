@@ -139,14 +139,17 @@ if __name__ == '__main__':
     local_path =np.zeros((100,2))
     parking_path =np.zeros((100,2))
     local_path_length=0
-    cur_gps_position= [0,0]
+    cur_gps_position = [0,0]
     gps_theta=0.
     speed=0
+    
     state_machine = np.zeros(8)
+    prev_state_machine = np.zeros(8)
 
     gps_accuracy=0
     lane_accuracy=0
-
+    stop_profile_flag=False
+    stop_profile_time=0
     camera_theta=0.
     parking_finish_sign=False
     going_gps_n=[0,0]
@@ -155,7 +158,7 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=3.5 #3.5
+    max_speed=3.75 #3.5
     min_speed=2.5 #2.5
     rospy.sleep(1.5)
 
@@ -278,13 +281,9 @@ if __name__ == '__main__':
             Speed_linear = (max_speed-min_speed)/28*(28-abs(alpha_speed))+min_speed
         else:
             Speed_linear=max_speed
-        #print(Speed_linear)
+
         print(going_gps_theta, imu_theta,gps_theta)
-        #print(Ld, gps_theta, Speed_linear)
 
-        #[cruse avoid_cruse stop traffic parking saftyzone crosswalk speedbump]
-
-        #print(state_type[state_machine.index(1)])
         
         if(state_machine[0]==1 and gps_accuracy>=2):
             ackermann.drive.speed = Speed_linear
@@ -376,6 +375,19 @@ if __name__ == '__main__':
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
+        #print(prev_state_machine, state_machine, stop_profile_flag)
+        #print(state_machine)
+        if((prev_state_machine[0]==1 and state_machine[1]==1) or (prev_state_machine[0]==1 and state_machine[3]==1) or (prev_state_machine[0]==1 and state_machine[4]==1) or (prev_state_machine[0]==1 and state_machine[5]==1)):
+            stop_profile_flag=True
+            stop_profile_time=time.time()
+
+        if stop_profile_flag==True:
+            if(time.time()-stop_profile_time < 0.7):
+                ackermann.drive.jerk = 45
+            else:
+                stop_profile_flag=False
+                
+        prev_state_machine=state_machine
         #print(ackermann.drive)
         ackermann_pub.publish(ackermann)
 

@@ -316,7 +316,7 @@ int main(int argc, char **argv) {
   private_nh.param<std::string>("sensor_model", sensor_model_, "VLP-16"); // VLP-16, HDL-32E, HDL-64E
   private_nh.param<std::string>("frame_id", frame_id_, "velodyne");
   private_nh.param<bool>("print_fps", print_fps_, true);
-  private_nh.param<float>("z_axis_min", z_axis_min_, -0.65);
+  private_nh.param<float>("z_axis_min", z_axis_min_, -0.75);
   private_nh.param<float>("z_axis_max", z_axis_max_,1.0);
   private_nh.param<int>("cluster_size_min", cluster_size_min_, 10);
   private_nh.param<int>("cluster_size_max", cluster_size_max_, 5000);

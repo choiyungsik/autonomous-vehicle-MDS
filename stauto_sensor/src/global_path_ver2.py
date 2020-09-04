@@ -190,7 +190,7 @@ if __name__ == '__main__':
     rospack.list()
     arg_name = rospack.get_path('stauto_sensor') + "/src/gps_data/"
 
-    f = open(arg_name + "gps_data_seoultech.txt","r")
+    f = open(arg_name + "fronteer_to_high.txt","r")
     #f = open(arg_name + "aaa.txt","r")
 
     gps_data = f.readlines()

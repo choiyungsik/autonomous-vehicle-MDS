@@ -5,12 +5,12 @@ TebLocalPlannerROS:
  # Trajectory
   
  teb_autosize: True
- dt_ref: 0.5
- dt_hysteresis: 0.05
+ dt_ref: 0.3
+ dt_hysteresis: 0.1
  max_samples: 500
  global_plan_overwrite_orientation: True
  allow_init_with_backwards_motion: True
- max_global_plan_lookahead_dist: 11.0
+ max_global_plan_lookahead_dist: 3.0
  global_plan_viapoint_sep: -1
  global_plan_prune_distance: 1
  exact_arc_length: False
@@ -52,17 +52,17 @@ TebLocalPlannerROS:
     
  # Obstacles
     
- min_obstacle_dist: 1.3 # This value must also include our robot's expansion, since footprint_model is set to "line".
+ min_obstacle_dist: 0.27 # This value must also include our robot's expansion, since footprint_model is set to "line".
  inflation_dist: 0.6
- include_costmap_obstacles: False
+ include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.0
  obstacle_poses_affected: 15
 
  dynamic_obstacle_inflation_dist: 0.6
- include_dynamic_obstacles: False 
+ include_dynamic_obstacles: True 
 
  costmap_converter_plugin: ""
- costmap_converter_spin_thread: False
+ costmap_converter_spin_thread: True
  costmap_converter_rate: 5
 
  # Optimization
@@ -82,7 +82,7 @@ TebLocalPlannerROS:
  weight_kinematics_turning_radius: 1
  weight_optimaltime: 1 # must be > 0
  weight_shortest_path: 0
- weight_obstacle: 1000
+ weight_obstacle: 100
  weight_inflation: 0.2
  weight_dynamic_obstacle: 10 # not in use yet
  weight_dynamic_obstacle_inflation: 0.2
@@ -95,7 +95,7 @@ TebLocalPlannerROS:
  enable_multithreading: True
  max_number_classes: 4
  selection_cost_hysteresis: 1.0
- selection_prefer_initial_plan: 1
+ selection_prefer_initial_plan: 0.95
  selection_obst_cost_scale: 1.0
  selection_alternative_time_cost: False
 
