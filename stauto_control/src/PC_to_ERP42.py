@@ -45,6 +45,7 @@ def GetGEAR(gear):
 
 def GetSPEED(speed):
     global count
+    print(speed)
     SPEED0 = chr(0x00)
     SPEED = int(speed*36) # float to integer
     #print(111111111,SPEED)
@@ -152,7 +153,7 @@ if __name__ == '__main__':
 
     rate = rospy.Rate(20)
 
-    port = str(rospy.get_param("~robot_port","/dev/ttyUSB0"))
+    port = str(rospy.get_param("~robot_port","/dev/ttyUSB3"))
 
     ser = serial.serial_for_url(port, baudrate=115200, timeout=1)
 

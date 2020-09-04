@@ -3,9 +3,9 @@ yolo_model:
   config_file:
     name: mission.cfg
   weight_file:
-    name: mission_17100.weights
+    name: mission_13200.weights
   threshold:
-    value: 0.55
+    value: 0.40
   detection_classes:
     names:
       - Red
@@ -13,12 +13,3 @@ yolo_model:
       - Left
       - StraightLeft
       - Parking
-      - School
-      - No-School
-      - Crosswalk
-      - BusOnly
-      - Working
-      - Bicycle
-      - Left-turn
-      - Cross
-      - Bump

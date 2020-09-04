@@ -21,7 +21,7 @@ from std_msgs.msg import Int32MultiArray
 def pub_traffic_sign(mission):
     global list_traffic, list_sign, true, pub_sign, sign_time,traffic_time
     total = 5
-    thresh = 3
+    thresh = 4
     if(pub_sign==True):
         if ((mission == 'Red') or (mission == 'Green') or (mission == 'Left') or (mission == 'StraightLeft')):
             traffic_time=time.time()
@@ -59,19 +59,19 @@ def pub_traffic_sign(mission):
                 print('StraightLeft???')
                 true.append('StraightLeft')
         #print(true, list_traffic)
-        if len(true)>=3:
-            if true[-3]=='Red' and true[-2]=='Red' and true[-1]=='Red':
+        if len(true)>=2:
+            if true[-2]=='Red' and true[-1]=='Red':
                 traffic_array.data = [1,0,0,0]
                 print('clearly Red')
 
-            elif true[-3]=='Green' and true[-2]=='Green' and true[-1]=='Green':
+            elif true[-2]=='Green' and true[-1]=='Green':
                 traffic_array.data = [0,1,0,0]
                 print('clearly Green')
 
-            elif true[-3]=='Left' and true[-2]=='Left' and true[-1]=='Left':
+            elif true[-2]=='Left' and true[-1]=='Left':
                 traffic_array.data = [0,0,1,0]
                 print('clearly Left')
-            elif true[-3]=='StraightLeft' and true[-2]=='StraightLeft' and true[-1]=='StraightLeft':
+            elif true[-2]=='StraightLeft' and true[-1]=='StraightLeft':
                 traffic_array.data = [0,0,0,1]
                 print('clearly StraightLeft')
             #print(send_msg)

@@ -310,7 +310,7 @@ if __name__ == '__main__':
         elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
             
-            ackermann.drive.speed = 2.5
+            ackermann.drive.speed = 3.0
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
@@ -331,7 +331,7 @@ if __name__ == '__main__':
             ackermann.drive.acceleration = 0
 
         elif(state_machine[3]==1 or state_machine[5]==1 or state_machine[6]==1):
-            ackermann.drive.speed = Speed_linear*2/3
+            ackermann.drive.speed = Speed_linear*2/3 
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
