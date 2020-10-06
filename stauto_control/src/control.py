@@ -142,7 +142,8 @@ if __name__ == '__main__':
     cur_gps_position = [0,0]
     gps_theta=0.
     speed=0
-    
+    path_alpha=0
+
     state_machine = np.zeros(8)
     prev_state_machine = np.zeros(8)
 
@@ -158,8 +159,8 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=3.75 #3.5
-    min_speed=2.5 #2.5
+    max_speed=2.5 #3.5
+    min_speed=2    #2.5
     rospy.sleep(1.5)
 
     parking_finish_time=time.time()
@@ -208,7 +209,7 @@ if __name__ == '__main__':
             #print(local_path)
             #print(going_gps)
         if (state_machine[1]==1):
-            going_gps_theta = atan2(going_gps_n1[1]-going_gps[1], going_gps_n1[0]-going_gps[0])*180/np.pi
+            going_gps_theta = atan2(going_gps_n3[1]-going_gps[1], going_gps_n3[0]-going_gps[0])*180/np.pi
         else:
             going_gps_theta = atan2(going_gps_n2[1]-going_gps[1], going_gps_n2[0]-going_gps[0])*180/np.pi
         #print(going_gps_theta)
@@ -242,8 +243,22 @@ if __name__ == '__main__':
             else:
                 alpha_speed=imu_theta-going_gps_theta
 
-
         alpha_speed=alpha_speed*(np.pi/180)  # alpha => degree
+
+        going_gps_theta2 = atan2(going_gps_n1[1]-going_gps_n[1], going_gps_n1[0]-going_gps_n[0])*180/np.pi
+        going_gps_theta3 = atan2(going_gps_n2[1]-going_gps_n1[1], going_gps_n2[0]-going_gps_n1[0])*180/np.pi
+        if((int(going_gps_theta3)*int(going_gps_theta2))>=0.):
+            path_alpha=going_gps_theta3-going_gps_theta2
+        else:
+            if(((-90>=going_gps_theta3>=-180) or (180>=going_gps_theta3>=90)) and ((-90>=going_gps_theta2>=-180) or (180>=going_gps_theta2>=90))):
+                if((going_gps_theta3>=0) and (going_gps_theta2<0)):
+                    path_alpha=-((180-going_gps_theta3)+(180+going_gps_theta2))
+                elif((going_gps_theta3<0) and (going_gps_theta2>=0)):
+                    path_alpha=(180+going_gps_theta3)+(180-going_gps_theta2)
+            else:
+                path_alpha=going_gps_theta3-going_gps_theta2
+
+        
 
         if (alpha_speed>=28):
             alpha_speed=28
@@ -254,19 +269,45 @@ if __name__ == '__main__':
         #print(local_path[0][0],cur_gps_position[0],local_path[0][1],cur_gps_position[1])
         L=1.3
         Ld=sqrt((local_path[0][0]-cur_gps_position[0])**(2) + (local_path[0][1]-cur_gps_position[1])**(2))
+        '''
+        speed_ld = speed*0.65
+        alpha_ld = abs(alpha*180/np.pi)*0.15
+        '''
 
-        speed_ld = speed*0.2
-        alpha_ld = abs(alpha*180/np.pi)*0.05
 
-        if(alpha_ld>=3):
-            alpha_ld=3
-        elif(alpha_ld<=0.2):
-            alpha_ld=0
-        if (state_machine[1]==1): #avoid cruise
-            ld = speed_ld+4.3-alpha_ld
+
+        
+        speed_ld = speed*0.30
+        alpha_ld = 0
+        
+        
+
+
+        '''
+        if(abs(path_alpha)>3):
+            if(alpha_ld>2.5):
+                alpha_ld=3.5
+            elif(alpha_ld<=0.3):
+                alpha_ld=0
         else:
-            ld = speed_ld+4.3-alpha_ld
+            alpha_ld=0
+        '''
 
+        '''
+        if(alpha_ld>2.0):
+            alpha_ld=3.0
+        elif(alpha_ld<=1.2):
+            alpha_ld=0
+        '''
+
+
+
+        if (state_machine[1]==1): #avoid cruise
+            ld = speed_ld+3.0-alpha_ld #4.3
+        else:
+            ld = speed_ld+3.0-alpha_ld #4.3
+        #print(path_alpha)
+        print(round(speed_ld,2), round(alpha_ld,2), round(ld,2), round(abs(path_alpha),2))
         #print(round(speed_ld,6),round((alpha_ld*180/np.pi),4), round(ld,4))
         gps_theta=atan(2*L*sin(alpha)/ld)*(180/np.pi)
 
@@ -282,34 +323,34 @@ if __name__ == '__main__':
         else:
             Speed_linear=max_speed
 
-        print(going_gps_theta, imu_theta,gps_theta)
+        #print(going_gps_theta, imu_theta,gps_theta)
 
-        
-        if(state_machine[0]==1 and gps_accuracy>=2):
+        #if(state_machine[0]==1 and gps_accuracy>=2):
+        if(state_machine[0]==1):
             ackermann.drive.speed = Speed_linear
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
             print("Global")
         
-        elif(state_machine[0]==1 and lane_accuracy>=5):
-            ackermann.drive.speed = Speed_linear #lanenet.drive.speed
-            ackermann.drive.steering_angle = lanenet.drive.steering_angle
-            ackermann.drive.jerk = 0
-            ackermann.drive.acceleration = 0
-            print("Vision")
+        #elif(state_machine[0]==1 and lane_accuracy>=5):
+        #    ackermann.drive.speed = Speed_linear #lanenet.drive.speed
+        #    ackermann.drive.steering_angle = lanenet.drive.steering_angle
+        #    ackermann.drive.jerk = 0
+        #    ackermann.drive.acceleration = 0
+        #    print("Vision")
 
-        elif(state_machine[0]==1 and gps_accuracy<2 and lane_accuracy<5):
-            ackermann.drive.speed = Speed_linear
-            ackermann.drive.steering_angle = -final_angle*np.pi/180
-            ackermann.drive.jerk = 0
-            ackermann.drive.acceleration = 0
-            print("Global")
+        #elif(state_machine[0]==1 and gps_accuracy<2 and lane_accuracy<5):
+        #    ackermann.drive.speed = Speed_linear
+        #    ackermann.drive.steering_angle = -final_angle*np.pi/180
+        #    ackermann.drive.jerk = 0
+        #    ackermann.drive.acceleration = 0
+        #    print("Global")
 
         elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
             
-            ackermann.drive.speed = 3.0
+            ackermann.drive.speed = 2.5 #1.8
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
@@ -384,6 +425,7 @@ if __name__ == '__main__':
         if stop_profile_flag==True:
             if(time.time()-stop_profile_time < 0.7):
                 ackermann.drive.jerk = 45
+                ackermann.drive.speed = 3.0
             else:
                 stop_profile_flag=False
                 

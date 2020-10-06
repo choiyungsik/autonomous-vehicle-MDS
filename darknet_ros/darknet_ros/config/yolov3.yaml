@@ -3,9 +3,9 @@ yolo_model:
   config_file:
     name: mission.cfg
   weight_file:
-    name: mission_13200.weights
+    name: mission_14400.weights
   threshold:
-    value: 0.40
+    value: 0.35
   detection_classes:
     names:
       - Red

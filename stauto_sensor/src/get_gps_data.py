@@ -106,8 +106,8 @@ if __name__ == '__main__':
     ntripArgs['port']=int("2101")
     #ntripArgs['port']=int("2201")
 
-    #ntripArgs['mountpoint']="SUWN-RTCM31"
-    ntripArgs['mountpoint']="SOUL-RTCM32"
+    ntripArgs['mountpoint']="SUWN-RTCM32"
+    #ntripArgs['mountpoint']="SOUL-RTCM32"
     #ntripArgs['mountpoint']="VRS-RTCM31"
     #ntripArgs['mountpoint']="FKP-RTCM31"
 

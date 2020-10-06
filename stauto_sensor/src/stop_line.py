@@ -101,7 +101,7 @@ class StopLine():
         self.rate = l1/l2
 
 
-        if self.rate>0.85:
+        if self.rate>0.95:
             print (round(self.rate,2), '1')
             return 1
         else:

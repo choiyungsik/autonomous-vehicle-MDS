@@ -117,7 +117,7 @@ bool RAstarPlannerROS::makePlan(const geometry_msgs::PoseStamped& start, const g
     for(int i=0; i < global_path_position.size() - 1; i++) {
       // global_path_position[i].pose.position.x -= 6763.45482065;
       // global_path_position[i].pose.position.y += 40939.2641813;
-      for(int j=0; j < 1; j++) {
+      for(int j=0; j < 10; j++) {
         geometry_msgs::PoseStamped new_goal = goal;
         new_goal.pose.position.x = global_path_position[i].pose.position.x + (global_path_position[i+1].pose.position.x - global_path_position[i].pose.position.x)*j/5;
         new_goal.pose.position.y = global_path_position[i].pose.position.y + (global_path_position[i+1].pose.position.y - global_path_position[i].pose.position.y)*j/5;

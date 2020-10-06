@@ -18,7 +18,7 @@ def local_path_callback(data):
     move_base_local_path=Path()
 
     local_path =np.zeros((300,2))
-    local_path_length=len(data.poses)
+    local_path_length=len(data.poses)/2
 
     for i in range(len(data.poses)):
         local_path[i][0] = data.poses[i].pose.position.x
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     rospy.init_node('path_select')
 
     rospy.Subscriber("/state_machine",Int32MultiArray,state_callback)
-    rospy.Subscriber("/move_base/TebLocalPlannerROS/local_plan",Path,local_path_callback)
+    rospy.Subscriber("/adaptive_clustering/Path_1",Path,local_path_callback)
     rospy.Subscriber("/global_path",Path,global_path_callback)
 
     final_path = rospy.Publisher("/final_path",Path, queue_size=10)
@@ -69,7 +69,8 @@ if __name__ == '__main__':
             final_path.publish(move_base_local_path)
             print("TEB Path")
         else:
-            final_path.publish(global_path)
+            final_path.publish(move_base_local_path)
+            # final_path.publish(global_path)
             print("Global Path")
         
         # final_path.publish(global_path)
