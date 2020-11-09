@@ -159,8 +159,8 @@ if __name__ == '__main__':
     going_gps_n3=[0,0]
     going_gps=[0,0]
 
-    max_speed=2.5 #3.5
-    min_speed=2    #2.5
+    max_speed=4.0 #3.5
+    min_speed=2.5    #2.5
     rospy.sleep(1.5)
 
     parking_finish_time=time.time()
@@ -350,7 +350,7 @@ if __name__ == '__main__':
         elif(state_machine[1]==1):
             #print(teb.drive.steering_angle)
             
-            ackermann.drive.speed = 2.5 #1.8
+            ackermann.drive.speed = 1.5 #1.8
             ackermann.drive.steering_angle = -final_angle*np.pi/180
             ackermann.drive.jerk = 0
             ackermann.drive.acceleration = 0
@@ -385,25 +385,25 @@ if __name__ == '__main__':
                 ackermann.drive.acceleration = 0
                 parking_finish_time=time.time()
             else:
-                if (time.time()-parking_finish_time<11):
+                if (time.time()-parking_finish_time<4):
                     ackermann.drive.speed = 0.0
                     ackermann.drive.steering_angle = 0.0
                     ackermann.drive.jerk = 100
                     ackermann.drive.acceleration = 0
                     print(1)
-                elif (time.time()-parking_finish_time<15.5):
+                elif (time.time()-parking_finish_time<8.5):
                     ackermann.drive.speed = 3.0
                     ackermann.drive.steering_angle = 0.0
                     ackermann.drive.jerk = 0
                     ackermann.drive.acceleration = 2
                     print(2)
-                elif (time.time()-parking_finish_time<17.2):
+                elif (time.time()-parking_finish_time<10.2):
                     ackermann.drive.speed = 3.0
                     ackermann.drive.steering_angle = -28.0*np.pi/180
                     ackermann.drive.jerk = 0
                     ackermann.drive.acceleration = 2
                     print(3)
-                elif (time.time()-parking_finish_time<17.5):
+                elif (time.time()-parking_finish_time<10.5):
                     ackermann.drive.speed = 0.0
                     ackermann.drive.steering_angle = 0.0
                     ackermann.drive.jerk = 100
@@ -424,8 +424,8 @@ if __name__ == '__main__':
 
         if stop_profile_flag==True:
             if(time.time()-stop_profile_time < 0.7):
-                ackermann.drive.jerk = 45
-                ackermann.drive.speed = 3.0
+                ackermann.drive.jerk = 60
+                ackermann.drive.speed = 2.5
             else:
                 stop_profile_flag=False
                 

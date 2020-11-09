@@ -80,8 +80,8 @@ if __name__ == '__main__':
     #print("main : {}".format(os.getpid()))
 
     ntripArgs = {}
-    #ntripArgs['lat']=37.236134
-    #ntripArgs['lon']=126.774126
+    ntripArgs['lat']=37.236134
+    ntripArgs['lon']=126.774126
     #SUWON
     #ntripArgs['lat']=37.630873
     #ntripArgs['lon']=127.076533
@@ -90,8 +90,8 @@ if __name__ == '__main__':
     #ntripArgs['lat']=37.16
     #ntripArgs['lon']=127.30
     #SUWON
-    ntripArgs['lat']=37.630873
-    ntripArgs['lon']=127.076533
+    #ntripArgs['lat']=37.630873
+    #ntripArgs['lon']=127.076533
     #SOUL
 
     ntripArgs['height']=0

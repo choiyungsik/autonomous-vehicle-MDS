@@ -21,6 +21,7 @@ bboxes = []
 global_path = Path()
 euler = []
 path_list = []
+left_right_list = []
 path1_pub = rospy.Publisher('/adaptive_clustering/Path_1',Path,queue_size = 1)
 
 class RotatedRect:
@@ -48,6 +49,7 @@ def bboxes_callback(data):
 def path_callback(data):
     global path_list
     global final_path
+    global left_right_list
     TEB_path = data
 
     TEB_path_ = Path()
@@ -75,17 +77,55 @@ def path_callback(data):
         print(pose.pose.position)
 
       TEB_path_.poses.append(pose)  
-         
+
+    TEB_0_pose = TEB_path_.poses[0]
+    TEB_last_pose = TEB_path_.poses[-1]
+
+    vec_0_last = np.array([TEB_last_pose.pose.position.x - TEB_0_pose.pose.position.x, TEB_last_pose.pose.position.y - TEB_0_pose.pose.position.y])
+
+    dist_list = []
+
+    for i in range(len(TEB_path_.poses)):
+      TEB_point_pose = TEB_path_.poses[i]
+      vec_0_point = np.array([TEB_point_pose.pose.position.x - TEB_0_pose.pose.position.x, TEB_point_pose.pose.position.y - TEB_0_pose.pose.position.y])
+
+      dist = np.dot(vec_0_last,vec_0_point)
+      dist_list.append(dist)
+      
+    max_dist_index = dist_list.index(max(dist_list))
+    max_dist_pose = TEB_path_.poses[max_dist_index]
+
+    is_right = False
+    right_left = (TEB_last_pose.pose.position.x - TEB_0_pose.pose.position.x)*(max_dist_pose.pose.position.y-TEB_0_pose.pose.position.y) - (max_dist_pose.pose.position.x-TEB_0_pose.pose.position.x)*(TEB_last_pose.pose.position.y-TEB_0_pose.pose.position.y)
+    if(right_left > 0):
+      is_right = True
+    else:
+      is_right = False
+
+    left_right_list.append(is_right)
     path_list.append(TEB_path_)
+
+    right_left_bool = False
+    right_left_num = 0
+    right_num = left_right_list.count(True)
+    left_num = left_right_list.count(False)
+    
+    if(right_num > left_num):
+      right_left_bool = True
+      right_left_num = right_num
+    else:
+      right_left_bool = False
+      right_left_num = left_num
 
     final_path = Path()
     for i in range(20):
       x_ = 0
       y_ = 0
 
-      for j in range(len(path_list)):
-        x_ += path_list[j].poses[i].pose.position.x
-        y_ += path_list[j].poses[i].pose.position.y
+      for j in range(len(left_right_list)):
+        if(right_left_bool == left_right_list[j]):
+          x_ += path_list[j].poses[i].pose.position.x
+          y_ += path_list[j].poses[i].pose.position.y
 
       final_path.header.stamp = rospy.Time.now()
       final_path.header.frame_id = "map"
@@ -94,8 +134,8 @@ def path_callback(data):
       pose.header.stamp = rospy.Time.now()
       pose.header.frame_id = "map"
 
-      pose.pose.position.x = float(x_)/len(path_list) + odom_pose.position.x
-      pose.pose.position.y = float(y_)/len(path_list) + odom_pose.position.y
+      pose.pose.position.x = float(x_)/right_left_num + odom_pose.position.x
+      pose.pose.position.y = float(y_)/right_left_num + odom_pose.position.y
       pose.pose.position.z = 0
 
       pose.pose.orientation.x = 0
@@ -103,16 +143,16 @@ def path_callback(data):
       pose.pose.orientation.z = 0
       pose.pose.orientation.w = 1
       
-      if(i == 19):
-        print("x",float(x_)/20)
-        print("y",float(y_)/20)
 
       final_path.poses.append(pose)  
 
     path1_pub.publish(final_path)
       
-    if(len(path_list) == 25):
+    if(len(path_list) == 7):
       del path_list[0]
+
+    if(len(left_right_list) == 7):
+      del left_right_list[0]
 
 def step_callback(data):
   global step_num

@@ -15,11 +15,16 @@ ros::Publisher cloud_pub;
 void cloud_callback (const sensor_msgs::PointCloud2& cloud_msg)
 {
   //make container for converted cloud
-  pcl::PCLPointCloud2::Ptr cloud (new pcl::PCLPointCloud2 ());
-  pcl::PCLPointCloud2::Ptr cloud_filtered (new pcl::PCLPointCloud2 ());
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::fromROSMsg(cloud_msg, cloud);
 
-  //convert cloud to pcl
-  pcl_conversions::toPCL(cloud_msg, *cloud);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_filtered(new pcl::PointCloud<pcl::PointXYZ>);
+  *ptr_filtered = cloud;
+
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_a(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_b(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
+
 
   //other pointclouds for filtering
 //  pcl::PCLPointCloud2::Ptr pass_z (new pcl::PCLPointCloud2 ());
@@ -28,30 +33,33 @@ void cloud_callback (const sensor_msgs::PointCloud2& cloud_msg)
   sensor_msgs::PointCloud2 cloud_out;
 
   //Passthrough filter the points in z
-  pcl::PassThrough<pcl::PCLPointCloud2> pass;
+	pcl::PassThrough<pcl::PointXYZ> pass;
   // pass.setInputCloud(cloud);
   // pass.setFilterFieldName("z");
   // pass.setFilterLimits(-1,1);
   // pass.filter(*cloud);
 
 //   Passthough in y
-  pass.setInputCloud(cloud);
+  pass.setInputCloud(ptr_filtered);
   pass.setFilterFieldName("y");
-  pass.setFilterLimits(-5,5);
-  pass.filter(*cloud);
+  pass.setFilterLimits(-0.6,0.6);
+  pass.setFilterLimitsNegative(true);
+  pass.filter(*cloud_a);
 
-  // //passthrough filter the points in x
+  //passthrough filter the points in x
+  pass.setInputCloud(ptr_filtered);
+  pass.setFilterFieldName("x");
+  pass.setFilterLimits(-1,1);
+  pass.setFilterLimitsNegative(true);
+  pass.filter(*cloud_b);
+
+  *cloud_filtered = *cloud_a + *cloud_b;
+  
   // pass.setInputCloud(cloud);
   // pass.setFilterFieldName("x");
-  // pass.setFilterLimits(-1,1);
-  // pass.setFilterLimitsNegative(true);
+  // pass.setFilterLimits(-5,100);
+  // pass.setFilterLimitsNegative(false);
   // pass.filter(*cloud);
-  
-  pass.setInputCloud(cloud);
-  pass.setFilterFieldName("x");
-  pass.setFilterLimits(-5,100);
-  pass.setFilterLimitsNegative(false);
-  pass.filter(*cloud);
   //Voxel Grid Filter the points
 //   pcl::VoxelGrid<pcl::PCLPointCloud2> vox;
 //   vox.setInputCloud(cloud);
@@ -60,9 +68,11 @@ void cloud_callback (const sensor_msgs::PointCloud2& cloud_msg)
 
 //  pcl_pub.publish(cloud_filtered);
 
+  sensor_msgs::PointCloud2 cloudmsg;
+  pcl::toROSMsg(*cloud_filtered, cloudmsg);
   //Publisher
-  pcl_conversions::fromPCL(*cloud, cloud_out);
-  cloud_pub.publish(cloud_out);
+  // pcl_conversions::fromPCL(*cloud, cloud_filtered);
+  cloud_pub.publish(cloudmsg);
   //cloud_pub.publish(*cloud_filtered);
 }
 

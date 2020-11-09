@@ -69,8 +69,8 @@ if __name__ == '__main__':
             final_path.publish(move_base_local_path)
             print("TEB Path")
         else:
-            final_path.publish(move_base_local_path)
-            # final_path.publish(global_path)
+            # final_path.publish(move_base_local_path)
+            final_path.publish(global_path)
             print("Global Path")
         
         # final_path.publish(global_path)

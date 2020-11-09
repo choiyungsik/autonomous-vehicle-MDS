@@ -25,6 +25,7 @@
 #include "adaptive_clustering/Bboxes2d.h"
 #include "costmap_converter/ObstacleMsg.h"
 #include "costmap_converter/ObstacleArrayMsg.h"
+#include <geometry_msgs/PoseStamped.h>
 // PCL
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/voxel_grid.h>
@@ -68,6 +69,19 @@ uint32_t pose_array_seq_ = 0;
 Eigen::Vector4f min_, max_;
 
 int frames; clock_t start_time; bool reset = true;//fps
+
+void currentstepCallback(const geometry_msgs::PoseStamped::ConstPtr& data) {
+  int step_num = data->pose.position.z;
+  std::cout<< step_num << std::endl;
+  if(step_num > 120 && step_num < 170) {
+    z_axis_min_ = -0.1;
+  }
+
+  else {
+    z_axis_min_ = -0.72;
+  }
+}
+
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& ros_pc2_in) {
   if(print_fps_)if(reset){frames=0;start_time=clock();reset=false;}//fps
 
@@ -302,6 +316,7 @@ int main(int argc, char **argv) {
   /*** Subscribers ***/
   ros::NodeHandle nh;
   ros::Subscriber point_cloud_sub = nh.subscribe<sensor_msgs::PointCloud2>("/cloud_filtered", 1, pointCloudCallback);
+  ros::Subscriber current_step_sub = nh.subscribe<geometry_msgs::PoseStamped>("/current_step", 1, currentstepCallback);
 
   /*** Publishers ***/
   ros::NodeHandle private_nh("~");

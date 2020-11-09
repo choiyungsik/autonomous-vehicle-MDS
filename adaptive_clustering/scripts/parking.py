@@ -60,7 +60,6 @@ def publish_obstacle_msg():
   empty_spot_array.data = [1,1,1,1,1,1]
 
   while not rospy.is_shutdown():
-    empty_spot_array.data = [1,1,1,1,1,1]
     try:
         (trans,rot) = listener.lookupTransform('/map', '/velodyne', rospy.Time(0))
         euler = tf.transformations.euler_from_quaternion(rot)
@@ -100,7 +99,7 @@ def publish_obstacle_msg():
         marker.pose.orientation.z = 0
         marker.pose.orientation.w = 0
 
-        r2 = RotatedRect(parking_spot[j][0], parking_spot[j][1], 2, 5,+0.338)
+        r2 = RotatedRect(parking_spot[j][0], parking_spot[j][1], 2, 5,1.5)
 
         for k in range(len(r2.get_contour().exterior.coords)):
           p = Point32()

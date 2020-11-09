@@ -177,9 +177,11 @@ class CoreController():
         
         # if(15<=self.step_num and self.step_num<=30):
         #     self.backup_state = self.Machine_State.safety_zone.value
-            # self.dynamic_obstacle = True                                #dynamic obstacle
-            # if(self.step_num == 30):
-            #     self.dynamic_obstacle = False 
+        #     self.dynamic_obstacle = True                                #dynamic obstacle
+        #     if(self.step_num == 30):
+        #         self.dynamic_obstacle = False 
+
+
 
 
         # if (5 <= self.step_num and self.step_num <=34):
@@ -335,16 +337,16 @@ class CoreController():
         #elif (self.stop_line == 1) and (self.cur_state == self.Machine_State.safety_zone.value):
         #   self.cur_state = self.Machine_State.stop.value
 
-        if mode == self.Machine_State.backup.value and sub_event==self.Machine_State.avoid_cruise.value:
-            print(self.avoid_timer,self.avoid_count)
-            if(self.dynamic_obstacle == True) and (self.avoid_timer == True):
-                self.cur_state = self.Machine_State.stop.value
-            elif (self.dynamic_obstacle == True) and (self.avoid_timer == False):
-                self.cur_state = self.Machine_State.safety_zone.value
-            elif (self.dynamic_obstacle == False) and (self.avoid_timer == True):
-                self.cur_state = self.Machine_State.avoid_cruise.value
-            elif (self.dynamic_obstacle == False) and (self.avoid_timer == False):
-                self.cur_state = self.Machine_State.cruise.value
+        # if mode == self.Machine_State.backup.value and sub_event==self.Machine_State.avoid_cruise.value:
+        # print(self.avoid_timer,self.avoid_count)
+        # if(self.dynamic_obstacle == True) and (self.avoid_timer == True):
+        #     self.cur_state = self.Machine_State.stop.value
+        # elif (self.dynamic_obstacle == True) and (self.avoid_timer == False):
+        #     self.cur_state = self.Machine_State.safety_zone.value
+        # elif (self.dynamic_obstacle == False) and (self.avoid_timer == True):
+        #     self.cur_state = self.Machine_State.avoid_cruise.value
+        # elif (self.dynamic_obstacle == False) and (self.avoid_timer == False:
+        #     self.cur_state = self.Machine_State.cruise.value
 
 
         if self.cur_state == self.Machine_State.traffic.value or sub_event == self.Machine_State.traffic.value:
